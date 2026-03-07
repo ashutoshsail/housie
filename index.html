@@ -872,7 +872,6 @@ async function startHostGame(){
   gs.gameId=id;
 
   const snapshot=buildSnapshot();
-  snapshot['.validate']={gameId:id,hostPW:pw,active:true,ts:Date.now()};
 
   try{
     // Clean old games and write new
