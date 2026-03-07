@@ -344,10 +344,6 @@ input:focus{border-color:var(--accent)}
       <span class="row-label">Announce numbers (TTS)</span>
       <button class="toggle on" id="tgl-tts" onclick="toggleTgl('tts')"></button>
     </div>
-    <div class="row">
-      <span class="row-label">Auto-detect winners</span>
-      <button class="toggle on" id="tgl-autodetect" onclick="toggleTgl('autodetect')"></button>
-    </div>
   </div>
 </div>
 
@@ -534,7 +530,7 @@ input:focus{border-color:var(--accent)}
 
 <!-- HOST CLAIM REVIEW MODAL -->
 <div class="modal-bg" id="modal-review-claim">
-  <div class="modal" style="max-width:380px">
+  <div class="modal" style="max-width:380px;max-height:88vh;overflow-y:auto">
     <div class="modal-title" id="rcm-title">Review Claim</div>
     <div id="rcm-card-view" style="margin:8px 0"></div>
     <div id="rcm-prize-info" style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:4px"></div>
@@ -776,7 +772,7 @@ let gs={
   winnerCounts:{},
   winOrder:0,
   rangeFrom:1,rangeTo:100,
-  tts:true,autodetect:true,
+  tts:true,
   gameId:'',hostPW:'',
   claims:{}, // claims[prizeId][cardCode] = {seq, code, ts, status:'pending'|'rejected'}
 };
@@ -1051,7 +1047,7 @@ function toggleAllCards(){
 function callNumber(){
   const remaining=[];
   for(let i=1;i<=90;i++) if(!gs.calledNums.has(i)) remaining.push(i);
-  if(remaining.length===0){showToast('All 90 numbers called!');document.getElementById('call-btn').disabled=true;checkEndPrizes();return;}
+  if(remaining.length===0){showToast('All 90 numbers called!');document.getElementById('call-btn').disabled=true;broadcastGameState();return;}
   const n=remaining[Math.floor(Math.random()*remaining.length)];
   gs.calledNums.add(n);gs.calledOrder.push(n);
   document.getElementById('hg-last-num').textContent=n;
@@ -1060,10 +1056,9 @@ function callNumber(){
   document.getElementById('cb-'+n).classList.add('called');
   document.getElementById('hg-called-count').textContent=gs.calledNums.size+' called';
   if(gs.tts) speak(n);
-  if(gs.autodetect) checkWinners(n);
   updateDisplayBoard(n);
   broadcastGameState();
-  if(gs.calledNums.size===90){document.getElementById('call-btn').disabled=true;checkEndPrizes();}
+  if(gs.calledNums.size===90){document.getElementById('call-btn').disabled=true;showToast('🎱 All 90 numbers called!');}
 }
 
 function speak(n){
@@ -1072,145 +1067,10 @@ function speak(n){
   window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
 }
 
-function checkWinners(lastCalled){
-  const newWinners=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    if(pid==='unlucky') continue; // handled continuously after fullhouse
-    const nextSlot=slots.findIndex(s=>s===null);
-    if(nextSlot===-1) continue;
-
-    if(pid==='temperature'){
-      for(let seq=gs.rangeFrom;seq<=gs.rangeTo;seq++){
-        const code=seqToCode(seq);
-        if(slots.some(s=>s&&s.code===code)) continue;
-        const grid=generateTicket(code);
-        const nums=gridNums(grid);
-        const hi=Math.max(...nums),lo=Math.min(...nums);
-        if(gs.calledNums.has(hi)&&gs.calledNums.has(lo)){
-          slots[nextSlot]={seq,code,name:`Card ${seq} (${code})`,order:gs.winOrder++};
-          newWinners.push({prize:pid,seq,code,slot:nextSlot});
-          break;
-        }
-      }
-      continue;
-    }
-
-    const wonCodes=new Set(slots.filter(Boolean).map(s=>s.code));
-    for(let seq=gs.rangeFrom;seq<=gs.rangeTo;seq++){
-      const code=seqToCode(seq);
-      if(wonCodes.has(code)) continue;
-      const grid=generateTicket(code);
-      if(checkPrize(pid,grid,gs.calledNums)){
-        slots[nextSlot]={seq,code,name:`Card ${seq} (${code})`,order:gs.winOrder++};
-        newWinners.push({prize:pid,seq,code,slot:nextSlot});
-        wonCodes.add(code);
-        // Fill multiple simultaneous winners (same call completing multiple cards)
-        const nextNext=slots.findIndex(s=>s===null);
-        if(nextNext===-1) break;
-        continue; // keep looking for more winners of same prize in same call
-      }
-    }
-  }
-
-  // Check "Most Unlucky" after fullhouse is won (if enabled)
-  if('unlucky' in gs.prizes){
-    const fhSlots=gs.prizes['fullhouse'];
-    const fhWon=fhSlots&&fhSlots.every(s=>s!==null);
-    if(fhWon||!gs.prizes['fullhouse']){
-      checkUnlucky(newWinners);
-    }
-  }
-
-  if(newWinners.length>0){
-    showWinnersFlash(newWinners);
-    renderHostPrizes();
-    renderDisplayPrizes();
-    buildAllCardsList();
-    broadcastGameState();
-  }
-}
-
-// Most Unlucky: MAX uncalled numbers remaining = winner.
-// Runs every call once full house is won. One card left with most uncalled = winner.
-// Tiebreaker if all 90 called: card whose first number was cancelled LATEST wins.
-function checkUnlucky(newWinners){
-  if(!('unlucky' in gs.prizes)) return;
-  const slots=gs.prizes['unlucky'];
-  if(slots.every(s=>s!==null)) return;
-
-  const alreadyWon=new Set(slots.filter(Boolean).map(s=>s.code));
-  let maxUncalled=-1;
-  const cardStats=[];
-  for(let seq=gs.rangeFrom;seq<=gs.rangeTo;seq++){
-    const code=seqToCode(seq);
-    if(alreadyWon.has(code)) continue;
-    const grid=generateTicket(code);
-    const nums=gridNums(grid);
-    const uncalled=nums.filter(n=>!gs.calledNums.has(n)).length;
-    if(uncalled>maxUncalled) maxUncalled=uncalled;
-    cardStats.push({seq,code,nums,uncalled});
-  }
-
-  const leaders=cardStats.filter(c=>c.uncalled===maxUncalled);
-  const allCalled=gs.calledNums.size===90;
-  const neededSlots=slots.filter(s=>s===null).length;
-
-  // Award when only one leader, OR all 90 called (then apply tiebreaker)
-  if(leaders.length<=neededSlots||allCalled){
-    let finalWinners=leaders;
-    // Tiebreaker: whose first cancelled number appeared LATEST in calledOrder
-    if(leaders.length>1){
-      const scored=leaders.map(c=>{
-        const firstCancelIdx=c.nums.reduce((latest,n)=>{
-          const idx=gs.calledOrder.indexOf(n);
-          return idx>latest?idx:latest;
-        },-1); // highest index = cancelled most recently = most unlucky
-        return{...c,firstCancelIdx};
-      });
-      const maxIdx=Math.max(...scored.map(s=>s.firstCancelIdx));
-      finalWinners=scored.filter(s=>s.firstCancelIdx===maxIdx);
-    }
-    let nextSlot=slots.findIndex(s=>s===null);
-    for(const c of finalWinners){
-      if(nextSlot===-1) break;
-      slots[nextSlot]={seq:c.seq,code:c.code,name:`Card ${c.seq} (${c.code})`,order:gs.winOrder++};
-      newWinners.push({prize:'unlucky',seq:c.seq,code:c.code,slot:nextSlot});
-      nextSlot=slots.findIndex(s=>s===null);
-    }
-  }
-}
-
-function checkEndPrizes(){
-  const newWinners=[];
-  if('unlucky' in gs.prizes) checkUnlucky(newWinners);
-  if(newWinners.length>0) showWinnersFlash(newWinners);
-  renderHostPrizes();renderDisplayPrizes();
-  broadcastGameState();
-  showToast('🎱 All 90 numbers called!');
-}
-
 function gridNums(grid){
   const nums=[];
   for(let r=0;r<3;r++)for(let c=0;c<9;c++)if(grid[r][c])nums.push(grid[r][c]);
   return nums;
-}
-
-function checkPrize(pid,grid,called){
-  if(pid==='topline') return grid[0].every(n=>n===0||called.has(n));
-  if(pid==='midline') return grid[1].every(n=>n===0||called.has(n));
-  if(pid==='botline') return grid[2].every(n=>n===0||called.has(n));
-  if(pid==='corners'){
-    const corners=getCorners(grid);
-    return corners.every(n=>called.has(n));
-  }
-  if(pid==='fullhouse'){
-    return gridNums(grid).every(n=>called.has(n));
-  }
-  if(pid==='temperature'){
-    const nums=gridNums(grid);
-    return called.has(Math.max(...nums))&&called.has(Math.min(...nums));
-  }
-  return false;
 }
 
 function getCorners(grid){
@@ -1382,16 +1242,116 @@ function openClaimReview(pid,claim){
   reviewingClaim={pid,claim};
   const def=PRIZE_DEFS.find(p=>p.id===pid);
   document.getElementById('rcm-title').textContent=`Review: ${def?.name||pid}`;
-  document.getElementById('rcm-prize-info').textContent=`Card #${claim.seq} · ${claim.code}`;
-  // Show the card
+
   const cardView=document.getElementById('rcm-card-view');
   cardView.innerHTML='';
+
   const grid=generateTicket(claim.code);
-  const prizeStatus=[];
-  for(const [p2,slots] of Object.entries(gs.prizes)){
-    if(slots.some(s=>s&&s.code===claim.code)) prizeStatus.push({pid:p2,status:'won'});
+  const playerMarked=new Set(claim.markedNums||[]);
+
+  // Work out which numbers are REQUIRED for this prize
+  const required=new Set();
+  if(pid==='topline') grid[0].forEach(n=>{if(n)required.add(n);});
+  else if(pid==='midline') grid[1].forEach(n=>{if(n)required.add(n);});
+  else if(pid==='botline') grid[2].forEach(n=>{if(n)required.add(n);});
+  else if(pid==='corners') getCorners(grid).forEach(n=>required.add(n));
+  else if(pid==='fullhouse') gridNums(grid).forEach(n=>required.add(n));
+  else if(pid==='temperature'){
+    const nums=gridNums(grid);
+    required.add(Math.max(...nums));
+    required.add(Math.min(...nums));
   }
-  cardView.appendChild(renderTicketEl(grid,claim.code,claim.seq,gs.calledNums,gs.calledNums,prizeStatus,false));
+
+  // Verification checks
+  const requiredArr=[...required];
+  const allCalled=requiredArr.every(n=>gs.calledNums.has(n));
+  const allTapped=requiredArr.every(n=>playerMarked.has(n));
+  const noFalseTaps=[...playerMarked].every(n=>gs.calledNums.has(n)); // no uncalled numbers tapped
+  const valid=allCalled&&allTapped&&noFalseTaps;
+
+  // Verification summary
+  const summary=document.createElement('div');
+  summary.style.cssText='display:flex;flex-direction:column;gap:4px;margin-bottom:10px';
+
+  const checks=[
+    {label:'All required numbers called by host', pass:allCalled},
+    {label:'Player tapped all required numbers', pass:allTapped},
+    {label:'No uncalled numbers tapped', pass:noFalseTaps},
+  ];
+  checks.forEach(({label,pass})=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600';
+    row.innerHTML=`<span style="font-size:14px">${pass?'✅':'❌'}</span><span style="color:${pass?'var(--green)':'var(--red)'}">${label}</span>`;
+    summary.appendChild(row);
+  });
+
+  // Overall verdict
+  const verdict=document.createElement('div');
+  verdict.style.cssText=`margin-top:6px;padding:8px 12px;border-radius:10px;font-size:13px;font-weight:800;text-align:center;background:${valid?'rgba(57,211,83,.15)':'rgba(255,68,68,.12)'};color:${valid?'var(--green)':'var(--red)'};border:1.5px solid ${valid?'rgba(57,211,83,.3)':'rgba(255,68,68,.3)'}`;
+  verdict.textContent=valid?'✅ Claim looks VALID':'⚠️ Claim looks INVALID — verify before accepting';
+  summary.appendChild(verdict);
+  cardView.appendChild(summary);
+
+  // Prize info line
+  const info=document.createElement('div');
+  info.style.cssText='font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center';
+  info.textContent=`Card #${claim.seq} · ${claim.code} · Required: ${requiredArr.join(', ')}`;
+  cardView.appendChild(info);
+
+  // Render ticket: show player's taps as marked, required-but-not-tapped highlighted in red
+  // Build a custom ticket render
+  const ticket=document.createElement('div');ticket.className='ticket';
+  const hdr=document.createElement('div');hdr.className='ticket-header';
+  const seqEl=document.createElement('div');seqEl.className='ticket-seq';seqEl.textContent='#'+claim.seq;
+  const codeEl=document.createElement('div');codeEl.className='ticket-code';codeEl.textContent=claim.code;
+  hdr.append(seqEl,codeEl);ticket.appendChild(hdr);
+  const tgrid=document.createElement('div');tgrid.className='ticket-grid';
+
+  for(let r=0;r<3;r++){
+    for(let c=0;c<9;c++){
+      const n=grid[r][c];
+      const cell=document.createElement('div');
+      if(n===0){cell.className='tnum empty';}
+      else{
+        cell.textContent=n;
+        const isTapped=playerMarked.has(n);
+        const isCalled=gs.calledNums.has(n);
+        const isRequired=required.has(n);
+        // Colour coding:
+        // Green fill = tapped AND called (correct)
+        // Red outline = required but NOT tapped (missed)
+        // Orange outline = tapped but NOT called (cheat/error)
+        // Grey = not relevant, not tapped
+        let cls='tnum';
+        if(isTapped&&isCalled) cls+=' marked'; // correct tap — orange fill
+        else if(isRequired&&!isTapped) cls+=' callable'; // missed required — pulse red outline
+        cell.className=cls;
+        // Override callable to red for missed required
+        if(isRequired&&!isTapped) cell.style.cssText='box-shadow:inset 0 0 0 2px var(--red);color:var(--red);animation:none';
+        // Flag tapped-but-uncalled as a bright warning
+        if(isTapped&&!isCalled) cell.style.cssText='background:rgba(255,68,68,.3);color:var(--red);border:2px solid var(--red)';
+      }
+      tgrid.appendChild(cell);
+    }
+  }
+  ticket.appendChild(tgrid);
+
+  // Legend
+  const legend=document.createElement('div');
+  legend.style.cssText='display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px;background:var(--card2);border-top:1px solid var(--border);font-size:10px;font-weight:600';
+  legend.innerHTML=`
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:var(--accent);border-radius:2px;display:inline-block"></span>Tapped ✓</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border:2px solid var(--red);border-radius:2px;display:inline-block"></span>Required, not tapped</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(255,68,68,.3);border-radius:2px;display:inline-block"></span>Tapped but not called!</span>
+  `;
+  ticket.appendChild(legend);
+  cardView.appendChild(ticket);
+
+  // Auto-disable accept button if claim is clearly invalid
+  document.getElementById('rcm-accept-btn').style.opacity=valid?'1':'0.5';
+  document.getElementById('rcm-accept-btn').title=valid?'':'Claim appears invalid — check carefully';
+
+  document.getElementById('rcm-prize-info').textContent='';
   document.getElementById('modal-review-claim').classList.add('show');
 }
 
@@ -1725,6 +1685,7 @@ function submitClaim(pid){
     ts:Date.now(),
     status:'pending',
     eligibleAt:playerState.eligibleAt[pid]||0,
+    markedNums:[...playerState.marked], // player's actual taps — host uses this to verify
   };
   db.ref(claimPath).set(claimData)
     .then(()=>{
