@@ -256,29 +256,45 @@ input:focus{border-color:var(--accent)}
 .claim-bubble:hover{transform:scale(1.12)}
 @keyframes bubblePop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
 .host-num-row{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0}
-/* ticket cell color coding for claim review */
-/* green fill + star = the exact number that triggered eligibility */
-.ticket-cell.tc-marked-last{
+/* ===== CLAIM REVIEW TICKET CELL STATES ===== */
+/* 1. GREEN ★ = trigger number (the last called, completing the prize) */
+.ticket-cell.tc-trigger{
   background:#16a34a;color:#fff;font-weight:700;
-  border:2px solid #15803d;
-  box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
+  border:2.5px solid #15803d;
+  box-shadow:0 0 0 2px rgba(34,197,94,.35);
 }
-.ticket-cell.tc-marked-last::after{content:"★";position:absolute;top:1px;right:2px;font-size:.5rem;color:#bbf7d0}
-/* orange fill + tick = tapped previously */
-.ticket-cell.tc-marked-prev{
+.ticket-cell.tc-trigger::after{content:"★";position:absolute;top:1px;right:2px;font-size:.48rem;color:#bbf7d0}
+/* 2. ORANGE ✓ = correctly tapped (called + tapped, part of prize requirement) */
+.ticket-cell.tc-tapped-ok{
   background:var(--marked);color:#fff;font-weight:700;
-  border:2px solid color-mix(in srgb,var(--marked) 60%,#000);
+  border:2px solid color-mix(in srgb,var(--marked) 55%,#000);
 }
-.ticket-cell.tc-marked-prev::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.5rem;opacity:.9}
-/* called but NOT tapped — strong accent border + tinted bg + accent text */
-.ticket-cell.tc-called-only{
-  background:color-mix(in srgb,var(--called) 18%,var(--bg3));
-  color:var(--called);
-  border:2px solid var(--called);
-  font-weight:600;
+.ticket-cell.tc-tapped-ok::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.48rem;opacity:.9}
+/* 3. RED ✗ = REQUIRED for prize but NOT tapped — INVALID CLAIM */
+.ticket-cell.tc-required-missing{
+  background:color-mix(in srgb,var(--danger) 20%,var(--bg3));
+  color:var(--danger);font-weight:700;
+  border:2.5px solid var(--danger);
+  animation:missingPulse 1s ease-in-out infinite;
 }
-/* uncalled — default dim */
-.ticket-cell.tc-blank{background:var(--bg2);color:transparent}
+.ticket-cell.tc-required-missing::after{content:"✗";position:absolute;top:1px;right:2px;font-size:.48rem}
+@keyframes missingPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 50%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
+/* 4. BLUE/ACCENT dim = called but not a prize requirement, not tapped (irrelevant) */
+.ticket-cell.tc-called-irrelevant{
+  background:color-mix(in srgb,var(--called) 10%,var(--bg3));
+  color:var(--text3);
+  border:1px solid color-mix(in srgb,var(--called) 40%,var(--border));
+}
+/* 5. Plain dim = not called at claim time */
+.ticket-cell.tc-uncalled{background:var(--bg3);color:var(--text3)}
+.ticket-cell.tc-blank-cell{background:var(--bg2);color:transparent}
+/* Claim validity banner */
+.claim-valid-banner{
+  padding:10px 14px;border-radius:10px;font-weight:700;font-size:.88rem;
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.claim-valid-banner.valid{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border:1.5px solid var(--win);color:var(--win)}
+.claim-valid-banner.invalid{background:color-mix(in srgb,var(--danger) 12%,var(--bg2));border:1.5px solid var(--danger);color:var(--danger)}
 .ticket-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:.72rem}
 .tl-item{display:flex;align-items:center;gap:4px;color:var(--text2)}
 .tl-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
@@ -948,7 +964,12 @@ function buildSnapshot(){
   });
   const claimsSer={};
   PRIZE_DEFS.forEach(p=>{
-    claimsSer[p.id]=(gs.claims[p.id]||[]).map(c=>({code:c.code,seq:c.seq,ts:c.ts,status:c.status}));
+    claimsSer[p.id]=(gs.claims[p.id]||[]).map(c=>({
+      code:c.code, seq:c.seq, ts:c.ts, status:c.status,
+      markedNums:c.markedNums||null,
+      triggerNum:c.triggerNum||null,
+      calledAtClaim:c.calledAtClaim||0,
+    }));
   });
   return {
     gameId:gs.gameId, hostPW:gs.hostPW, active:gs.active,
@@ -1054,7 +1075,12 @@ function applyLiveSnapshot(data){
   });
   gs.claims={};
   PRIZE_DEFS.forEach(p=>{
-    gs.claims[p.id]=(data.claims&&data.claims[p.id]||[]).map(c=>({code:c.code,seq:c.seq,ts:c.ts,status:c.status}));
+    gs.claims[p.id]=(data.claims&&data.claims[p.id]||[]).map(c=>({
+      code:c.code, seq:c.seq, ts:c.ts, status:c.status,
+      markedNums:c.markedNums||null,
+      triggerNum:c.triggerNum||null,
+      calledAtClaim:c.calledAtClaim||0,
+    }));
   });
 }
 
@@ -1317,19 +1343,55 @@ function renderClaimsPanel(){
 
 function showClaimReview(prizeId, claim){
   const grid=generateTicket(claim.code);
-  const lastCalled=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
-  // We show: marked-by-last-tap (green star), marked-prev (orange tick), called-not-marked (accent border), unmarked (bg)
+
+  // Reconstruct called set AT THE MOMENT the player submitted the claim
+  const calledAtClaim=claim.calledAtClaim||gs.calledOrder.length;
+  const calledOrderAtClaim=gs.calledOrder.slice(0, calledAtClaim);
+  const calledSetAtClaim=new Set(calledOrderAtClaim);
+  const lastCalledAtClaim=calledOrderAtClaim.length?calledOrderAtClaim[calledOrderAtClaim.length-1]:null;
+
+  const triggerNum=claim.triggerNum||null;
+  const markedSet=claim.markedNums?new Set(claim.markedNums):null;
+
+  // Get the required numbers for this specific prize on this card
+  const requiredNums=new Set(getPrizeNums(prizeId, grid));
+
+  // === VALIDITY CHECKS ===
+  // 1. Trigger must equal the last called number at claim time
+  const triggerIsLastCalled=(triggerNum===lastCalledAtClaim);
+  // 2. All required numbers must be marked (tapped) by player
+  const allRequiredMarked=markedSet?[...requiredNums].every(n=>markedSet.has(n)):false;
+  // 3. All marked numbers must actually have been called (no cheating)
+  const noFakeMarks=markedSet?[...markedSet].every(n=>calledSetAtClaim.has(n)):false;
+
+  const isValid=triggerIsLastCalled&&allRequiredMarked&&noFakeMarks;
+
   const wrap=document.createElement('div');
-  // Legend
+
+  // Validity banner
+  const banner=document.createElement('div');
+  banner.className='claim-valid-banner '+(isValid?'valid':'invalid');
+  if(isValid){
+    banner.innerHTML='✅ Claim looks valid';
+  } else {
+    const reasons=[];
+    if(!triggerIsLastCalled) reasons.push('prize was eligible before last called number');
+    if(!allRequiredMarked) reasons.push('required numbers not all tapped');
+    if(!noFakeMarks) reasons.push('tapped numbers not all called');
+    banner.innerHTML='⚠️ Issue: '+reasons.join(' · ');
+  }
+  wrap.appendChild(banner);
+
+  // Legend — 5 states
   const legend=document.createElement('div');legend.className='ticket-legend';
   legend.innerHTML=
-    '<div class="tl-item"><div class="tl-swatch" style="background:#22c55e"></div> ★ Trigger (made eligible)</div>'+
-    '<div class="tl-item"><div class="tl-swatch" style="background:var(--marked)"></div> ✓ Tapped</div>'+
-    '<div class="tl-item"><div class="tl-swatch" style="background:var(--bg3);border:1.5px solid var(--called)"></div> Called, not tapped</div>';
+    '<div class="tl-item"><div class="tl-swatch" style="background:#16a34a"></div>★ Trigger (last called)</div>'+
+    '<div class="tl-item"><div class="tl-swatch" style="background:var(--marked)"></div>✓ Tapped (prize req.)</div>'+
+    '<div class="tl-item"><div class="tl-swatch" style="background:color-mix(in srgb,var(--danger) 20%,var(--bg3));border:2px solid var(--danger)"></div>✗ Required, NOT tapped</div>'+
+    '<div class="tl-item"><div class="tl-swatch" style="background:var(--bg3);border:1px solid var(--called)"></div>Called, not required</div>'+
+    '<div class="tl-item"><div class="tl-swatch" style="background:var(--bg3)"></div>Not called</div>';
   wrap.appendChild(legend);
-  // Ticket with rich coloring using claim.markedNums
-  const markedSet=claim.markedNums?new Set(claim.markedNums):null;
-  const triggerNum=claim.triggerNum||null;
+
   const ticket=document.createElement('div');ticket.className='ticket';
   for(let r=0;r<3;r++){
     const row=document.createElement('div');row.className='ticket-row';
@@ -1337,19 +1399,28 @@ function showClaimReview(prizeId, claim){
       const n=grid[r][c];
       const cell=document.createElement('div');
       if(n===0){
-        cell.className='ticket-cell blank tc-blank';
+        cell.className='ticket-cell tc-blank-cell';
       } else {
         cell.textContent=n;
+        const isRequired=requiredNums.has(n);
         const isMarked=markedSet&&markedSet.has(n);
-        const isCalled=gs.calledNums.has(n);
+        const wasCalledAtClaim=calledSetAtClaim.has(n);
+
         if(isMarked&&n===triggerNum){
-          cell.className='ticket-cell tc-marked-last'; // green star = the triggering number
-        } else if(isMarked){
-          cell.className='ticket-cell tc-marked-prev'; // orange = tapped previously
-        } else if(isCalled){
-          cell.className='ticket-cell tc-called-only'; // accent border = called not tapped
+          // The exact number that completed the prize — must be last called
+          cell.className='ticket-cell tc-trigger';
+        } else if(isMarked&&isRequired){
+          // Correctly tapped required number
+          cell.className='ticket-cell tc-tapped-ok';
+        } else if(isRequired&&!isMarked&&wasCalledAtClaim){
+          // PROBLEM: required for prize, was called, but player didn't tap it
+          cell.className='ticket-cell tc-required-missing';
+        } else if(wasCalledAtClaim&&!isRequired){
+          // Called but not a prize requirement — irrelevant, shown dimly
+          cell.className='ticket-cell tc-called-irrelevant';
         } else {
-          cell.className='ticket-cell'; // uncalled
+          // Not yet called at claim time
+          cell.className='ticket-cell tc-uncalled';
         }
       }
       row.appendChild(cell);
