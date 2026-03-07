@@ -11,37 +11,69 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ===== THEMES ===== */
+/* ===== THEME: MIDNIGHT CARNIVAL =====
+   Deep dark bg · Electric cyan panels · Hot magenta accents · Amber numbers */
 :root,[data-theme="midnight"]{
-  --bg:#0e0b1e;--bg2:#1a1230;--bg3:#231848;--surface:#2a1f56;
-  --border:#3d2f80;--accent:#a78bfa;--accent2:#7c3aed;--accent3:#c4b5fd;
-  --text:#f1eeff;--text2:#b8aee0;--text3:#7a6fb0;
-  --called:#a78bfa;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
-  --danger:#ef4444;--warn:#f59e0b;--toast-bg:#1a1230;
-  --call-btn:#e11d48;--num-color:#fb7185;
+  --bg:#09080f;--bg2:#130f23;--bg3:#1e1640;--surface:#15113a;
+  --border:#3b2d7a;
+  --accent:#e879f9;          /* hot magenta — buttons, active */
+  --accent2:#a21caf;
+  --accent3:#f0abfc;
+  --text:#f8f4ff;--text2:#c4b8e8;--text3:#7c6fa8;
+  --called:#22d3ee;          /* electric cyan — called numbers */
+  --marked:#f97316;          /* orange — tapped */
+  --win:#4ade80;--corner:#f59e0b;
+  --danger:#f43f5e;--warn:#fb923c;--toast-bg:#130f23;
+  --call-btn:#e879f9;--num-color:#22d3ee;
+  --topbar-bg:#0f0b2a;--panel-bg:#1a1445;
 }
+/* ===== THEME: JUNGLE FESTIVAL =====
+   Deep teal bg · Lime green panels · Hot coral accents · Golden numbers */
 [data-theme="forest"]{
-  --bg:#0a1a0e;--bg2:#0f2714;--bg3:#163620;--surface:#1e4a28;
-  --border:#2d7040;--accent:#4ade80;--accent2:#16a34a;--accent3:#86efac;
-  --text:#edfff3;--text2:#a7d9b5;--text3:#5a9e6e;
-  --called:#4ade80;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
-  --danger:#ef4444;--warn:#f59e0b;--toast-bg:#0f2714;
-  --call-btn:#d97706;--num-color:#fbbf24;
+  --bg:#0a1a14;--bg2:#0d2318;--bg3:#0f3020;--surface:#123d28;
+  --border:#1a5c38;
+  --accent:#f472b6;          /* hot coral/pink — buttons */
+  --accent2:#db2777;
+  --accent3:#fda4af;
+  --text:#f0fff8;--text2:#a3e8c8;--text3:#4a9e78;
+  --called:#a3e635;          /* lime green — called numbers */
+  --marked:#fb923c;          /* orange — tapped */
+  --win:#34d399;--corner:#c084fc;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0d2318;
+  --call-btn:#f472b6;--num-color:#a3e635;
+  --topbar-bg:#091a10;--panel-bg:#0e2d1c;
 }
+/* ===== THEME: FIESTA =====
+   Warm cream bg · Saffron yellow panels · Deep violet accents · Teal numbers */
 [data-theme="sunset"]{
-  --bg:#fff7ed;--bg2:#fff3e0;--bg3:#ffe0b2;--surface:#ffd0a0;
-  --border:#f59e0b;--accent:#d97706;--accent2:#b45309;--accent3:#92400e;
-  --text:#1c0a00;--text2:#5c3a1e;--text3:#8a5c38;
-  --called:#d97706;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
-  --danger:#dc2626;--warn:#d97706;--toast-bg:#fff3e0;
-  --call-btn:#7c3aed;--num-color:#8b5cf6;
+  --bg:#fffbf0;--bg2:#fff8e6;--bg3:#fef3c7;--surface:#fde68a;
+  --border:#f59e0b;
+  --accent:#7c3aed;          /* deep violet — buttons */
+  --accent2:#6d28d9;
+  --accent3:#4c1d95;
+  --text:#1a0a2e;--text2:#4a2080;--text3:#7c5cbf;
+  --called:#0d9488;          /* teal — called numbers */
+  --marked:#ef4444;          /* red — tapped */
+  --win:#16a34a;--corner:#db2777;
+  --danger:#dc2626;--warn:#d97706;--toast-bg:#fff8e6;
+  --call-btn:#7c3aed;--num-color:#0d9488;
+  --topbar-bg:#fef3c7;--panel-bg:#fde68a;
 }
+/* ===== THEME: NEON REEF =====
+   Deep navy bg · Rich cobalt panels · Neon orange accents · Emerald numbers */
 [data-theme="ocean"]{
-  --bg:#e8f4fd;--bg2:#dbeafe;--bg3:#bfdbfe;--surface:#93c5fd;
-  --border:#3b82f6;--accent:#1d4ed8;--accent2:#1e40af;--accent3:#1e3a8a;
-  --text:#0c1a3a;--text2:#1e3a6a;--text3:#3a6ea8;
-  --called:#1d4ed8;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
-  --danger:#dc2626;--warn:#d97706;--toast-bg:#dbeafe;
-  --call-btn:#0f766e;--num-color:#2dd4bf;
+  --bg:#020617;--bg2:#0a1628;--bg3:#0f2040;--surface:#0d1e3d;
+  --border:#1e3a6e;
+  --accent:#f97316;          /* neon orange — buttons */
+  --accent2:#ea580c;
+  --accent3:#fed7aa;
+  --text:#f0f8ff;--text2:#93c5fd;--text3:#3b82f6;
+  --called:#10b981;          /* emerald green — called numbers */
+  --marked:#f59e0b;          /* amber — tapped */
+  --win:#34d399;--corner:#e879f9;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0a1628;
+  --call-btn:#f97316;--num-color:#10b981;
+  --topbar-bg:#050d1a;--panel-bg:#0c1c38;
 }
 
 /* ===== RESET ===== */
@@ -66,7 +98,7 @@ input:focus{border-color:var(--accent)}
 .screen.active{display:flex}
 
 /* ===== TOPBAR ===== */
-.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--topbar-bg,var(--bg2));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
 .topbar-title{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);letter-spacing:.1em}
 .topbar-btn{padding:6px 12px;border-radius:8px;font-weight:600;font-size:.82rem;background:var(--surface);color:var(--text);border:1.5px solid var(--border);white-space:nowrap}
 .topbar-btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
@@ -89,7 +121,7 @@ input:focus{border-color:var(--accent)}
 .content{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
 
 /* ===== PANELS ===== */
-.panel{background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:14px}
+.panel{background:var(--panel-bg,var(--bg2));border:1.5px solid var(--border);border-radius:14px;padding:14px}
 .panel-title{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
 .panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
@@ -648,10 +680,10 @@ let deferredPrompt = null;
 
 // ===== THEMES =====
 const THEMES = [
-  {id:'midnight', label:'🌙 Midnight'},
-  {id:'forest',   label:'🌿 Forest'},
-  {id:'sunset',   label:'🌅 Sunset'},
-  {id:'ocean',    label:'🌊 Ocean'},
+  {id:'midnight', label:'🎪 Carnival'},
+  {id:'forest',   label:'🌴 Jungle'},
+  {id:'sunset',   label:'🎉 Fiesta'},
+  {id:'ocean',    label:'🌊 Neon Reef'},
 ];
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
