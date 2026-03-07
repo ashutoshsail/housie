@@ -11,69 +11,85 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ===== THEMES ===== */
-/* ===== THEME: MIDNIGHT CARNIVAL =====
-   Deep dark bg · Electric cyan panels · Hot magenta accents · Amber numbers */
+/* ===== THEME: CARNIVAL (dark) =====
+   Page: deep charcoal-black · Topbar: dark forest green · Panels: deep crimson · Accents: gold + cyan */
 :root,[data-theme="midnight"]{
-  --bg:#09080f;--bg2:#130f23;--bg3:#1e1640;--surface:#15113a;
-  --border:#3b2d7a;
-  --accent:#e879f9;          /* hot magenta — buttons, active */
-  --accent2:#a21caf;
-  --accent3:#f0abfc;
-  --text:#f8f4ff;--text2:#c4b8e8;--text3:#7c6fa8;
-  --called:#22d3ee;          /* electric cyan — called numbers */
-  --marked:#f97316;          /* orange — tapped */
-  --win:#4ade80;--corner:#f59e0b;
-  --danger:#f43f5e;--warn:#fb923c;--toast-bg:#130f23;
-  --call-btn:#e879f9;--num-color:#22d3ee;
-  --topbar-bg:#0f0b2a;--panel-bg:#1a1445;
+  --bg:#0f0f0f;
+  --bg2:#1a0505;            /* panels — deep crimson */
+  --bg3:#280808;
+  --surface:#380a0a;
+  --topbar-bg:#0a1f0a;      /* topbar — dark forest green */
+  --panel-bg:#1a0505;
+  --border:#dc2626;
+  --accent:#fbbf24;         /* gold — buttons */
+  --accent2:#d97706;
+  --accent3:#fef3c7;
+  --text:#fff8f0;--text2:#ffd0a0;--text3:#c07040;
+  --called:#22d3ee;         /* cyan — called numbers */
+  --marked:#fbbf24;         /* gold — tapped */
+  --win:#4ade80;--corner:#fb923c;
+  --danger:#f43f5e;--warn:#fb923c;--toast-bg:#1a0505;
+  --call-btn:#fbbf24;--num-color:#22d3ee;
 }
-/* ===== THEME: JUNGLE FESTIVAL =====
-   Deep teal bg · Lime green panels · Hot coral accents · Golden numbers */
+/* ===== THEME: JUNGLE (dark) =====
+   Page: deep black-green · Topbar: dark rust-red · Panels: deep royal blue · Accents: lime + coral */
 [data-theme="forest"]{
-  --bg:#0a1a14;--bg2:#0d2318;--bg3:#0f3020;--surface:#123d28;
-  --border:#1a5c38;
-  --accent:#f472b6;          /* hot coral/pink — buttons */
+  --bg:#050f08;
+  --bg2:#05082a;            /* panels — deep royal blue */
+  --bg3:#080f38;
+  --surface:#0d1848;
+  --topbar-bg:#1f0800;      /* topbar — dark rust */
+  --panel-bg:#05082a;
+  --border:#3b5bdb;
+  --accent:#f472b6;         /* coral pink — buttons */
   --accent2:#db2777;
   --accent3:#fda4af;
-  --text:#f0fff8;--text2:#a3e8c8;--text3:#4a9e78;
-  --called:#a3e635;          /* lime green — called numbers */
-  --marked:#fb923c;          /* orange — tapped */
-  --win:#34d399;--corner:#c084fc;
-  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0d2318;
+  --text:#f0fff4;--text2:#a5d8c0;--text3:#4a9e78;
+  --called:#a3e635;         /* lime — called numbers */
+  --marked:#fb923c;         /* orange — tapped */
+  --win:#34d399;--corner:#fbbf24;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#05082a;
   --call-btn:#f472b6;--num-color:#a3e635;
-  --topbar-bg:#091a10;--panel-bg:#0e2d1c;
 }
-/* ===== THEME: FIESTA =====
-   Warm cream bg · Saffron yellow panels · Deep violet accents · Teal numbers */
+/* ===== THEME: FIESTA (light) =====
+   Page: terracotta-coral · Topbar: deep teal · Panels: rich gold-cream · three totally distinct warm hues */
 [data-theme="sunset"]{
-  --bg:#fffbf0;--bg2:#fff8e6;--bg3:#fef3c7;--surface:#fde68a;
-  --border:#f59e0b;
-  --accent:#7c3aed;          /* deep violet — buttons */
-  --accent2:#6d28d9;
-  --accent3:#4c1d95;
-  --text:#1a0a2e;--text2:#4a2080;--text3:#7c5cbf;
-  --called:#0d9488;          /* teal — called numbers */
-  --marked:#ef4444;          /* red — tapped */
-  --win:#16a34a;--corner:#db2777;
-  --danger:#dc2626;--warn:#d97706;--toast-bg:#fff8e6;
-  --call-btn:#7c3aed;--num-color:#0d9488;
-  --topbar-bg:#fef3c7;--panel-bg:#fde68a;
+  --bg:#fff0e8;             /* warm coral-white page */
+  --bg2:#fff8e0;            /* panels — rich warm cream/gold tint */
+  --bg3:#ffecc0;
+  --surface:#ffdda0;
+  --topbar-bg:#0f4a44;      /* topbar — deep teal, completely different */
+  --panel-bg:#fff8e0;
+  --border:#e07020;         /* burnt orange border */
+  --accent:#e07020;         /* burnt orange buttons */
+  --accent2:#b85010;
+  --accent3:#ff9040;
+  --text:#1a0800;--text2:#5a2800;--text3:#8a5030;
+  --called:#0f9488;         /* teal — called numbers */
+  --marked:#e07020;         /* burnt orange — tapped */
+  --win:#16a34a;--corner:#dc2626;
+  --danger:#dc2626;--warn:#d97706;--toast-bg:#fff8e0;
+  --call-btn:#0f4a44;--num-color:#0f9488;
 }
-/* ===== THEME: NEON REEF =====
-   Deep navy bg · Rich cobalt panels · Neon orange accents · Emerald numbers */
+/* ===== THEME: NEON REEF (dark) =====
+   Page: deep navy · Topbar: dark burnt sienna · Panels: deep teal · three completely different hues */
 [data-theme="ocean"]{
-  --bg:#020617;--bg2:#0a1628;--bg3:#0f2040;--surface:#0d1e3d;
-  --border:#1e3a6e;
-  --accent:#f97316;          /* neon orange — buttons */
+  --bg:#020a18;             /* deep navy */
+  --bg2:#001a18;            /* panels — very dark teal, different from navy */
+  --bg3:#002820;
+  --surface:#003828;
+  --topbar-bg:#1a0800;      /* topbar — dark burnt sienna */
+  --panel-bg:#001a18;
+  --border:#10b981;         /* emerald border */
+  --accent:#f97316;         /* neon orange — buttons */
   --accent2:#ea580c;
   --accent3:#fed7aa;
-  --text:#f0f8ff;--text2:#93c5fd;--text3:#3b82f6;
-  --called:#10b981;          /* emerald green — called numbers */
-  --marked:#f59e0b;          /* amber — tapped */
-  --win:#34d399;--corner:#e879f9;
-  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0a1628;
+  --text:#f0fff8;--text2:#6ee7b7;--text3:#2d9e70;
+  --called:#10b981;         /* emerald — called */
+  --marked:#f97316;         /* orange — tapped */
+  --win:#34d399;--corner:#fbbf24;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#001a18;
   --call-btn:#f97316;--num-color:#10b981;
-  --topbar-bg:#050d1a;--panel-bg:#0c1c38;
 }
 
 /* ===== RESET ===== */
@@ -1128,17 +1144,23 @@ async function goPlayerFromJoin(){
   btn.disabled=true; btn.textContent='Assigning card…';
 
   try{
-    const poolRef=db.ref('cardpool/'+gs.gameId);
+    // Pre-fetch pool array (read-only, large) separately
+    // Then atomically increment only nextIndex (small integer node — no null issue)
+    const poolSnap=await db.ref('cardpool/'+gs.gameId).once('value');
+    const poolData=poolSnap.val();
+    if(!poolData||!poolData.pool){
+      statusEl.textContent='⚠️ No card pool found. Ask host to restart.';
+      btn.disabled=false; btn.textContent='🎴 Get My Card →';
+      return;
+    }
+    const pool=poolData.pool;
     let assignedSeq=null;
 
-    await poolRef.transaction(poolData=>{
-      if(!poolData) return poolData; // abort if no pool
-      const idx=poolData.nextIndex||0;
-      if(idx>=poolData.pool.length){
-        assignedSeq=null; return poolData; // pool exhausted, don't modify
-      }
-      assignedSeq=poolData.pool[idx];
-      return {...poolData, nextIndex:idx+1};
+    await db.ref('cardpool/'+gs.gameId+'/nextIndex').transaction(idx=>{
+      const cur=idx||0;
+      if(cur>=pool.length) return cur; // exhausted — don't change
+      assignedSeq=pool[cur];
+      return cur+1;
     });
 
     if(assignedSeq===null){
