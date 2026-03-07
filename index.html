@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Housie</title>
+<meta name="description" content="Digital Housie · Play Together"/>
+<meta name="theme-color" content="#1a1230"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ===== CSS VARIABLES / THEMES ===== */
+:root,[data-theme="midnight"]{
+  --bg:#0e0b1e;--bg2:#1a1230;--bg3:#231848;--surface:#2a1f56;
+  --border:#3d2f80;--accent:#a78bfa;--accent2:#7c3aed;--accent3:#c4b5fd;
+  --text:#f1eeff;--text2:#b8aee0;--text3:#7a6fb0;
+  --called:#a78bfa;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
+  --danger:#ef4444;--toast-bg:#1a1230;
+}
+[data-theme="forest"]{
+  --bg:#0a1a0e;--bg2:#0f2714;--bg3:#163620;--surface:#1e4a28;
+  --border:#2d7040;--accent:#4ade80;--accent2:#16a34a;--accent3:#86efac;
+  --text:#edfff3;--text2:#a7d9b5;--text3:#5a9e6e;
+  --called:#4ade80;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
+  --danger:#ef4444;--toast-bg:#0f2714;
+}
+[data-theme="sunset"]{
+  --bg:#fff7ed;--bg2:#fff3e0;--bg3:#ffe0b2;--surface:#ffd0a0;
+  --border:#f59e0b;--accent:#d97706;--accent2:#b45309;--accent3:#92400e;
+  --text:#1c0a00;--text2:#5c3a1e;--text3:#8a5c38;
+  --called:#d97706;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
+  --danger:#dc2626;--toast-bg:#fff3e0;
+}
+[data-theme="ocean"]{
+  --bg:#e8f4fd;--bg2:#dbeafe;--bg3:#bfdbfe;--surface:#93c5fd;
+  --border:#3b82f6;--accent:#1d4ed8;--accent2:#1e40af;--accent3:#1e3a8a;
+  --text:#0c1a3a;--text2:#1e3a6a;--text3:#3a6ea8;
+  --called:#1d4ed8;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
+  --danger:#dc2626;--toast-bg:#dbeafe;
+}
+
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  transition:background .3s,color .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+input,button,select,textarea{font-family:inherit}
+button{cursor:pointer;border:none;background:none;color:inherit}
+button:active{transform:scale(0.97)}
+a{text-decoration:none;color:var(--accent)}
+input[type="text"],input[type="password"],input[type="number"]{
+  background:var(--bg3);border:1.5px solid var(--border);
+  color:var(--text);border-radius:10px;padding:10px 14px;
+  font-family:'DM Mono',monospace;font-size:1rem;
+  text-transform:uppercase;letter-spacing:.08em;width:100%;
+  outline:none;transition:border .2s;
+}
+input:focus{border-color:var(--accent)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 16px;background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10;
+  min-height:56px;
+}
+.topbar-title{
+  flex:1;text-align:center;font-family:'DM Mono',monospace;
+  font-size:1.2rem;font-weight:700;color:var(--accent);
+  letter-spacing:.1em;
+}
+.topbar-btn{
+  padding:6px 14px;border-radius:8px;font-weight:600;font-size:.85rem;
+  background:var(--surface);color:var(--text);border:1.5px solid var(--border);
+  white-space:nowrap;
+}
+.topbar-btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.topbar-btn.accent{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.icon-btn{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:1.1rem;background:var(--surface);
+  border:1.5px solid var(--border);
+}
+
+/* ===== CONTENT AREA ===== */
+.content{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.content-wide{flex:1;overflow-y:auto;padding:0}
+
+/* ===== CARDS / PANELS ===== */
+.panel{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px;
+}
+.panel-title{
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:12px;
+}
+.panel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ===== LANDING ===== */
+#s-landing{align-items:center;justify-content:center;padding:24px 20px;gap:24px;min-height:100vh}
+.logo{font-size:5rem;filter:drop-shadow(0 0 20px var(--accent));animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 12px var(--accent))}50%{filter:drop-shadow(0 0 30px var(--accent))}}
+.app-title{font-size:3rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.app-sub{color:var(--text3);font-size:.9rem;letter-spacing:.08em;text-transform:uppercase}
+.theme-bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.theme-btn{
+  padding:8px 14px;border-radius:20px;border:2px solid var(--border);
+  background:var(--bg2);font-size:.85rem;font-weight:600;
+  color:var(--text2);transition:all .2s;
+}
+.theme-btn.active,.theme-btn:hover{border-color:var(--accent);color:var(--text);background:var(--surface)}
+.divider{width:100%;display:flex;align-items:center;gap:12px;color:var(--text3);font-size:.8rem;letter-spacing:.1em}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.landing-input-row{display:flex;gap:8px;width:100%;max-width:360px}
+.landing-input-row input{flex:1}
+
+/* ===== BUTTONS ===== */
+.btn{
+  padding:13px 20px;border-radius:12px;font-weight:700;font-size:1rem;
+  border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;
+  justify-content:center;gap:8px;
+}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{opacity:.9}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn-outline:hover{background:var(--accent);color:var(--bg)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-full{width:100%}
+.btn-sm{padding:8px 14px;font-size:.85rem;border-radius:8px}
+.btn-call{
+  font-size:1.3rem;padding:18px;border-radius:16px;background:var(--accent);
+  color:var(--bg);font-weight:700;width:100%;letter-spacing:.02em;
+  box-shadow:0 4px 24px color-mix(in srgb,var(--accent) 40%,transparent);
+}
+
+/* ===== NUMBER DISPLAY ===== */
+.last-called-big{
+  font-family:'DM Mono',monospace;font-size:4.5rem;font-weight:700;
+  color:var(--accent);text-align:center;line-height:1;
+  text-shadow:0 0 30px color-mix(in srgb,var(--accent) 60%,transparent);
+}
+.called-count{text-align:center;color:var(--text3);font-size:.85rem;margin-top:4px}
+
+/* ===== NUMBER GRID ===== */
+.num-grid{
+  display:grid;grid-template-columns:repeat(9,1fr);gap:4px;
+}
+.num-cell{
+  aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500;
+  background:var(--bg3);color:var(--text3);transition:all .3s;
+}
+.num-cell.called{background:var(--called);color:var(--bg);font-weight:700}
+
+/* ===== TICKET ===== */
+.ticket{
+  border:2px solid var(--border);border-radius:12px;
+  overflow:hidden;background:var(--bg2);
+}
+.ticket-row{display:grid;grid-template-columns:repeat(9,1fr)}
+.ticket-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.9rem;font-weight:600;
+  border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);
+  position:relative;transition:all .25s;
+  min-height:36px;
+}
+.ticket-cell.blank{background:var(--bg2);color:transparent}
+.ticket-cell.called{background:color-mix(in srgb,var(--called) 25%,var(--bg3));color:var(--called)}
+.ticket-cell.marked{background:var(--marked);color:#fff;font-weight:700}
+.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.55rem;opacity:.7}
+.ticket-cell.callable{outline:2px solid var(--marked);outline-offset:-2px;animation:callPulse 1.2s ease-in-out infinite;cursor:pointer}
+@keyframes callPulse{0%,100%{outline-color:var(--marked);box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 50%,transparent)}50%{outline-color:color-mix(in srgb,var(--marked) 70%,transparent);box-shadow:0 0 0 4px transparent}}
+.ticket-cell.win-highlight{background:color-mix(in srgb,var(--win) 30%,var(--bg3));outline:2px solid var(--win)}
+.ticket-cell.corner-highlight{background:color-mix(in srgb,var(--corner) 30%,var(--bg3));outline:2px solid var(--corner)}
+.ticket-code{text-align:center;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text3);padding:6px;letter-spacing:.1em}
+
+/* ===== PRIZES ===== */
+.prize-row{
+  display:flex;align-items:center;gap:8px;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.prize-row:last-child{border-bottom:none}
+.prize-name{flex:1;font-weight:600;font-size:.9rem}
+.prize-status{font-size:.8rem;color:var(--text3)}
+.prize-won{color:var(--win);font-weight:700}
+.prize-toggle{width:36px;height:20px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--border);position:relative;cursor:pointer;transition:background .2s}
+.prize-toggle.on{background:var(--accent)}
+.prize-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:1px;left:2px;transition:left .2s}
+.prize-toggle.on::after{left:18px}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper-btn{width:28px;height:28px;border-radius:6px;background:var(--bg3);border:1.5px solid var(--border);font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.stepper-val{font-family:'DM Mono',monospace;font-size:.95rem;min-width:20px;text-align:center}
+
+/* ===== WINNER SLOTS ===== */
+.winner-slot{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:8px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  font-family:'DM Mono',monospace;font-size:.8rem;cursor:pointer;
+  color:var(--text2);transition:all .2s;margin:3px;
+}
+.winner-slot.filled{background:color-mix(in srgb,var(--win) 20%,var(--bg3));border-color:var(--win);color:var(--win)}
+.winner-slot.filled:hover{background:color-mix(in srgb,var(--win) 35%,var(--bg3))}
+
+/* ===== WINNERS FLASH ===== */
+#winners-flash{
+  background:color-mix(in srgb,var(--win) 20%,var(--bg2));
+  border:1.5px solid var(--win);border-radius:12px;padding:10px 14px;
+  color:var(--win);font-weight:700;font-size:.9rem;display:none;
+  animation:flashIn .3s ease;
+}
+@keyframes flashIn{from{transform:translateY(-10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ===== CARD CHIPS ===== */
+.card-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:8px;background:var(--bg3);
+  border:1.5px solid var(--border);font-family:'DM Mono',monospace;
+  font-size:.78rem;cursor:pointer;color:var(--text2);
+  transition:all .2s;margin:3px;
+}
+.card-chip:hover{border-color:var(--accent);color:var(--text)}
+.card-chip.won{background:color-mix(in srgb,var(--win) 20%,var(--bg3));border-color:var(--win);color:var(--win);box-shadow:0 0 8px color-mix(in srgb,var(--win) 30%,transparent)}
+
+/* ===== PLAYER SCREEN ===== */
+#s-player .topbar{flex-wrap:wrap;gap:6px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--win);animation:livePulse 1.5s ease-in-out infinite;flex-shrink:0}
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--win) 50%,transparent)}50%{opacity:.7;box-shadow:0 0 0 5px transparent}}
+.player-topbar-number{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--accent);margin-left:auto}
+.win-alert{font-size:.8rem;font-weight:700;color:var(--win);background:color-mix(in srgb,var(--win) 15%,var(--bg2));padding:3px 8px;border-radius:6px}
+#player-ticket-wrapper{position:fixed;left:0;width:100vw;z-index:20}
+.player-spacer{width:100%;background:transparent}
+.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prize-mini{
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;
+  padding:8px 10px;font-size:.8rem;
+}
+.prize-mini-name{font-weight:600;color:var(--text2)}
+.prize-mini-status{color:var(--text3);font-size:.75rem;margin-top:2px}
+.prize-mini.won-prize{border-color:var(--win);background:color-mix(in srgb,var(--win) 12%,var(--bg2))}
+.prize-mini.won-prize .prize-mini-status{color:var(--win)}
+
+/* ===== DISPLAY MODE ===== */
+#s-display{background:#000;color:#fff}
+#s-display .last-called-big{font-size:8rem;color:#fff}
+#s-display .num-cell.called{background:#fff;color:#000}
+#s-display .num-cell{background:#111;color:#444}
+.display-prizes{margin-top:20px}
+.display-prize-item{padding:6px 0;border-bottom:1px solid #222;font-size:.9rem;color:#aaa}
+.display-prize-item .pw{color:#fff;font-weight:700}
+
+/* ===== PRINT ===== */
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff;color:#000}
+  .ticket-cell{border:1px solid #ccc;background:#fff;color:#000}
+  .ticket-cell.blank{background:#f0f0f0}
+  .print-card{page-break-inside:avoid;margin-bottom:24px}
+  .topbar,.screen:not(#s-print){display:none!important}
+  #s-print{display:block!important}
+}
+
+/* ===== COLLAPSIBLE ===== */
+.collapsible-header{
+  display:flex;align-items:center;cursor:pointer;
+  user-select:none;gap:8px;
+}
+.collapsible-header .arrow{transition:transform .2s;font-size:.75rem;color:var(--text3)}
+.collapsible-header.open .arrow{transform:rotate(90deg)}
+.collapsible-body{display:none;margin-top:12px}
+.collapsible-body.open{display:block}
+
+/* ===== JOIN SCREEN ===== */
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+  border-radius:20px;font-size:.82rem;font-weight:600;
+  background:var(--bg3);color:var(--text2);
+}
+.status-badge.live{background:color-mix(in srgb,var(--win) 15%,var(--bg3));color:var(--win)}
+
+/* ===== TOAST ===== */
+#toast{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--toast-bg);border:1.5px solid var(--border);color:var(--text);
+  padding:10px 20px;border-radius:12px;font-size:.88rem;font-weight:600;
+  z-index:9999;transition:transform .3s;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ===== INSTALL BTN ===== */
+#install-btn{display:none}
+
+/* ===== MISC ===== */
+.mono{font-family:'DM Mono',monospace}
+.accent{color:var(--accent)}
+.text2{color:var(--text2)}
+.text3{color:var(--text3)}
+.gap-8{gap:8px}
+.flex{display:flex}
+.flex-col{flex-direction:column}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.fw700{font-weight:700}
+.fs-lg{font-size:1.1rem}
+.sep{height:1px;background:var(--border);margin:8px 0}
+.inline-theme-bar{display:flex;gap:6px;flex-wrap:wrap}
+.mt8{margin-top:8px}
+.hint{font-size:.8rem;color:var(--text3);text-align:center}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ===== SCREEN: LANDING ===== -->
+<div class="screen active" id="s-landing">
+  <div class="logo">🎱</div>
+  <h1 class="app-title">Housie</h1>
+  <p class="app-sub">Digital Housie · Play Together</p>
+  <div class="theme-bar" id="landing-theme-bar"></div>
+  <button class="btn btn-primary no-print" id="install-btn" onclick="installApp()">📲 Add to Home Screen</button>
+  <button class="btn btn-primary btn-full" style="max-width:320px" onclick="goCreateGame()">🏠 Create New Game</button>
+  <div class="divider" style="max-width:320px">or join</div>
+  <div class="landing-input-row">
+    <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase()"/>
+    <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: CREATE GAME ===== -->
+<div class="screen" id="s-creategame">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">New Game</div>
+    <button class="topbar-btn accent" onclick="startHostGame()">Start →</button>
+  </div>
+  <div class="content">
+    <div class="panel">
+      <div class="panel-title">Host Password</div>
+      <input type="text" id="host-pw-input" maxlength="20" oninput="this.value=this.value.toUpperCase()"/>
+      <p class="hint mt8">Others enter this to become host</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Active Card Range</div>
+      <div class="panel-row">
+        <span class="text2" style="font-size:.85rem">From</span>
+        <input type="number" id="range-from" value="1" min="1" max="9999" style="width:80px"/>
+        <span class="text2" style="font-size:.85rem">to</span>
+        <input type="number" id="range-to" value="100" min="1" max="9999" style="width:80px"/>
+      </div>
+      <div class="mt8 hint" id="card-range-hint">100 cards active</div>
+      <button class="btn btn-outline btn-full mt8" onclick="show('s-print')">🖨 Print Cards</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Prize Categories</div>
+      <div id="prize-setup"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Game Settings</div>
+      <div class="prize-row">
+        <span class="prize-name">🔊 Text-to-Speech</span>
+        <div class="prize-toggle" id="tts-toggle" onclick="toggleSetting(this,'tts')"></div>
+      </div>
+      <div class="prize-row">
+        <span class="prize-name">🤖 Auto-detect Winners</span>
+        <div class="prize-toggle on" id="autodetect-toggle" onclick="toggleSetting(this,'autodetect')"></div>
+      </div>
+    </div>
+    <div class="inline-theme-bar" id="create-theme-bar"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: JOIN GAME ===== -->
+<div class="screen" id="s-joingame">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title" id="join-game-title">Game XXXX</div>
+  </div>
+  <div class="content">
+    <div id="join-status-row" class="panel" style="display:flex;align-items:center;gap:10px">
+      <span id="join-status-badge" class="status-badge">⏳ Not started</span>
+      <span id="join-called-count" class="text3 mono" style="font-size:.85rem"></span>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Play with a Card</div>
+      <div class="panel-row">
+        <input type="text" id="player-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-primary btn-sm" onclick="goPlayerFromJoin()">View My Card →</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Switch to Host</div>
+      <div class="panel-row">
+        <input type="password" id="host-pw-join" placeholder="Host Password" style="flex:1"/>
+        <button class="btn btn-outline btn-sm" onclick="goHostFromJoin()">Enter as Host →</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Display Screen</div>
+      <button class="btn btn-outline btn-full" onclick="show('s-display')">📺 Open Display Mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: HOST GAME ===== -->
+<div class="screen" id="s-hostgame">
+  <div class="topbar" id="host-topbar">
+    <button class="topbar-btn danger" onclick="endGame()">End</button>
+    <div class="topbar-title mono" id="host-game-id" style="font-size:1.5rem;letter-spacing:.15em"></div>
+    <button class="icon-btn" onclick="show('s-playerview')" title="View Cards">👁</button>
+    <button class="icon-btn" onclick="show('s-display')" title="Display">📺</button>
+    <button class="icon-btn" onclick="toggleThemeBar('host')" title="Theme">🎨</button>
+  </div>
+  <div class="content" id="host-content">
+    <div class="inline-theme-bar" id="host-theme-bar" style="display:none"></div>
+    <div id="winners-flash"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0">
+      <div class="last-called-big" id="host-last-num">—</div>
+      <div class="called-count" id="host-called-count">0 / 90 called</div>
+    </div>
+    <button class="btn-call" onclick="callNextNumber()">🎱 Call Next Number</button>
+    <div class="panel">
+      <div class="panel-title">Called Numbers</div>
+      <div class="num-grid" id="host-num-grid"></div>
+    </div>
+    <div class="panel">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span class="panel-title" style="margin:0">🏆 Prizes</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="collapsible-body open" id="prizes-panel"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Validate / View Card</div>
+      <div class="panel-row">
+        <input type="text" id="validate-input" placeholder="Seq # or Code" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-outline btn-sm" onclick="validateCard()">View</button>
+      </div>
+      <div id="validate-result" class="mt8"></div>
+    </div>
+    <div class="panel">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span class="panel-title" style="margin:0">All Active Cards</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="collapsible-body" id="all-cards-panel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PLAYER ===== -->
+<div class="screen" id="s-player">
+  <div class="topbar" id="player-topbar">
+    <button class="topbar-btn" onclick="show('s-joingame')">← Back</button>
+    <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
+      <div class="live-dot"></div>
+      <span class="mono" style="font-size:.88rem;letter-spacing:.08em" id="player-card-label">Card XXXXXX</span>
+    </div>
+    <div class="player-topbar-number" id="player-last-called">—</div>
+    <button class="icon-btn" onclick="resetMarks()">↺</button>
+  </div>
+  <div class="content" id="player-content">
+    <div id="player-win-alert"></div>
+    <div class="player-spacer" id="player-spacer"></div>
+    <p class="hint">Tap numbers as host calls them 🎱</p>
+    <div class="panel">
+      <div class="panel-title">Prizes</div>
+      <div class="prize-grid-2" id="player-prize-grid"></div>
+    </div>
+    <div class="inline-theme-bar" id="player-theme-bar"></div>
+  </div>
+</div>
+<div id="player-ticket-wrapper"></div>
+
+<!-- ===== SCREEN: PLAYER VIEW (HOST) ===== -->
+<div class="screen" id="s-playerview">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-hostgame')">← Back</button>
+    <div class="topbar-title">Browse Cards</div>
+    <span class="mono text3" id="pv-card-indicator" style="font-size:.85rem"></span>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-outline" onclick="pvNav(-1)">← Prev</button>
+      <button class="btn btn-outline" onclick="pvNav(1)">Next →</button>
+    </div>
+    <div id="pv-ticket-area"></div>
+    <div id="pv-prize-area" class="prize-grid-2"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: DISPLAY ===== -->
+<div class="screen" id="s-display">
+  <div class="topbar" style="background:#000;border-color:#222">
+    <button class="topbar-btn" onclick="displayBack()">← Back</button>
+    <div class="topbar-title" style="color:#fff">Display Mode</div>
+  </div>
+  <div class="content" style="background:#000">
+    <div class="last-called-big" id="disp-last-num">—</div>
+    <div class="called-count" id="disp-called-count" style="color:#666">Waiting...</div>
+    <div class="num-grid" id="disp-num-grid" style="margin-top:16px"></div>
+    <div class="display-prizes" id="disp-prizes"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PRINT ===== -->
+<div class="screen" id="s-print">
+  <div class="topbar no-print">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">Print Cards</div>
+    <button class="topbar-btn accent" onclick="window.print()">🖨 Print</button>
+  </div>
+  <div class="content no-print">
+    <div class="panel">
+      <div class="panel-title">Card Range</div>
+      <div class="panel-row">
+        <span class="text2" style="font-size:.85rem">From</span>
+        <input type="number" id="print-from" value="1" min="1" max="9999" style="width:80px"/>
+        <span class="text2" style="font-size:.85rem">to</span>
+        <input type="number" id="print-to" value="10" min="1" max="9999" style="width:80px"/>
+      </div>
+      <button class="btn btn-primary btn-full mt8" onclick="generatePrintCards()">Generate Cards</button>
+    </div>
+  </div>
+  <div id="print-area" style="padding:16px"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===== PRIZE DEFINITIONS =====
+const PRIZE_DEFS = [
+  {id:'topline',    name:'Top Line',       rule:'Row 1 complete'},
+  {id:'midline',    name:'Middle Line',    rule:'Row 2 complete'},
+  {id:'botline',    name:'Bottom Line',    rule:'Row 3 complete'},
+  {id:'corners',    name:'Corners',        rule:'First+last of rows 1&2'},
+  {id:'fullhouse',  name:'Full House',     rule:'All 15 numbers'},
+  {id:'temperature',name:'Temperature 🌡', rule:'Highest & lowest called'},
+  {id:'unlucky',    name:'Most Unlucky 😬',rule:'Most uncalled at full house'},
+];
+
+// ===== GAME STATE =====
+let gs = {
+  gameId:'', hostPW:'', active:false,
+  calledNums:new Set(), calledOrder:[],
+  prizes:{}, enabledPrizes:{}, winnerCounts:{},
+  rangeFrom:1, rangeTo:100,
+  tts:false, autodetect:true,
+  winOrder:[],
+};
+let playerState = {code:'', seq:0, grid:[], marked:new Set(), lastSyncTs:0};
+let fbListener = null;
+let pvIndex = 0;
+let displayBackTarget = 's-landing';
+let flashTimer = null;
+let deferredPrompt = null;
+
+// ===== THEME =====
+const THEMES = [
+  {id:'midnight', label:'🌙 Midnight'},
+  {id:'forest',   label:'🌿 Forest'},
+  {id:'sunset',   label:'🌅 Sunset'},
+  {id:'ocean',    label:'🌊 Ocean'},
+];
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('housie-theme',t);
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.theme===t);
+  });
+}
+function buildThemeBars(){
+  ['landing-theme-bar','create-theme-bar','host-theme-bar','player-theme-bar'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML='';
+    THEMES.forEach(t=>{
+      const b=document.createElement('button');
+      b.className='theme-btn';
+      b.dataset.theme=t.id;
+      b.textContent=t.label;
+      b.onclick=()=>setTheme(t.id);
+      el.appendChild(b);
+    });
+  });
+  const saved=localStorage.getItem('housie-theme')||'midnight';
+  setTheme(saved);
+}
+function toggleThemeBar(which){
+  const bar=document.getElementById(which+'-theme-bar');
+  if(bar) bar.style.display = bar.style.display==='none'?'flex':'none';
+}
+
+// ===== SCREEN NAV =====
+function show(id){
+  if(id!=='s-player') stopPlayerSync();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='s-hostgame') renderHostScreen();
+  if(id==='s-display') renderDisplay();
+  if(id==='s-playerview'){pvIndex=gs.rangeFrom; renderPlayerView();}
+  if(id==='s-player') positionPlayerTicket();
+}
+
+// ===== SEEDED RNG =====
+function seededRng(seed){
+  let s=0;
+  for(let i=0;i<seed.length;i++) s=((s*31)+seed.charCodeAt(i))>>>0;
+  return function(){s=((s*1664525)+1013904223)>>>0;return s/4294967296;};
+}
+
+// ===== CARD GENERATION =====
+const CODE_CHARS='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function seqToCode(seq){
+  const rng=seededRng('TAMBOLA_'+seq);
+  let code='';
+  for(let i=0;i<6;i++) code+=CODE_CHARS[Math.floor(rng()*CODE_CHARS.length)];
+  return code;
+}
+function codeToSeq(code,maxSeq){
+  for(let i=1;i<=maxSeq;i++) if(seqToCode(i)===code) return i;
+  return -1;
+}
+function generateTicket(code){
+  const rng=seededRng(code+'TAMBOLA');
+  // Column ranges
+  const colRanges=[[1,9],[10,19],[20,29],[30,39],[40,49],[50,59],[60,69],[70,79],[80,90]];
+  // Decide which columns get 2 numbers (6 cols) vs 1 (3 cols)
+  const colCounts=[2,2,2,2,2,2,1,1,1];
+  // Shuffle which columns get 1 vs 2
+  for(let i=colCounts.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [colCounts[i],colCounts[j]]=[colCounts[j],colCounts[i]];
+  }
+  // Generate numbers per column
+  const colNums=[];
+  for(let c=0;c<9;c++){
+    const [lo,hi]=colRanges[c];
+    const count=colCounts[c];
+    const nums=[];
+    while(nums.length<count){
+      const n=lo+Math.floor(rng()*(hi-lo+1));
+      if(!nums.includes(n)) nums.push(n);
+    }
+    nums.sort((a,b)=>a-b);
+    colNums.push(nums);
+  }
+  // Place into 3x9 grid
+  // Each row needs exactly 5 numbers from different columns
+  // We have 15 numbers total across 9 columns
+  const grid=Array.from({length:3},()=>Array(9).fill(0));
+  // Assign each number to a row
+  const assignments=[];
+  colNums.forEach((nums,c)=>nums.forEach(n=>assignments.push({c,n})));
+  // Shuffle assignments, then greedily assign to rows ensuring each row gets 5
+  for(let i=assignments.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [assignments[i],assignments[j]]=[assignments[j],assignments[i]];
+  }
+  const rowCounts=[0,0,0];
+  const colUsed=Array.from({length:3},()=>new Set());
+  // Try greedy assignment
+  const queue=[...assignments];
+  const placed=[];
+  // BFS/greedy with backtracking isn't needed for simple approach
+  // Sort by most constrained column (2 numbers) first
+  queue.sort((a,b)=>colNums[b.c].length-colNums[a.c].length);
+  function assign(idx){
+    if(idx===queue.length) return rowCounts.every(r=>r===5);
+    const {c,n}=queue[idx];
+    const rows=rowCounts.map((cnt,r)=>[r,cnt]).filter(([r])=>!colUsed[r].has(c)&&rowCounts[r]<5);
+    for(const [r] of rows){
+      rowCounts[r]++;colUsed[r].add(c);grid[r][c]=n;
+      if(assign(idx+1)) return true;
+      rowCounts[r]--;colUsed[r].delete(c);grid[r][c]=0;
+    }
+    return false;
+  }
+  assign(0);
+  return grid;
+}
+
+// ===== TICKET RENDERING =====
+function renderTicketEl(grid,code,seq,calledSet,markedSet,prizeStatus,interactive){
+  const wrap=document.createElement('div');
+  wrap.className='ticket';
+  // Prize highlights
+  const {topline=[],midline=[],botline=[],corners=[],fullhouse=[]}=prizeStatus||{};
+  function getHighlight(r,c){
+    const n=grid[r][c];if(!n)return '';
+    const isWin=(row,arr)=>arr.some(s=>s.code===code||s.seq===seq)?row:false;
+    // Check row wins
+    if(r===0&&topline.some(s=>s.code===code||s.seq===seq)) return 'win-highlight';
+    if(r===1&&midline.some(s=>s.code===code||s.seq===seq)) return 'win-highlight';
+    if(r===2&&botline.some(s=>s.code===code||s.seq===seq)) return 'win-highlight';
+    if(fullhouse.some(s=>s.code===code||s.seq===seq)) return 'win-highlight';
+    if(corners.some(s=>s.code===code||s.seq===seq)){
+      // corners = first+last of row 0 and row 1
+      const row0Nums=grid[0].filter(x=>x>0);
+      const row1Nums=grid[1].filter(x=>x>0);
+      const cornerNums=[row0Nums[0],row0Nums[row0Nums.length-1],row1Nums[0],row1Nums[row1Nums.length-1]];
+      if(cornerNums.includes(n)) return 'corner-highlight';
+    }
+    return '';
+  }
+  for(let r=0;r<3;r++){
+    const row=document.createElement('div');
+    row.className='ticket-row';
+    for(let c=0;c<9;c++){
+      const n=grid[r][c];
+      const cell=document.createElement('div');
+      cell.className='ticket-cell'+(n===0?' blank':'');
+      if(n>0){
+        cell.textContent=n;
+        const hi=getHighlight(r,c);
+        if(!interactive){
+          if(calledSet&&calledSet.has(n)) cell.classList.add('called');
+        } else {
+          const isCalled=calledSet&&calledSet.has(n);
+          const isMarked=markedSet&&markedSet.has(n);
+          if(isMarked) cell.classList.add('marked');
+          else if(isCalled) cell.classList.add('callable');
+        }
+        if(hi) cell.classList.add(hi);
+        if(interactive){
+          cell.addEventListener('click',()=>playerTapNumber(n));
+        }
+      }
+      row.appendChild(cell);
+    }
+    wrap.appendChild(row);
+  }
+  const codeEl=document.createElement('div');
+  codeEl.className='ticket-code';
+  codeEl.textContent=`#${seq} · ${code}`;
+  wrap.appendChild(codeEl);
+  return wrap;
+}
+
+// ===== PRIZE SETUP UI =====
+function buildPrizeSetup(){
+  const container=document.getElementById('prize-setup');
+  container.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    const row=document.createElement('div');
+    row.className='prize-row';
+    const name=document.createElement('span');
+    name.className='prize-name';
+    name.textContent=p.name;
+    const rule=document.createElement('span');
+    rule.className='text3';
+    rule.style.fontSize='.75rem';
+    rule.textContent=p.rule;
+    const tog=document.createElement('div');
+    tog.className='prize-toggle on';
+    tog.id='ps-tog-'+p.id;
+    tog.onclick=()=>{tog.classList.toggle('on')};
+    const step=document.createElement('div');
+    step.className='stepper';
+    const minus=document.createElement('button');
+    minus.className='stepper-btn';minus.textContent='−';
+    const val=document.createElement('span');
+    val.className='stepper-val';val.id='ps-cnt-'+p.id;val.textContent='1';
+    const plus=document.createElement('button');
+    plus.className='stepper-btn';plus.textContent='+';
+    minus.onclick=()=>{let v=parseInt(val.textContent);if(v>1)val.textContent=v-1;};
+    plus.onclick=()=>{let v=parseInt(val.textContent);if(v<9)val.textContent=v+1;};
+    step.append(minus,val,plus);
+    const nameCol=document.createElement('div');
+    nameCol.style.flex='1';nameCol.style.display='flex';nameCol.style.flexDirection='column';nameCol.style.gap='2px';
+    nameCol.append(name,rule);
+    row.append(nameCol,tog,step);
+    container.appendChild(row);
+  });
+}
+
+function toggleSetting(el,key){
+  el.classList.toggle('on');
+  if(key==='tts') gs.tts=el.classList.contains('on');
+  if(key==='autodetect') gs.autodetect=el.classList.contains('on');
+}
+
+// Watch range inputs
+document.getElementById('range-from').addEventListener('input',updateRangeHint);
+document.getElementById('range-to').addEventListener('input',updateRangeHint);
+function updateRangeHint(){
+  const f=parseInt(document.getElementById('range-from').value)||1;
+  const t=parseInt(document.getElementById('range-to').value)||1;
+  const cnt=Math.max(0,t-f+1);
+  document.getElementById('card-range-hint').textContent=cnt+' cards active';
+}
+
+// ===== CREATE / START GAME =====
+function goCreateGame(){
+  // Random host password
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pw='';for(let i=0;i<5;i++) pw+=chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('host-pw-input').value=pw;
+  document.getElementById('range-from').value=1;
+  document.getElementById('range-to').value=100;
+  updateRangeHint();
+  buildPrizeSetup();
+  gs.tts=false; gs.autodetect=true;
+  document.getElementById('tts-toggle').classList.remove('on');
+  document.getElementById('autodetect-toggle').classList.add('on');
+  show('s-creategame');
+}
+
+function randId(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let id='';for(let i=0;i<4;i++) id+=chars[Math.floor(Math.random()*chars.length)];
+  return id;
+}
+
+async function startHostGame(){
+  const pw=document.getElementById('host-pw-input').value.trim();
+  if(pw.length<3){toast('Password must be at least 3 characters');return;}
+  const from=parseInt(document.getElementById('range-from').value)||1;
+  const to=parseInt(document.getElementById('range-to').value)||100;
+  if(to<from){toast('Invalid card range');return;}
+
+  gs.hostPW=pw;
+  gs.rangeFrom=from; gs.rangeTo=to;
+  gs.calledNums=new Set(); gs.calledOrder=[];
+  gs.active=true; gs.winOrder=[];
+  gs.tts=document.getElementById('tts-toggle').classList.contains('on');
+  gs.autodetect=document.getElementById('autodetect-toggle').classList.contains('on');
+
+  // Build prizes
+  gs.prizes={}; gs.enabledPrizes={}; gs.winnerCounts={};
+  PRIZE_DEFS.forEach(p=>{
+    gs.enabledPrizes[p.id]=document.getElementById('ps-tog-'+p.id)?.classList.contains('on')??true;
+    gs.winnerCounts[p.id]=parseInt(document.getElementById('ps-cnt-'+p.id)?.textContent)||1;
+    gs.prizes[p.id]=[];
+  });
+
+  const id=randId();
+  gs.gameId=id;
+
+  const snapshot=buildSnapshot();
+  snapshot['.validate']={gameId:id,hostPW:pw,active:true,ts:Date.now()};
+
+  try{
+    // Clean old games and write new
+    const existing=await db.ref('games').once('value');
+    const updates={};
+    existing.forEach(child=>{updates['games/'+child.key]=null;});
+    updates['games/'+id]=snapshot;
+    await db.ref('/').update(updates);
+    show('s-hostgame');
+    toast('Game '+id+' started!');
+  } catch(e){
+    console.error(e);
+    toast('Firebase error: '+e.message);
+  }
+}
+
+function buildSnapshot(){
+  const prizesSer={};
+  PRIZE_DEFS.forEach(p=>{
+    prizesSer[p.id]=(gs.prizes[p.id]||[]).map(s=>({code:s.code,seq:s.seq}));
+  });
+  return {
+    gameId:gs.gameId, hostPW:gs.hostPW, active:gs.active,
+    calledNums:[...gs.calledNums], calledOrder:gs.calledOrder,
+    prizes:prizesSer, enabledPrizes:gs.enabledPrizes,
+    winnerCounts:gs.winnerCounts,
+    rangeFrom:gs.rangeFrom, rangeTo:gs.rangeTo,
+    tts:gs.tts, autodetect:gs.autodetect,
+    ts:Date.now(),
+  };
+}
+
+function broadcastGameState(){
+  if(!gs.gameId) return;
+  db.ref('games/'+gs.gameId).set(buildSnapshot()).catch(e=>console.error('broadcast error',e));
+}
+
+// ===== JOIN GAME =====
+async function goJoinGame(){
+  const id=document.getElementById('join-id-input').value.trim().toUpperCase();
+  if(id.length<2){toast('Enter a Game ID');return;}
+  try{
+    const snap=await db.ref('games/'+id).once('value');
+    const data=snap.val();
+    if(!data){toast('Game not found');return;}
+    applyLiveSnapshot(data);
+    document.getElementById('join-game-title').textContent='Game '+id;
+    updateJoinStatus(data);
+    show('s-joingame');
+    // Clean old games silently
+    cleanOldGames();
+  } catch(e){
+    toast('Error: '+e.message);
+  }
+}
+
+function updateJoinStatus(data){
+  const badge=document.getElementById('join-status-badge');
+  const cnt=document.getElementById('join-called-count');
+  if(data&&data.active){
+    badge.className='status-badge live';
+    badge.textContent='🟢 Live';
+    cnt.textContent=(data.calledNums?data.calledNums.length:0)+' numbers called';
+  } else {
+    badge.className='status-badge';
+    badge.textContent='⏳ Not started';
+    cnt.textContent='';
+  }
+}
+
+async function cleanOldGames(){
+  try{
+    const snap=await db.ref('games').once('value');
+    const updates={};
+    const cutoff=Date.now()-24*60*60*1000;
+    snap.forEach(child=>{
+      const d=child.val();
+      if(d&&d.ts&&d.ts<cutoff) updates['games/'+child.key]=null;
+    });
+    if(Object.keys(updates).length) await db.ref('/').update(updates);
+  } catch(e){}
+}
+
+function goPlayerFromJoin(){
+  const val=document.getElementById('player-card-input').value.trim().toUpperCase();
+  if(!val){toast('Enter card # or code');return;}
+  let seq,code;
+  if(/^\d+$/.test(val)){
+    seq=parseInt(val);
+    if(seq<gs.rangeFrom||seq>gs.rangeTo){toast('Card not in active range ('+gs.rangeFrom+'–'+gs.rangeTo+')');return;}
+    code=seqToCode(seq);
+  } else {
+    seq=codeToSeq(val,gs.rangeTo);
+    if(seq<0||seq<gs.rangeFrom||seq>gs.rangeTo){toast('Code not found in active range');return;}
+    code=val;
+  }
+  playerState.code=code; playerState.seq=seq;
+  playerState.grid=generateTicket(code);
+  const saved=localStorage.getItem('marks_'+code+'_'+gs.gameId);
+  playerState.marked=saved?new Set(JSON.parse(saved)):new Set();
+  startPlayerSync();
+  renderPlayerScreen();
+  show('s-player');
+}
+
+function goHostFromJoin(){
+  const pw=document.getElementById('host-pw-join').value.trim();
+  if(pw.toUpperCase()!==gs.hostPW.toUpperCase()){toast('Wrong password');return;}
+  show('s-hostgame');
+}
+
+// ===== PLAYER SYNC =====
+function startPlayerSync(){
+  stopPlayerSync();
+  if(!gs.gameId) return;
+  fbListener=db.ref('games/'+gs.gameId);
+  fbListener.on('value',snap=>{
+    const data=snap.val();
+    if(!data) return;
+    applyLiveSnapshot(data);
+    renderPlayerScreen();
+  });
+}
+
+function stopPlayerSync(){
+  if(fbListener){
+    fbListener.off();
+    fbListener=null;
+  }
+}
+
+function applyLiveSnapshot(data){
+  if(!data) return;
+  gs.calledNums=new Set(data.calledNums||[]);
+  gs.calledOrder=data.calledOrder||[];
+  gs.rangeFrom=data.rangeFrom||1;
+  gs.rangeTo=data.rangeTo||100;
+  gs.active=data.active||false;
+  gs.gameId=data.gameId||gs.gameId;
+  gs.hostPW=data.hostPW||gs.hostPW;
+  gs.enabledPrizes=data.enabledPrizes||{};
+  gs.winnerCounts=data.winnerCounts||{};
+  gs.tts=data.tts||false;
+  gs.autodetect=data.autodetect!==undefined?data.autodetect:true;
+  // Restore prizes
+  gs.prizes={};
+  if(data.prizes){
+    Object.keys(data.prizes).forEach(pid=>{
+      gs.prizes[pid]=(data.prizes[pid]||[]).map(s=>({code:s.code,seq:s.seq,grid:generateTicket(s.code)}));
+    });
+  } else {
+    PRIZE_DEFS.forEach(p=>{gs.prizes[p.id]=[];});
+  }
+}
+
+// ===== RENDER PLAYER SCREEN =====
+function renderPlayerScreen(){
+  if(!playerState.code) return;
+  // Update label
+  document.getElementById('player-card-label').textContent='Card '+playerState.code;
+  // Last called
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('player-last-called').textContent=last||'—';
+  // Win alert
+  const alerts=[];
+  PRIZE_DEFS.forEach(p=>{
+    const winners=gs.prizes[p.id]||[];
+    if(winners.some(w=>w.code===playerState.code)) alerts.push(p.name);
+  });
+  const alertEl=document.getElementById('player-win-alert');
+  if(alerts.length){
+    alertEl.innerHTML='<div class="win-alert">🎉 Won: '+alerts.join(', ')+'</div>';
+  } else alertEl.innerHTML='';
+  // Render ticket
+  const wrapper=document.getElementById('player-ticket-wrapper');
+  wrapper.innerHTML='';
+  const prizeStatus=buildPrizeStatus();
+  const ticketEl=renderTicketEl(playerState.grid,playerState.code,playerState.seq,gs.calledNums,playerState.marked,prizeStatus,true);
+  ticketEl.style.borderRadius='0';ticketEl.style.border='none';
+  ticketEl.style.borderTop='1px solid var(--border)';
+  ticketEl.style.borderBottom='1px solid var(--border)';
+  wrapper.appendChild(ticketEl);
+  positionPlayerTicket();
+  // Prize grid
+  renderPlayerPrizeGrid();
+}
+
+function positionPlayerTicket(){
+  requestAnimationFrame(()=>{
+    const topbar=document.getElementById('player-topbar');
+    const wrapper=document.getElementById('player-ticket-wrapper');
+    const spacer=document.getElementById('player-spacer');
+    if(!topbar||!wrapper||!spacer) return;
+    const bottom=topbar.getBoundingClientRect().bottom;
+    wrapper.style.top=bottom+'px';
+    const wh=wrapper.getBoundingClientRect().height||120;
+    spacer.style.height=wh+'px';
+  });
+}
+
+function renderPlayerPrizeGrid(){
+  const grid=document.getElementById('player-prize-grid');
+  grid.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const winners=gs.prizes[p.id]||[];
+    const isWon=winners.some(w=>w.code===playerState.code);
+    const isClosed=winners.length>=(gs.winnerCounts[p.id]||1);
+    const mini=document.createElement('div');
+    mini.className='prize-mini'+(isWon?' won-prize':'');
+    const nm=document.createElement('div');nm.className='prize-mini-name';nm.textContent=p.name;
+    const st=document.createElement('div');st.className='prize-mini-status';
+    if(isWon) st.textContent='🏆 Won!';
+    else if(isClosed) st.textContent='Closed ('+winners.length+' winner'+(winners.length>1?'s':'')+')';
+    else st.textContent=(winners.length?winners.length+' won · ':'')+((gs.winnerCounts[p.id]||1)-winners.length)+' left';
+    mini.append(nm,st);
+    grid.appendChild(mini);
+  });
+}
+
+function playerTapNumber(n){
+  if(!gs.calledNums.has(n)) return; // uncalled
+  if(playerState.marked.has(n)) playerState.marked.delete(n);
+  else playerState.marked.add(n);
+  // Save to localStorage
+  localStorage.setItem('marks_'+playerState.code+'_'+gs.gameId, JSON.stringify([...playerState.marked]));
+  renderPlayerScreen();
+}
+
+function resetMarks(){
+  if(!confirm('Reset all marks on this card?')) return;
+  playerState.marked=new Set();
+  localStorage.removeItem('marks_'+playerState.code+'_'+gs.gameId);
+  renderPlayerScreen();
+}
+
+// ===== HOST SCREEN =====
+function renderHostScreen(){
+  document.getElementById('host-game-id').textContent=gs.gameId;
+  renderHostNumbers();
+  renderPrizesPanel();
+  renderAllCardsPanel();
+}
+
+function renderHostNumbers(){
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('host-last-num').textContent=last||'—';
+  document.getElementById('host-called-count').textContent=gs.calledNums.size+' / 90 called';
+  const grid=document.getElementById('host-num-grid');
+  grid.innerHTML='';
+  for(let n=1;n<=90;n++){
+    const cell=document.createElement('div');
+    cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');
+    cell.textContent=n;
+    grid.appendChild(cell);
+  }
+}
+
+function renderPrizesPanel(){
+  const panel=document.getElementById('prizes-panel');
+  panel.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const def=PRIZE_DEFS.find(d=>d.id===p.id)||{name:p.id};
+    const row=document.createElement('div');
+    row.className='prize-row';
+    const nameEl=document.createElement('span');
+    nameEl.className='prize-name';nameEl.textContent=def.name;
+    const slots=document.createElement('div');
+    slots.style.display='flex';slots.style.flexWrap='wrap';slots.style.flex='1';
+    const maxW=gs.winnerCounts[p.id]||1;
+    const winners=gs.prizes[p.id]||[];
+    for(let i=0;i<maxW;i++){
+      const slot=document.createElement('div');
+      if(winners[i]){
+        slot.className='winner-slot filled';
+        slot.textContent='#'+winners[i].seq+' '+winners[i].code;
+        slot.onclick=()=>viewCardInHost(winners[i].code,winners[i].seq);
+      } else {
+        slot.className='winner-slot';
+        slot.textContent='Empty';
+      }
+      slots.appendChild(slot);
+    }
+    row.append(nameEl,slots);
+    panel.appendChild(row);
+  });
+}
+
+function renderAllCardsPanel(){
+  const panel=document.getElementById('all-cards-panel');
+  panel.innerHTML='';
+  const wonCodes=new Set();
+  PRIZE_DEFS.forEach(p=>{(gs.prizes[p.id]||[]).forEach(w=>wonCodes.add(w.code));});
+  for(let s=gs.rangeFrom;s<=gs.rangeTo;s++){
+    const code=seqToCode(s);
+    const chip=document.createElement('div');
+    chip.className='card-chip'+(wonCodes.has(code)?' won':'');
+    chip.textContent='#'+s+' '+code;
+    chip.onclick=()=>viewCardInHost(code,s);
+    panel.appendChild(chip);
+  }
+}
+
+function viewCardInHost(code,seq){
+  const grid=generateTicket(code);
+  const ps=buildPrizeStatus();
+  const el=renderTicketEl(grid,code,seq,gs.calledNums,null,ps,false);
+  const result=document.getElementById('validate-result');
+  result.innerHTML='';result.appendChild(el);
+  result.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function validateCard(){
+  const val=document.getElementById('validate-input').value.trim().toUpperCase();
+  if(!val) return;
+  let seq,code;
+  if(/^\d+$/.test(val)){
+    seq=parseInt(val);code=seqToCode(seq);
+  } else {
+    seq=codeToSeq(val,gs.rangeTo);
+    if(seq<0){toast('Code not found');return;}
+    code=val;
+  }
+  viewCardInHost(code,seq);
+}
+
+// ===== CALL NUMBER =====
+function callNextNumber(){
+  if(gs.calledNums.size>=90){toast('All 90 numbers called!');return;}
+  let n;
+  do{ n=Math.floor(Math.random()*90)+1; } while(gs.calledNums.has(n));
+  gs.calledNums.add(n);
+  gs.calledOrder.push(n);
+  if(gs.tts) speakNumber(n);
+  if(gs.autodetect) detectWinners(n);
+  broadcastGameState();
+  renderHostNumbers();
+  renderPrizesPanel();
+  renderAllCardsPanel();
+  renderDisplay();
+}
+
+function speakNumber(n){
+  if(!('speechSynthesis' in window)) return;
+  const u=new SpeechSynthesisUtterance(String(n));
+  u.lang='en-IN';u.rate=0.8;
+  speechSynthesis.speak(u);
+}
+
+// ===== WIN DETECTION =====
+function detectWinners(lastNum){
+  const newWins=[];
+  for(let s=gs.rangeFrom;s<=gs.rangeTo;s++){
+    const code=seqToCode(s);
+    const grid=generateTicket(code);
+    PRIZE_DEFS.forEach(p=>{
+      if(!gs.enabledPrizes[p.id]) return;
+      const winners=gs.prizes[p.id]||[];
+      const maxW=gs.winnerCounts[p.id]||1;
+      if(winners.length>=maxW) return;
+      if(winners.some(w=>w.code===code)) return;
+      if(p.id==='unlucky') return; // handled separately
+      if(checkPrize(p.id,grid,gs.calledNums,code,s)){
+        const w={code,seq:s,grid};
+        winners.push(w);
+        newWins.push({prize:p.id,code,seq:s});
+      }
+    });
+  }
+  // Handle Most Unlucky after Full House
+  if(gs.enabledPrizes['unlucky']){
+    const fhWinners=gs.prizes['fullhouse']||[];
+    const fhMax=gs.winnerCounts['fullhouse']||1;
+    if(fhWinners.length>=fhMax){
+      // Count uncalled per card
+      let maxUncalled=-1, worstCode='', worstSeq=0;
+      for(let s=gs.rangeFrom;s<=gs.rangeTo;s++){
+        const code=seqToCode(s);
+        const grid=generateTicket(code);
+        const allNums=grid.flat().filter(x=>x>0);
+        const uncalled=allNums.filter(n=>!gs.calledNums.has(n)).length;
+        if(uncalled>maxUncalled){maxUncalled=uncalled;worstCode=code;worstSeq=s;}
+        else if(uncalled===maxUncalled){
+          // Tiebreak: whose first cancelled number appeared LATEST in calledOrder
+          const prevGrid=generateTicket(worstCode);
+          const prevNums=prevGrid.flat().filter(x=>x>0);
+          const prevFirstHit=prevNums.map(n=>gs.calledOrder.indexOf(n)).filter(i=>i>=0);
+          const curNums=allNums;
+          const curFirstHit=curNums.map(n=>gs.calledOrder.indexOf(n)).filter(i=>i>=0);
+          const prevMin=prevFirstHit.length?Math.min(...prevFirstHit):Infinity;
+          const curMin=curFirstHit.length?Math.min(...curFirstHit):Infinity;
+          if(curMin>prevMin){worstCode=code;worstSeq=s;maxUncalled=uncalled;}
+        }
+      }
+      if(worstCode){
+        const ul=gs.prizes['unlucky']||[];
+        if(ul.length===0){
+          const w={code:worstCode,seq:worstSeq,grid:generateTicket(worstCode)};
+          ul.push(w);gs.prizes['unlucky']=ul;
+          newWins.push({prize:'unlucky',code:worstCode,seq:worstSeq});
+        }
+      }
+    }
+  }
+  if(newWins.length) showWinnersFlash(newWins);
+}
+
+function checkPrize(pid,grid,called,code,seq){
+  const flat=grid.flat();
+  const allNums=flat.filter(x=>x>0);
+  switch(pid){
+    case 'topline': return grid[0].filter(x=>x>0).every(n=>called.has(n));
+    case 'midline': return grid[1].filter(x=>x>0).every(n=>called.has(n));
+    case 'botline': return grid[2].filter(x=>x>0).every(n=>called.has(n));
+    case 'corners':{
+      const r0=grid[0].filter(x=>x>0); const r1=grid[1].filter(x=>x>0);
+      return [r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]].every(n=>called.has(n));
+    }
+    case 'fullhouse': return allNums.every(n=>called.has(n));
+    case 'temperature':{
+      const sorted=[...allNums].sort((a,b)=>a-b);
+      return called.has(sorted[0])&&called.has(sorted[sorted.length-1]);
+    }
+  }
+  return false;
+}
+
+function showWinnersFlash(wins){
+  const el=document.getElementById('winners-flash');
+  if(flashTimer) clearTimeout(flashTimer);
+  el.style.display='block';
+  el.innerHTML=wins.map(w=>{
+    const pd=PRIZE_DEFS.find(p=>p.id===w.prize);
+    return '🏆 '+pd.name+' — #'+w.seq+' '+w.code;
+  }).join('<br>');
+  flashTimer=setTimeout(()=>{el.style.display='none';},8000);
+}
+
+function buildPrizeStatus(){
+  const ps={};
+  PRIZE_DEFS.forEach(p=>{ps[p.id]=gs.prizes[p.id]||[];});
+  return ps;
+}
+
+// ===== END GAME =====
+async function endGame(){
+  if(!confirm('End this game?')) return;
+  gs.active=false;
+  try{ await db.ref('games/'+gs.gameId).remove(); } catch(e){}
+  show('s-landing');
+}
+
+// ===== PLAYER VIEW =====
+function pvNav(dir){
+  pvIndex=Math.max(gs.rangeFrom,Math.min(gs.rangeTo,pvIndex+dir));
+  renderPlayerView();
+}
+function renderPlayerView(){
+  const seq=pvIndex; const code=seqToCode(seq); const grid=generateTicket(code);
+  document.getElementById('pv-card-indicator').textContent='#'+seq+' of '+gs.rangeTo;
+  const area=document.getElementById('pv-ticket-area');
+  area.innerHTML='';
+  const ps=buildPrizeStatus();
+  area.appendChild(renderTicketEl(grid,code,seq,gs.calledNums,null,ps,false));
+  // Prize status
+  const pa=document.getElementById('pv-prize-area');
+  pa.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const isWon=(gs.prizes[p.id]||[]).some(w=>w.code===code);
+    const mini=document.createElement('div');
+    mini.className='prize-mini'+(isWon?' won-prize':'');
+    mini.innerHTML='<div class="prize-mini-name">'+p.name+'</div><div class="prize-mini-status">'+(isWon?'🏆 Won':'—')+'</div>';
+    pa.appendChild(mini);
+  });
+}
+
+// ===== DISPLAY =====
+function displayBack(){
+  const screens=document.querySelectorAll('.screen.active');
+  // Go back to wherever we were
+  show(displayBackTarget);
+}
+// Override show to track back target
+const _origShow=show;
+window.show=function(id){
+  if(id==='s-display'){
+    const cur=document.querySelector('.screen.active');
+    if(cur&&cur.id!=='s-display') displayBackTarget=cur.id;
+  }
+  _origShow(id);
+};
+
+function renderDisplay(){
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('disp-last-num').textContent=last||'—';
+  document.getElementById('disp-called-count').textContent=gs.calledNums.size+' / 90 numbers called';
+  const grid=document.getElementById('disp-num-grid');
+  grid.innerHTML='';
+  for(let n=1;n<=90;n++){
+    const cell=document.createElement('div');
+    cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');
+    cell.textContent=n;
+    grid.appendChild(cell);
+  }
+  const prizes=document.getElementById('disp-prizes');
+  prizes.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const winners=gs.prizes[p.id]||[];
+    const pd=PRIZE_DEFS.find(d=>d.id===p.id);
+    const item=document.createElement('div');
+    item.className='display-prize-item';
+    item.innerHTML='<span class="pw">'+pd.name+'</span> — '+(winners.length?winners.map(w=>'#'+w.seq).join(', '):'—');
+    prizes.appendChild(item);
+  });
+}
+
+// ===== PRINT =====
+function generatePrintCards(){
+  const from=parseInt(document.getElementById('print-from').value)||1;
+  const to=parseInt(document.getElementById('print-to').value)||10;
+  const area=document.getElementById('print-area');
+  area.innerHTML='';
+  for(let s=from;s<=to;s++){
+    const code=seqToCode(s); const grid=generateTicket(code);
+    const wrap=document.createElement('div');
+    wrap.className='print-card';
+    wrap.style.marginBottom='24px';
+    const el=renderTicketEl(grid,code,s,new Set(),new Set(),{},false);
+    wrap.appendChild(el);
+    area.appendChild(wrap);
+  }
+  toast('Generated '+(to-from+1)+' cards');
+}
+
+// ===== COLLAPSIBLE =====
+function toggleCollapsible(header){
+  header.classList.toggle('open');
+  const body=header.nextElementSibling;
+  if(body) body.classList.toggle('open');
+}
+
+// ===== TOAST =====
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ===== PWA =====
+const manifestData={
+  name:'Housie',short_name:'Housie',
+  description:'Digital Housie · Play Together',
+  start_url:'/',display:'standalone',
+  background_color:'#0e0b1e',theme_color:'#1a1230',
+  icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎱</text></svg>',sizes:'any',type:'image/svg+xml'}],
+};
+const manifestBlob=new Blob([JSON.stringify(manifestData)],{type:'application/json'});
+const manifestURL=URL.createObjectURL(manifestBlob);
+const link=document.createElement('link');
+link.rel='manifest';link.id='pwa-manifest';link.href=manifestURL;
+document.head.appendChild(link);
+
+// Service Worker
+const swCode=`
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>clients.claim());
+self.addEventListener('fetch',e=>{
+  if(e.request.mode==='navigate'){
+    e.respondWith(fetch(e.request).catch(()=>caches.match('/')));
+  }
+});
+`;
+if('serviceWorker' in navigator){
+  const swBlob=new Blob([swCode],{type:'application/javascript'});
+  const swURL=URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL).catch(()=>{});
+}
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  document.getElementById('install-btn').style.display='flex';
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-btn').style.display='none';
+  deferredPrompt=null;
+});
+function installApp(){
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});}
+}
+
+// ===== INIT =====
+buildThemeBars();
+// Resize handler for player ticket positioning
+window.addEventListener('resize',()=>{
+  if(document.getElementById('s-player').classList.contains('active')) positionPlayerTicket();
+});
+</script>
+</body>
+</html>
