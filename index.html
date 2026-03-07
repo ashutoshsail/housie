@@ -38,7 +38,21 @@
   --text:#0c1a3a;--text2:#1e3a6a;--text3:#3a6ea8;
   --called:#1d4ed8;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
   --danger:#dc2626;--warn:#d97706;--toast-bg:#dbeafe;
+  --call-btn:#0369a1;--num-color:#0ea5e9;
 }
+
+/* Per-theme color accents for key interactive elements */
+[data-theme="midnight"]{--call-btn:#7c3aed;--num-color:#c4b5fd}
+[data-theme="forest"]{--call-btn:#15803d;--num-color:#86efac}
+[data-theme="sunset"]{--call-btn:#c2410c;--num-color:#fb923c}
+[data-theme="ocean"]{--call-btn:#0369a1;--num-color:#38bdf8}
+
+.btn-call{
+  background:var(--call-btn) !important;
+  box-shadow:0 4px 20px color-mix(in srgb,var(--call-btn) 40%,transparent) !important;
+}
+.last-called-big{color:var(--num-color) !important;text-shadow:0 0 30px color-mix(in srgb,var(--num-color) 50%,transparent) !important}
+.num-cell.called{background:var(--num-color) !important;color:var(--bg) !important}
 
 /* ===== RESET ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -129,10 +143,10 @@ input:focus{border-color:var(--accent)}
 .ticket-row{display:grid;grid-template-columns:repeat(9,1fr)}
 .ticket-cell{
   aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  font-family:'DM Mono',monospace;font-size:.88rem;font-weight:400;
-  border:.5px solid var(--border);background:var(--bg2);color:var(--text3);
+  font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;
+  border:.5px solid var(--border);background:var(--bg3);color:var(--text2);
   position:relative;transition:all .22s;min-height:34px;user-select:none;
-  font-style:italic;opacity:.7;
+  font-style:italic;
 }
 .ticket-cell.blank{background:var(--bg2);color:transparent;pointer-events:none}
 /* called but NOT yet tapped by player (host view) — strong accent fill + border */
@@ -289,14 +303,14 @@ input:focus{border-color:var(--accent)}
   border:2px solid var(--called);
   font-weight:600;
 }
-/* 5. Not yet called — very dim, italic, thin border, muted text */
+/* 5. Not yet called — italic, muted, clearly inactive but still readable */
 .ticket-cell.tc-uncalled{
-  background:var(--bg2);
+  background:var(--bg3);
   color:var(--text3);
   font-style:italic;
-  font-weight:400;
+  font-weight:500;
   border:.5px solid var(--border);
-  opacity:.55;
+  opacity:.65;
 }
 .ticket-cell.tc-blank-cell{background:var(--bg2);color:transparent}
 /* Claim validity banner */
@@ -503,7 +517,6 @@ input:focus{border-color:var(--accent)}
           <input type="text" id="validate-input" placeholder="Seq # or Code" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
           <button class="btn btn-outline btn-sm" onclick="validateCard()">View</button>
         </div>
-        <div id="validate-result" class="mt8"></div>
       </div>
     </div>
     <div class="panel">
@@ -687,7 +700,19 @@ document.addEventListener('click',e=>{
 
 // ===== SCREEN NAV =====
 function show(id){
-  if(id!=='s-player') stopPlayerSync();
+  if(id!=='s-player'){
+    stopPlayerSync();
+    // Always clear the fixed ticket wrapper when leaving player screen
+    const tw=document.getElementById('player-ticket-wrapper');
+    if(tw) tw.innerHTML='';
+    const sp=document.getElementById('player-spacer');
+    if(sp) sp.style.height='0';
+  }
+  // Track display back target BEFORE switching screens
+  if(id==='s-display'){
+    const cur=document.querySelector('.screen.active');
+    if(cur&&cur.id!=='s-display') displayBackTarget=cur.id;
+  }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id);
   if(el) el.classList.add('active');
@@ -696,10 +721,6 @@ function show(id){
   if(id==='s-display') renderDisplay();
   if(id==='s-playerview'){pvIndex=gs.rangeFrom;renderPlayerView();}
   if(id==='s-player') positionPlayerTicket();
-  if(id==='s-display'){
-    const cur=document.querySelector('.screen.active');
-    if(cur&&cur.id!=='s-display') displayBackTarget=cur.id;
-  }
 }
 function displayBack(){show(displayBackTarget);}
 
@@ -1535,6 +1556,7 @@ function validateCard(){
   if(/^\d+$/.test(val)){seq=parseInt(val);code=seqToCode(seq);}
   else{seq=codeToSeq(val,gs.rangeTo);if(seq<0){toast('Code not found');return;}code=val;}
   showCardModal(code,seq,'Card #'+seq+' '+code);
+  document.getElementById('validate-input').value='';
 }
 
 function showCardModal(code,seq,title){
