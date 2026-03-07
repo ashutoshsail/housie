@@ -134,13 +134,36 @@ input:focus{border-color:var(--accent)}
   position:relative;transition:all .22s;min-height:34px;user-select:none;
 }
 .ticket-cell.blank{background:var(--bg2);color:transparent;pointer-events:none}
-.ticket-cell.called-only{background:color-mix(in srgb,var(--called) 18%,var(--bg3));color:var(--called)}
-.ticket-cell.marked{background:var(--marked);color:#fff;font-weight:700}
-.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.5rem;opacity:.8}
-.ticket-cell.callable{outline:2.5px solid var(--marked);outline-offset:-2px;animation:callPulse 1.1s ease-in-out infinite;cursor:pointer}
-@keyframes callPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 50%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
-.ticket-cell.win-hi{background:color-mix(in srgb,var(--win) 28%,var(--bg3));outline:2px solid var(--win)}
-.ticket-cell.corner-hi{background:color-mix(in srgb,var(--corner) 28%,var(--bg3));outline:2px solid var(--corner)}
+/* called but NOT yet tapped by player — accent bg tint, accent border, accent text */
+.ticket-cell.called-only{
+  background:color-mix(in srgb,var(--called) 14%,var(--bg3));
+  color:var(--called);
+  border:1.5px solid var(--called);
+  font-weight:600;
+}
+/* called + not yet tapped (interactive) — pulsing orange outline, accent tint */
+.ticket-cell.callable{
+  background:color-mix(in srgb,var(--marked) 12%,var(--bg3));
+  color:var(--marked);
+  border:2px solid var(--marked);
+  font-weight:700;
+  animation:callPulse 1.1s ease-in-out infinite;
+  cursor:pointer;
+}
+@keyframes callPulse{
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 60%,transparent)}
+  50%{box-shadow:0 0 0 5px transparent}
+}
+/* tapped (marked) by player — solid orange fill, white text, tick */
+.ticket-cell.marked{
+  background:var(--marked);
+  color:#fff;
+  font-weight:700;
+  border:2px solid color-mix(in srgb,var(--marked) 60%,#000);
+}
+.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.5rem;opacity:.9}
+.ticket-cell.win-hi{background:color-mix(in srgb,var(--win) 35%,var(--bg3));outline:2.5px solid var(--win);color:var(--win)}
+.ticket-cell.corner-hi{background:color-mix(in srgb,var(--corner) 35%,var(--bg3));outline:2.5px solid var(--corner);color:var(--corner)}
 .ticket-code{text-align:center;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);padding:5px;letter-spacing:.1em}
 
 /* ===== PRIZE SETUP ===== */
@@ -234,11 +257,27 @@ input:focus{border-color:var(--accent)}
 @keyframes bubblePop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
 .host-num-row{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0}
 /* ticket cell color coding for claim review */
-.ticket-cell.tc-marked-last{background:#22c55e;color:#fff;font-weight:700}
-.ticket-cell.tc-marked-last::after{content:"★";position:absolute;top:1px;right:2px;font-size:.45rem}
-.ticket-cell.tc-marked-prev{background:var(--marked);color:#fff;font-weight:700}
-.ticket-cell.tc-marked-prev::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.45rem}
-.ticket-cell.tc-called-only{background:color-mix(in srgb,var(--called) 22%,var(--bg3));color:var(--called);border:1.5px solid var(--called)}
+/* green fill + star = the exact number that triggered eligibility */
+.ticket-cell.tc-marked-last{
+  background:#16a34a;color:#fff;font-weight:700;
+  border:2px solid #15803d;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
+}
+.ticket-cell.tc-marked-last::after{content:"★";position:absolute;top:1px;right:2px;font-size:.5rem;color:#bbf7d0}
+/* orange fill + tick = tapped previously */
+.ticket-cell.tc-marked-prev{
+  background:var(--marked);color:#fff;font-weight:700;
+  border:2px solid color-mix(in srgb,var(--marked) 60%,#000);
+}
+.ticket-cell.tc-marked-prev::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.5rem;opacity:.9}
+/* called but NOT tapped — strong accent border + tinted bg + accent text */
+.ticket-cell.tc-called-only{
+  background:color-mix(in srgb,var(--called) 18%,var(--bg3));
+  color:var(--called);
+  border:2px solid var(--called);
+  font-weight:600;
+}
+/* uncalled — default dim */
 .ticket-cell.tc-blank{background:var(--bg2);color:transparent}
 .ticket-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:.72rem}
 .tl-item{display:flex;align-items:center;gap:4px;color:var(--text2)}
@@ -553,7 +592,7 @@ const PRIZE_DEFS = [
   {id:'topline',    name:'Top Line',        rule:'Row 1 complete'},
   {id:'midline',    name:'Middle Line',     rule:'Row 2 complete'},
   {id:'botline',    name:'Bottom Line',     rule:'Row 3 complete'},
-  {id:'corners',   name:'Corners',         rule:'1st & last of rows 1+2'},
+  {id:'corners',   name:'Corners',         rule:'1st & last numbers of rows 1 & 3'},
   {id:'fullhouse', name:'Full House',      rule:'All 15 numbers'},
   {id:'temperature',name:'Temperature 🌡', rule:'Highest & lowest called'},
   {id:'unlucky',   name:'Most Unlucky 😬', rule:'Most uncalled at full house'},
@@ -711,8 +750,8 @@ function checkPrize(pid, grid, markedSet){
     case 'midline': return grid[1].filter(x=>x>0).every(n=>markedSet.has(n));
     case 'botline': return grid[2].filter(x=>x>0).every(n=>markedSet.has(n));
     case 'corners':{
-      const r0=grid[0].filter(x=>x>0);const r1=grid[1].filter(x=>x>0);
-      return [r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]].every(n=>markedSet.has(n));
+      const r0=grid[0].filter(x=>x>0);const r2=grid[2].filter(x=>x>0);
+      return [r0[0],r0[r0.length-1],r2[0],r2[r2.length-1]].every(n=>markedSet.has(n));
     }
     case 'fullhouse': return grid.flat().filter(x=>x>0).every(n=>markedSet.has(n));
     case 'temperature':{
@@ -763,8 +802,8 @@ function getPrizeNums(pid, grid){
     case 'midline': return grid[1].filter(x=>x>0);
     case 'botline': return grid[2].filter(x=>x>0);
     case 'corners':{
-      const r0=grid[0].filter(x=>x>0);const r1=grid[1].filter(x=>x>0);
-      return [r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]];
+      const r0=grid[0].filter(x=>x>0);const r2=grid[2].filter(x=>x>0);
+      return [r0[0],r0[r0.length-1],r2[0],r2[r2.length-1]];
     }
     case 'fullhouse': return grid.flat().filter(x=>x>0);
     case 'temperature':{
@@ -812,8 +851,8 @@ function renderTicketEl(grid, code, seq, calledSet, markedSet, prizeWinners, int
           if(r===1&&wonPrizes.has('midline')) cell.classList.add('win-hi');
           if(r===2&&wonPrizes.has('botline')) cell.classList.add('win-hi');
           if(wonPrizes.has('corners')){
-            const r0=grid[0].filter(x=>x>0);const r1=grid[1].filter(x=>x>0);
-            const cn=[r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]];
+            const r0=grid[0].filter(x=>x>0);const r2=grid[2].filter(x=>x>0);
+            const cn=[r0[0],r0[r0.length-1],r2[0],r2[r2.length-1]];
             if(cn.includes(n)) cell.classList.add('corner-hi');
           }
         }
