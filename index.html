@@ -1,2137 +1,1442 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="midnight">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>Housie</title>
-<meta name="application-name" content="Housie">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Housie">
-<meta name="theme-color" content="#0f0d1a">
-<meta name="description" content="Digital Housie — multiplayer Housie for everyone">
-<link rel="manifest" id="pwa-manifest">
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDFIoGJI7KlkmMxva5biDdnt6FqPxEn56I",
-  authDomain: "housie-game-b5e7d.firebaseapp.com",
-  databaseURL: "https://housie-game-b5e7d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "housie-game-b5e7d",
-  storageBucket: "housie-game-b5e7d.firebasestorage.app",
-  messagingSenderId: "161557580850",
-  appId: "1:161557580850:web:24ddc9a1419d5217c8402b"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-</script>
+<meta name="description" content="Digital Housie · Play Together"/>
+<meta name="theme-color" content="#1a1230"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
-
-/* ── THEMES ── */
-:root{
-  --bg:#0f0d1a;--card:#1a1828;--card2:#221f35;--border:#2e2a48;
-  --accent:#ff9a00;--accent2:#ff6b35;--green:#39d353;--red:#ff4444;--blue:#38bdf8;--purple:#a855f7;
-  --text:#e8e0ff;--muted:#7a7499;--mono:'DM Mono',monospace;
-  --body-grad:radial-gradient(ellipse at 50% 0%,#1e1a35 0%,#0f0d1a 70%);
-  --inp-bg:#12101f;
-}
-[data-theme="midnight"]{
-  --bg:#0f0d1a;--card:#1a1828;--card2:#221f35;--border:#2e2a48;
-  --accent:#ff9a00;--accent2:#ff6b35;--green:#39d353;--red:#ff4444;--blue:#38bdf8;--purple:#a855f7;
-  --text:#e8e0ff;--muted:#7a7499;
-  --body-grad:radial-gradient(ellipse at 50% 0%,#1e1a35 0%,#0f0d1a 70%);
-  --inp-bg:#12101f;
+/* ===== THEMES ===== */
+:root,[data-theme="midnight"]{
+  --bg:#0e0b1e;--bg2:#1a1230;--bg3:#231848;--surface:#2a1f56;
+  --border:#3d2f80;--accent:#a78bfa;--accent2:#7c3aed;--accent3:#c4b5fd;
+  --text:#f1eeff;--text2:#b8aee0;--text3:#7a6fb0;
+  --called:#a78bfa;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
+  --danger:#ef4444;--warn:#f59e0b;--toast-bg:#1a1230;
 }
 [data-theme="forest"]{
-  --bg:#0d1a12;--card:#142010;--card2:#1a2e1a;--border:#2a4230;
-  --accent:#7adb78;--accent2:#4ade80;--green:#39d353;--red:#ff6060;--blue:#67e8f9;--purple:#c084fc;
-  --text:#d4f5d4;--muted:#6b9970;
-  --body-grad:radial-gradient(ellipse at 50% 0%,#152518 0%,#0d1a12 70%);
-  --inp-bg:#0a1510;
+  --bg:#0a1a0e;--bg2:#0f2714;--bg3:#163620;--surface:#1e4a28;
+  --border:#2d7040;--accent:#4ade80;--accent2:#16a34a;--accent3:#86efac;
+  --text:#edfff3;--text2:#a7d9b5;--text3:#5a9e6e;
+  --called:#4ade80;--marked:#f97316;--win:#22c55e;--corner:#a855f7;
+  --danger:#ef4444;--warn:#f59e0b;--toast-bg:#0f2714;
 }
 [data-theme="sunset"]{
-  --bg:#fff8f0;--card:#fff1e6;--card2:#fde8d0;--border:#f5c9a0;
-  --accent:#e8520a;--accent2:#f97316;--green:#16a34a;--red:#dc2626;--blue:#0284c7;--purple:#9333ea;
-  --text:#3d1a00;--muted:#9a6040;
-  --body-grad:linear-gradient(160deg,#fff3e0 0%,#ffecd2 50%,#fff8f0 100%);
-  --inp-bg:#fff3e8;
+  --bg:#fff7ed;--bg2:#fff3e0;--bg3:#ffe0b2;--surface:#ffd0a0;
+  --border:#f59e0b;--accent:#d97706;--accent2:#b45309;--accent3:#92400e;
+  --text:#1c0a00;--text2:#5c3a1e;--text3:#8a5c38;
+  --called:#d97706;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
+  --danger:#dc2626;--warn:#d97706;--toast-bg:#fff3e0;
 }
 [data-theme="ocean"]{
-  --bg:#e8f4fb;--card:#d0eaf8;--card2:#b8dff5;--border:#7ec8e3;
-  --accent:#0369a1;--accent2:#0284c7;--green:#059669;--red:#dc2626;--blue:#0ea5e9;--purple:#7c3aed;
-  --text:#0c2d4a;--muted:#4a8aaa;
-  --body-grad:linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#e8f4fb 100%);
-  --inp-bg:#dbeefa;
+  --bg:#e8f4fd;--bg2:#dbeafe;--bg3:#bfdbfe;--surface:#93c5fd;
+  --border:#3b82f6;--accent:#1d4ed8;--accent2:#1e40af;--accent3:#1e3a8a;
+  --text:#0c1a3a;--text2:#1e3a6a;--text3:#3a6ea8;
+  --called:#1d4ed8;--marked:#f97316;--win:#16a34a;--corner:#9333ea;
+  --danger:#dc2626;--warn:#d97706;--toast-bg:#dbeafe;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);touch-action:manipulation}
-body{display:flex;flex-direction:column;align-items:center;background:var(--body-grad)}
 
-/* ── SCREENS ── */
-.screen{width:100%;max-width:520px;min-height:100dvh;display:none;flex-direction:column;align-items:center;padding:16px}
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
+input,button,select{font-family:inherit}
+button{cursor:pointer;border:none;background:none;color:inherit}
+button:active{transform:scale(0.97)}
+input[type="text"],input[type="password"],input[type="number"]{
+  background:var(--bg3);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;
+  font-size:1rem;text-transform:uppercase;letter-spacing:.08em;width:100%;outline:none;transition:border .2s;
+}
+input:focus{border-color:var(--accent)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
 
-/* ── LANDING ── */
-#s-landing{justify-content:center;gap:20px}
-.logo{font-size:48px;filter:drop-shadow(0 0 20px var(--accent))}
-.app-title{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
-.app-sub{font-size:13px;color:var(--muted);letter-spacing:.3px}
-.land-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px;width:100%;display:flex;flex-direction:column;gap:12px}
-.land-sect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:2px}
-.big-btn{padding:14px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
-.big-btn-p{background:linear-gradient(135deg,#ff6b35,#ff9a00);color:#fff;box-shadow:0 4px 20px rgba(255,120,0,.4)}
-.big-btn-p:active{transform:scale(.97)}
-.big-btn-s{background:rgba(255,255,255,.07);color:var(--text);border:1.5px solid var(--border)}
-.big-btn-s:active{transform:scale(.97)}
-.big-btn-b{background:linear-gradient(135deg,#1a6aff,#38bdf8);color:#fff;box-shadow:0 4px 20px rgba(56,189,248,.3)}
-.big-btn-b:active{transform:scale(.97)}
-.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:1px}
+/* ===== TOPBAR ===== */
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
+.topbar-title{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);letter-spacing:.1em}
+.topbar-btn{padding:6px 12px;border-radius:8px;font-weight:600;font-size:.82rem;background:var(--surface);color:var(--text);border:1.5px solid var(--border);white-space:nowrap}
+.topbar-btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.topbar-btn.accent{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--surface);border:1.5px solid var(--border);flex-shrink:0}
+
+/* ===== THEME DROPDOWN ===== */
+.theme-dropdown-wrap{position:relative}
+.theme-menu{
+  position:absolute;top:calc(100% + 6px);right:0;z-index:100;
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;
+  padding:6px;display:none;flex-direction:column;gap:4px;min-width:160px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.theme-menu.open{display:flex}
+.theme-menu-item{padding:8px 12px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:8px;transition:background .15s}
+.theme-menu-item:hover,.theme-menu-item.active{background:var(--surface);color:var(--text)}
+
+/* ===== CONTENT ===== */
+.content{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
+
+/* ===== PANELS ===== */
+.panel{background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:14px}
+.panel-title{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ===== LANDING ===== */
+#s-landing{align-items:center;justify-content:center;padding:32px 20px;gap:20px;min-height:100vh;position:relative}
+.landing-topright{position:absolute;top:16px;right:16px}
+.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.logo-icon{width:80px;height:80px;animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 10px var(--accent))}50%{filter:drop-shadow(0 0 28px var(--accent))}}
+.app-title{font-size:2.8rem;font-weight:700;letter-spacing:-.02em}
+.app-sub{color:var(--text3);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase}
+.divider{width:100%;display:flex;align-items:center;gap:10px;color:var(--text3);font-size:.78rem;letter-spacing:.1em;max-width:340px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.code-inp{background:var(--inp-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--mono);font-size:18px;font-weight:500;padding:10px 14px;width:100%;outline:none;letter-spacing:3px;text-align:center;text-transform:uppercase;transition:border-color .2s}
-.code-inp:focus{border-color:var(--accent)}
-.code-inp::placeholder{letter-spacing:1px;font-size:12px;color:var(--muted)}
+.landing-input-row{display:flex;gap:8px;width:100%;max-width:340px}
+.landing-input-row input{flex:1}
 
-/* ── SHARED COMPONENTS ── */
-.topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:4px 0 12px;flex-shrink:0}
-.topbar-title{font-size:16px;font-weight:800;color:var(--accent)}
-.back-btn{background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-weight:600;padding:6px 12px;cursor:pointer}
-.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:8px;width:100%}
-.panel{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;width:100%;margin-bottom:12px}
-.row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.row:last-child{margin-bottom:0}
-.row-label{font-size:13px;font-weight:500;color:var(--text)}
-.sm-btn{padding:7px 14px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:12px;cursor:pointer;transition:all .2s}
-.sm-btn-p{background:linear-gradient(135deg,#ff6b35,#ff9a00);color:#fff}
-.sm-btn-p:active{transform:scale(.96)}
-.sm-btn-s{background:rgba(255,255,255,.08);color:var(--text);border:1.5px solid var(--border)}
-.sm-btn-s:active{transform:scale(.96)}
-.sm-btn-g{background:rgba(57,211,83,.15);color:var(--green);border:1.5px solid rgba(57,211,83,.3)}
-.sm-btn-r{background:rgba(255,68,68,.15);color:var(--red);border:1.5px solid rgba(255,68,68,.3)}
-.sm-btn-b{background:rgba(56,189,248,.15);color:var(--blue);border:1.5px solid rgba(56,189,248,.3)}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-g{background:rgba(57,211,83,.15);color:var(--green);border:1px solid rgba(57,211,83,.3)}
-.badge-r{background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.3)}
-.badge-a{background:rgba(255,154,0,.15);color:var(--accent);border:1px solid rgba(255,154,0,.3)}
-.badge-m{background:rgba(168,85,247,.15);color:var(--purple);border:1px solid rgba(168,85,247,.3)}
-.toggle{width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background .25s;background:rgba(255,255,255,.12);flex-shrink:0}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.toggle.on{background:var(--green)}
-.toggle.on::after{transform:translateX(22px)}
-input[type=number],input[type=text]{background:var(--inp-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 10px;outline:none;transition:border-color .2s;width:80px;text-align:center}
-input:focus{border-color:var(--accent)}
+/* ===== BUTTONS ===== */
+.btn{padding:12px 18px;border-radius:12px;font-weight:700;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn-outline:hover{background:var(--accent);color:var(--bg)}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-warn{background:var(--warn);color:#fff;border:none}
+.btn-green{background:var(--win);color:#fff;border:none}
+.btn-full{width:100%}
+.btn-sm{padding:7px 12px;font-size:.82rem;border-radius:8px}
+.btn-call{font-size:1.2rem;padding:16px;border-radius:16px;background:var(--accent);color:var(--bg);font-weight:700;width:100%;box-shadow:0 4px 24px color-mix(in srgb,var(--accent) 35%,transparent)}
+#install-btn{display:none}
 
-/* ── HOST PASSWORD (removed) ── */
+/* ===== NUMBER DISPLAY ===== */
+.last-called-big{font-family:'DM Mono',monospace;font-size:4rem;font-weight:700;color:var(--accent);text-align:center;line-height:1;text-shadow:0 0 30px color-mix(in srgb,var(--accent) 60%,transparent)}
+.called-count{text-align:center;color:var(--text3);font-size:.82rem;margin-top:4px}
 
-/* ── THEME SWITCHER ── */
-.theme-icon-btn{padding:5px 9px;border:1.5px solid var(--border);border-radius:8px;background:var(--card2);color:var(--text);font-size:14px;cursor:pointer;transition:all .2s;position:relative}
-.theme-icon-btn:active{transform:scale(.92)}
-.theme-popover{position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:6px;display:flex;flex-direction:column;gap:4px;z-index:300;min-width:130px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.theme-popover-item{padding:7px 12px;border-radius:8px;border:none;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:background .15s;display:flex;align-items:center;gap:8px}
-.theme-popover-item:hover{background:var(--card2)}
-.theme-popover-item.active{background:rgba(255,154,0,.15);color:var(--accent)}
+/* ===== NUMBER GRID ===== */
+.num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.num-cell{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:500;background:var(--bg3);color:var(--text3);transition:all .3s}
+.num-cell.called{background:var(--called);color:var(--bg);font-weight:700}
 
-/* ── HOST SETUP ── */
-#s-creategame{padding-top:16px}
+/* ===== TICKET ===== */
+.ticket{border:2px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg2)}
+.ticket-row{display:grid;grid-template-columns:repeat(9,1fr)}
+.ticket-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;
+  border:.5px solid var(--border);background:var(--bg3);color:var(--text2);
+  position:relative;transition:all .22s;min-height:34px;user-select:none;
+}
+.ticket-cell.blank{background:var(--bg2);color:transparent;pointer-events:none}
+.ticket-cell.called-only{background:color-mix(in srgb,var(--called) 18%,var(--bg3));color:var(--called)}
+.ticket-cell.marked{background:var(--marked);color:#fff;font-weight:700}
+.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.5rem;opacity:.8}
+.ticket-cell.callable{outline:2.5px solid var(--marked);outline-offset:-2px;animation:callPulse 1.1s ease-in-out infinite;cursor:pointer}
+@keyframes callPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 50%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
+.ticket-cell.win-hi{background:color-mix(in srgb,var(--win) 28%,var(--bg3));outline:2px solid var(--win)}
+.ticket-cell.corner-hi{background:color-mix(in srgb,var(--corner) 28%,var(--bg3));outline:2px solid var(--corner)}
+.ticket-code{text-align:center;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);padding:5px;letter-spacing:.1em}
 
-/* ── HOST GAME ── */
-#s-hostgame{padding:8px 12px}
-.called-board{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:100%;margin-bottom:12px}
-.cb-num{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;background:var(--card2);color:var(--muted);transition:all .3s;cursor:default}
-.cb-num.called{background:var(--accent);color:#000;box-shadow:0 0 8px rgba(255,154,0,.5)}
-.last-called-big{font-family:var(--mono);font-size:72px;font-weight:900;color:var(--accent);text-align:center;line-height:1;filter:drop-shadow(0 0 20px var(--accent));animation:numPop .4s cubic-bezier(.34,1.56,.64,1)}
-@keyframes numPop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.call-btn{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,#ff6b35,#ff9a00);color:#fff;font-family:'DM Sans',sans-serif;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 4px 20px rgba(255,120,0,.5);transition:all .2s;margin-bottom:8px}
-.call-btn:active{transform:scale(.97)}
-.call-btn:disabled{opacity:.4;cursor:not-allowed}
-.prize-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
-.prize-row:last-child{border-bottom:none}
-.prize-name{font-size:13px;font-weight:600;color:var(--text)}
-.prize-winner{font-size:12px;color:var(--muted);font-family:var(--mono)}
-.prize-winner.won{color:var(--green);font-weight:700}
-.winners-flash{background:rgba(57,211,83,.08);border:1.5px solid rgba(57,211,83,.2);border-radius:12px;padding:10px 14px;margin-bottom:8px;display:none}
-.winners-flash.show{display:block}
-.wf-title{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.wf-item{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
-.validate-row{display:flex;gap:8px;margin-bottom:8px}
-.validate-inp{flex:1;background:var(--inp-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--mono);font-size:15px;padding:9px 12px;outline:none;letter-spacing:2px;text-align:center;text-transform:uppercase;width:0;transition:border-color .2s}
-.validate-inp:focus{border-color:var(--accent)}
+/* ===== PRIZE SETUP ===== */
+.prize-setup-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)}
+.prize-setup-row:last-child{border-bottom:none}
+.prize-toggle{width:36px;height:20px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.prize-toggle.on{background:var(--accent)}
+.prize-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:1px;left:2px;transition:left .2s}
+.prize-toggle.on::after{left:18px}
+.stepper{display:flex;align-items:center;gap:5px}
+.stepper-btn{width:26px;height:26px;border-radius:6px;background:var(--bg3);border:1.5px solid var(--border);font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.stepper-val{font-family:'DM Mono',monospace;font-size:.9rem;min-width:18px;text-align:center}
 
-/* ── TICKET ── */
-.ticket{width:100%;border-radius:0;overflow:hidden;border:0;border-top:2px solid var(--border);border-bottom:2px solid var(--border);background:var(--card)}
-/* Player ticket — DIRECT body child, 100vw, no parent constraints */
-#player-ticket-wrap{position:fixed;left:0;width:100vw}
-#player-ticket-wrap .ticket{width:100vw;border-radius:0;border-left:none;border-right:none}
-#player-ticket-wrap .tnum{font-size:clamp(15px,5.2vw,26px)}
-.ticket-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:var(--card2);border-bottom:1px solid var(--border)}
-.ticket-seq{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:500}
-.ticket-code{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px}
-.ticket-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:0;padding:0;border-left:2px solid var(--border);border-top:2px solid var(--border)}
-.tnum{aspect-ratio:1;border-right:2px solid var(--border);border-bottom:2px solid var(--border);border-radius:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:clamp(14px,4vw,20px);font-weight:800;background:var(--card2);color:var(--text);cursor:pointer;transition:background .15s,transform .1s;position:relative;user-select:none;-webkit-user-select:none}
-.tnum.empty{background:var(--bg);cursor:default}
-.tnum.marked{background:var(--accent);color:#000}
-.tnum.marked::after{content:'✓';position:absolute;font-size:9px;top:2px;right:3px;opacity:.8;font-family:var(--mono)}
-.tnum.callable{background:var(--card2);color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);animation:callPulse 1.2s ease-in-out infinite}
-@keyframes callPulse{0%,100%{box-shadow:inset 0 0 0 2px var(--accent)}50%{box-shadow:inset 0 0 0 2px var(--accent),0 0 8px var(--accent)}}
-.tnum.win-highlight{background:var(--green);color:#000}
-.tnum.corner-highlight{background:var(--purple);color:#fff}
-.tnum:active:not(.empty){transform:scale(.88)}
+/* ===== HOST PRIZE CLAIMS PANEL ===== */
+.claim-prize-block{margin-bottom:14px;padding:12px;background:var(--bg3);border-radius:12px;border:1.5px solid var(--border)}
+.claim-prize-name{font-weight:700;font-size:.95rem;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.claim-prize-name .closed-badge{font-size:.7rem;padding:2px 8px;border-radius:10px;background:var(--win);color:#fff;font-weight:700}
+.claim-prize-name .open-badge{font-size:.7rem;padding:2px 8px;border-radius:10px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.claim-cards-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.claim-card-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
+  border-radius:8px;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:600;
+  cursor:pointer;transition:all .2s;border:1.5px solid;
+}
+.claim-card-chip.pending{background:color-mix(in srgb,var(--warn) 15%,var(--bg2));border-color:var(--warn);color:var(--warn)}
+.claim-card-chip.accepted{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border-color:var(--win);color:var(--win)}
+.claim-card-chip.rejected{background:color-mix(in srgb,var(--danger) 12%,var(--bg2));border-color:var(--border);color:var(--text3);text-decoration:line-through}
+.winner-chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.winner-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--win) 18%,var(--bg2));border:1.5px solid var(--win);font-family:'DM Mono',monospace;font-size:.78rem;color:var(--win);font-weight:600}
+.no-claims{font-size:.8rem;color:var(--text3);font-style:italic}
 
-/* ── PLAYER ── */
-#s-player{padding:0}
-.player-topbar{padding:8px 12px 4px;width:100%}
-.player-below{padding:0 12px 16px;width:100%}
-.claim-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:800;font-size:16px;cursor:pointer;transition:all .2s;margin-top:4px}
-.claim-btn-active{background:linear-gradient(135deg,var(--green),#22c55e);color:#fff;box-shadow:0 4px 16px rgba(57,211,83,.4)}
-.claim-btn-active:active{transform:scale(.97)}
-.claim-btn-inactive{background:rgba(255,255,255,.06);color:var(--muted);border:1.5px solid var(--border);cursor:not-allowed}
-.win-alert{background:rgba(57,211,83,.1);border:1.5px solid rgba(57,211,83,.3);border-radius:12px;padding:12px 16px;margin-bottom:8px;display:none}
-.win-alert.show{display:block}
-.win-alert-title{font-size:14px;font-weight:800;color:var(--green);margin-bottom:4px}
-.win-alert-sub{font-size:12px;color:var(--muted)}
+/* ===== PLAYER PRIZE GRID ===== */
+.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prize-mini{background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:8px 10px}
+.prize-mini-name{font-weight:600;font-size:.82rem}
+.prize-mini-status{color:var(--text3);font-size:.73rem;margin-top:3px;display:flex;align-items:center;gap:4px}
+.prize-mini.claimable{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--bg2))}
+.prize-mini.claimed{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--bg2))}
+.prize-mini.won-prize{border-color:var(--win);background:color-mix(in srgb,var(--win) 12%,var(--bg2))}
+.prize-mini.closed-prize{opacity:.55}
+.claim-btn{width:100%;margin-top:6px;padding:6px;border-radius:7px;background:var(--warn);color:#fff;font-weight:700;font-size:.78rem;border:none;cursor:pointer}
+.claim-btn:active{transform:scale(.97)}
+.claim-btn.already{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 
-/* ── CLAIMS ── */
-.claims-panel{background:rgba(255,154,0,.07);border:1.5px solid rgba(255,154,0,.25);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:none}
-.claims-panel.show{display:block}
-.claims-panel-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:10px}
-.claim-prize-group{margin-bottom:10px}
-.claim-prize-group:last-child{margin-bottom:0}
-.claim-prize-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.claim-cards-row{display:flex;flex-wrap:wrap;gap:6px}
-.claim-card-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;background:rgba(255,154,0,.12);border:1.5px solid rgba(255,154,0,.3);cursor:pointer;transition:all .15s}
-.claim-card-chip:hover{background:rgba(255,154,0,.22)}
-.claim-card-chip-num{font-family:var(--mono);font-size:12px;font-weight:800;color:var(--accent)}
-.prize-status-won{color:var(--green);font-size:13px}
-.prize-status-pending{color:var(--accent);font-size:13px;animation:pulse 1.2s infinite}
-.prize-status-open{color:var(--muted);font-size:13px}
-.prize-status-closed{color:var(--muted);font-size:11px;text-decoration:line-through}
-.winner-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;background:rgba(57,211,83,.12);border:1px solid rgba(57,211,83,.3);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);cursor:pointer}
-.shared-label{font-size:10px;color:var(--muted);font-weight:600;margin-right:4px}
-/* Player claim button states */
-.claim-prize-btn{width:100%;padding:10px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-top:3px}
-.claim-prize-btn.eligible{background:linear-gradient(135deg,var(--green),#22c55e);color:#fff;box-shadow:0 3px 12px rgba(57,211,83,.35)}
-.claim-prize-btn.eligible:active{transform:scale(.96)}
-.claim-prize-btn.pending{background:rgba(255,154,0,.15);color:var(--accent);border:1.5px solid rgba(255,154,0,.3);cursor:not-allowed}
-.claim-prize-btn.rejected{background:rgba(255,68,68,.1);color:var(--red);border:1.5px solid rgba(255,68,68,.3);cursor:not-allowed}
-.claim-prize-btn.won{background:rgba(57,211,83,.12);color:var(--green);border:1.5px solid rgba(57,211,83,.3);cursor:not-allowed}
-.claim-prize-btn.closed{background:rgba(255,255,255,.05);color:var(--muted);border:1.5px solid var(--border);cursor:not-allowed;font-size:11px}
+/* ===== PLAYER SCREEN ===== */
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--win);animation:livePulse 1.5s ease-in-out infinite;flex-shrink:0}
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--win) 50%,transparent)}50%{opacity:.7;box-shadow:0 0 0 5px transparent}}
+#player-ticket-wrapper{position:fixed;left:0;width:100vw;z-index:20}
+.player-spacer{width:100%;background:transparent}
+.win-alert-bar{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border:1.5px solid var(--win);border-radius:10px;padding:8px 12px;color:var(--win);font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px}
 
-/* ── DISPLAY MODE ── */
-#s-display{background:#000;max-width:100%;padding:20px;justify-content:center;align-items:center;gap:20px}
-.disp-last{font-family:var(--mono);font-size:120px;font-weight:900;color:var(--accent);text-align:center;line-height:1;filter:drop-shadow(0 0 30px var(--accent));animation:numPop .5s cubic-bezier(.34,1.56,.64,1)}
-.disp-board{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;width:100%}
-.disp-num{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700;background:#111;color:#444;transition:all .4s}
-.disp-num.called{background:var(--accent);color:#000;box-shadow:0 0 10px rgba(255,154,0,.5)}
-.disp-prizes{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%}
-.disp-prize{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;background:#111;color:#444;border:1px solid #222}
-.disp-prize.won{background:rgba(57,211,83,.15);color:var(--green);border-color:rgba(57,211,83,.4)}
+/* ===== CARD CHIPS ===== */
+.card-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:var(--bg3);border:1.5px solid var(--border);font-family:'DM Mono',monospace;font-size:.76rem;cursor:pointer;color:var(--text2);transition:all .2s;margin:3px}
+.card-chip:hover{border-color:var(--accent);color:var(--text)}
+.card-chip.won{background:color-mix(in srgb,var(--win) 18%,var(--bg3));border-color:var(--win);color:var(--win);box-shadow:0 0 8px color-mix(in srgb,var(--win) 25%,transparent)}
 
-/* ── PRINT ── */
-#s-print{background:#fff;color:#000;padding:10px;max-width:100%}
-.print-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:8px;background:#f5f5f5;border-radius:8px}
-@media print{.print-controls{display:none!important}.print-ticket{break-inside:avoid}}
-.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.print-ticket{background:#fff;border:1.5px solid #ccc;border-radius:8px;padding:8px;break-inside:avoid}
-.pt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #eee}
-.pt-seq{font-size:11px;color:#666;font-family:monospace;font-weight:600}
-.pt-code{font-size:13px;font-weight:800;color:#ff6b35;font-family:monospace;letter-spacing:2px}
-.pt-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:0;border-left:1px solid #ccc;border-top:1px solid #ccc}
-.pt-cell{aspect-ratio:1;border-right:1px solid #ccc;border-bottom:1px solid #ccc;border-radius:0;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:10px;font-weight:700;background:#f5f0e8;color:#333}
-.pt-cell.empty{background:#fff}
-.pt-title{font-size:9px;color:#888;text-align:center;margin-top:4px;font-family:monospace}
+/* ===== DISPLAY MODE ===== */
+#s-display{background:#000;color:#fff}
+#s-display .last-called-big{font-size:7rem;color:#fff}
+#s-display .num-cell.called{background:#fff;color:#000}
+#s-display .num-cell{background:#111;color:#333}
+.display-prize-item{padding:7px 0;border-bottom:1px solid #1a1a1a;font-size:.88rem;color:#888}
+.display-prize-item .pw{color:#fff;font-weight:700}
 
-/* ── TOAST ── */
-#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 18px;font-size:13px;font-weight:600;color:var(--text);z-index:2000;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;backdrop-filter:blur(8px);pointer-events:none}
+/* ===== STATUS BADGE ===== */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.8rem;font-weight:600;background:var(--bg3);color:var(--text2)}
+.status-badge.live{background:color-mix(in srgb,var(--win) 15%,var(--bg3));color:var(--win)}
+
+/* ===== COLLAPSIBLE ===== */
+.collapsible-header{display:flex;align-items:center;cursor:pointer;user-select:none;gap:8px}
+.collapsible-header .arrow{transition:transform .2s;font-size:.72rem;color:var(--text3)}
+.collapsible-header.open .arrow{transform:rotate(90deg)}
+.collapsible-body{display:none;margin-top:10px}
+.collapsible-body.open{display:block}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--toast-bg);border:1.5px solid var(--border);color:var(--text);padding:9px 18px;border-radius:12px;font-size:.86rem;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
-/* ── MODAL ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal-bg.show{display:flex}
-.modal{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px}
-.modal-title{font-size:18px;font-weight:800;color:var(--accent);text-align:center}
-.modal-body{font-size:13px;color:var(--muted);line-height:1.6;text-align:center}
-.modal-btns{display:flex;gap:8px}
-.modal-btns button{flex:1;padding:11px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer}
+/* ===== MODAL ===== */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
+#modal-overlay.open{display:flex}
+#modal-box{background:var(--bg2);border:1.5px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:380px;max-height:80vh;overflow-y:auto}
+.modal-title{font-weight:700;font-size:1rem;margin-bottom:14px;color:var(--text)}
+.modal-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+/* ===== PRINT ===== */
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff;color:#000}
+  .ticket-cell{border:1px solid #ccc;background:#fff;color:#000}
+  .ticket-cell.blank{background:#eee}
+  .print-card{page-break-inside:avoid;margin-bottom:20px}
+  .screen:not(#s-print){display:none!important}
+  #s-print{display:block!important}
+}
+
+/* ===== MISC ===== */
+.mono{font-family:'DM Mono',monospace}
+.sep{height:1px;background:var(--border);margin:8px 0}
+.hint{font-size:.78rem;color:var(--text3);text-align:center}
+.mt8{margin-top:8px}
+.flex{display:flex}.items-center{align-items:center}.gap8{gap:8px}.fw7{font-weight:700}
+.text3{color:var(--text3)}.text2{color:var(--text2)}.accent{color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- LANDING -->
-<div class="screen active" id="s-landing">
-  <!-- Colorful cube SVG icon -->
-  <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:4px;filter:drop-shadow(0 0 16px rgba(255,120,0,.5))">
-    <defs>
-      <linearGradient id="cg-top" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff9a00"/><stop offset="100%" stop-color="#ff6b35"/></linearGradient>
-      <linearGradient id="cg-left" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
-      <linearGradient id="cg-right" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient>
-    </defs>
-    <!-- Top face -->
-    <polygon points="36,4 64,20 36,36 8,20" fill="url(#cg-top)"/>
-    <!-- Left face -->
-    <polygon points="8,20 36,36 36,68 8,52" fill="url(#cg-left)"/>
-    <!-- Right face -->
-    <polygon points="64,20 36,36 36,68 64,52" fill="url(#cg-right)"/>
-    <!-- Number 7 on top face -->
-    <text x="36" y="28" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="16" font-weight="900" font-family="monospace" letter-spacing="-1">7</text>
-    <!-- Dots on left face -->
-    <circle cx="20" cy="44" r="3.5" fill="rgba(255,255,255,0.7)"/>
-    <circle cx="24" cy="56" r="3.5" fill="rgba(255,255,255,0.7)"/>
-    <!-- Dots on right face -->
-    <circle cx="50" cy="44" r="3.5" fill="rgba(255,255,255,0.7)"/>
-    <circle cx="54" cy="56" r="3.5" fill="rgba(255,255,255,0.7)"/>
-    <!-- Shine line -->
-    <line x1="8" y1="20" x2="36" y2="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-    <line x1="36" y1="4" x2="64" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-  </svg>
-  <div class="app-title">Housie</div>
-  <div class="app-sub">Digital Housie · Play Together</div>
-  <div style="display:flex;justify-content:flex-end;width:100%;max-width:340px;margin-bottom:2px;position:relative">
-    <button class="theme-icon-btn" onclick="toggleThemePopover('landing')" id="theme-btn-landing">🎨 Theme</button>
-    <div class="theme-popover" id="theme-pop-landing" style="display:none">
-      <button class="theme-popover-item" data-t="midnight" onclick="setTheme('midnight');closeThemePopover()">🌙 Midnight</button>
-      <button class="theme-popover-item" data-t="forest" onclick="setTheme('forest');closeThemePopover()">🌿 Forest</button>
-      <button class="theme-popover-item" data-t="sunset" onclick="setTheme('sunset');closeThemePopover()">🌅 Sunset</button>
-      <button class="theme-popover-item" data-t="ocean" onclick="setTheme('ocean');closeThemePopover()">🌊 Ocean</button>
-    </div>
-  </div>
-  <div class="land-card">
-    <button id="install-btn" class="big-btn" onclick="installApp()" style="display:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 4px 20px rgba(99,102,241,.4)">📲 Add to Home Screen</button>
-    <button class="big-btn big-btn-p" onclick="goCreateGame()">🏠 Create New Game</button>
-    <div class="divider">OR</div>
-    <div class="land-sect">🎫 Join / Rejoin a Game</div>
-    <input class="code-inp" id="join-game-id-inp" placeholder="Enter Game ID (e.g. HX7K)" maxlength="6" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-    <button class="big-btn big-btn-s" onclick="goJoinGame()">Join Game →</button>
-  </div>
-</div>
-
-<!-- CREATE GAME -->
-<div class="screen" id="s-creategame">
-  <div class="topbar">
-    <button class="back-btn" onclick="show('s-landing')">Back</button>
-    <div class="topbar-title">New Game</div>
-    <button class="sm-btn sm-btn-p" onclick="startHostGame()">Start →</button>
-  </div>
-  <div class="panel">
-    <div class="section-label">Host Password</div>
-    <div class="row"><span class="row-label" style="font-size:12px;color:var(--muted)">Others enter this to become host</span></div>
-    <input class="code-inp" id="host-pw-inp" placeholder="Host password" maxlength="8" style="font-size:20px;letter-spacing:4px" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-  </div>
-  <div class="panel">
-    <div class="section-label">Active Card Range</div>
-    <div class="row">
-      <span class="row-label">From card #</span>
-      <input type="number" id="range-from" value="1" min="1" max="2000">
-    </div>
-    <div class="row">
-      <span class="row-label">To card #</span>
-      <input type="number" id="range-to" value="100" min="1" max="2000">
-    </div>
-    <div class="row" style="margin-top:8px">
-      <span class="row-label" style="font-size:12px;color:var(--muted)" id="range-info">100 cards active</span>
-      <button class="sm-btn sm-btn-s" onclick="goprint()">Print Cards</button>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="section-label">Prize Categories</div>
-    <div id="prize-toggles"></div>
-  </div>
-  <div class="panel">
-    <div class="section-label">Game Settings</div>
-    <div class="row">
-      <span class="row-label">Announce numbers (TTS)</span>
-      <button class="toggle on" id="tgl-tts" onclick="toggleTgl('tts')"></button>
-    </div>
-  </div>
-</div>
-
-<!-- JOIN GAME -->
-<div class="screen" id="s-joingame">
-  <div class="topbar">
-    <button class="back-btn" onclick="show('s-landing')">Back</button>
-    <div class="topbar-title" id="jg-title">Join Game</div>
-    <div></div>
-  </div>
-  <div class="panel">
-    <div id="jg-status" style="font-size:13px;color:var(--muted);text-align:center;padding:4px">Looking up game...</div>
-  </div>
-  <div class="panel">
-    <div class="section-label">Play with a Card</div>
-    <input class="code-inp" id="jg-card-inp" placeholder="Card # or Code (e.g. 42 or AFJ12K)" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-    <button class="big-btn big-btn-s" style="margin-top:8px" onclick="goPlayerFromJoin()">View My Card →</button>
-  </div>
-  <div class="panel">
-    <div class="section-label">Switch to Host</div>
-    <input class="code-inp" id="jg-pw-inp" placeholder="Host password" maxlength="8" style="letter-spacing:4px" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-    <button class="big-btn big-btn-p" style="margin-top:8px" onclick="goHostFromJoin()">Enter as Host →</button>
-  </div>
-  <div class="panel">
-    <div class="section-label">Display Screen</div>
-    <button class="big-btn big-btn-b" onclick="goDisplay()">Open Display Mode</button>
-  </div>
-</div>
-
-<!-- HOST GAME -->
-<div class="screen" id="s-hostgame">
-  <div class="topbar" style="padding-bottom:4px">
-    <button class="back-btn" onclick="confirmEndGame()">End</button>
-    <div style="text-align:center">
-      <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase">Game ID</div>
-      <div id="hg-game-id" style="font-family:var(--mono);font-size:20px;font-weight:900;color:var(--accent);letter-spacing:3px">----</div>
-    </div>
-    <div style="display:flex;gap:5px;align-items:center">
-      <button class="sm-btn sm-btn-s" style="font-size:11px;padding:5px 8px" onclick="showWinnersModal()">🏆</button>
-      <button class="sm-btn sm-btn-s" style="font-size:11px;padding:5px 8px" onclick="showCalledModal()">🔢</button>
-      <button class="sm-btn sm-btn-b" style="font-size:11px;padding:5px 8px" onclick="goPlayerView()">👁</button>
-      <button class="sm-btn sm-btn-s" style="font-size:11px;padding:5px 8px" onclick="goDisplayFromHost()">📺</button>
-      <div style="position:relative">
-        <button class="theme-icon-btn" style="font-size:12px;padding:5px 7px" onclick="toggleThemePopover('hg')" id="theme-btn-hg">🎨</button>
-        <div class="theme-popover" id="theme-pop-hg" style="display:none">
-          <button class="theme-popover-item" data-t="midnight" onclick="setTheme('midnight');closeThemePopover()">🌙 Midnight</button>
-          <button class="theme-popover-item" data-t="forest" onclick="setTheme('forest');closeThemePopover()">🌿 Forest</button>
-          <button class="theme-popover-item" data-t="sunset" onclick="setTheme('sunset');closeThemePopover()">🌅 Sunset</button>
-          <button class="theme-popover-item" data-t="ocean" onclick="setTheme('ocean');closeThemePopover()">🌊 Ocean</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center;margin-bottom:8px">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:1px;font-weight:600">Last Called</div>
-    <div class="last-called-big" id="hg-last-num">—</div>
-    <div id="hg-called-count" style="font-size:13px;font-weight:700;color:var(--muted);margin-top:2px">0 called</div>
-  </div>
-
-  <button class="call-btn" id="call-btn" onclick="callNumber()">🎱 Call Next Number</button>
-
-  <div class="winners-flash" id="winners-flash"></div>
-
-  <div class="panel" style="margin-bottom:8px">
-    <div class="section-label">Called Numbers</div>
-    <div class="called-board" id="hg-board"></div>
-  </div>
-
-  <div id="hg-claims-panel" class="claims-panel">
-    <div class="claims-panel-title">⚡ Pending Claims</div>
-    <div id="hg-claims-body"></div>
-  </div>
-
-  <div class="panel" style="margin-bottom:8px">
-    <div class="section-label">Prizes</div>
-    <div id="hg-prizes"></div>
-  </div>
-
-  <div class="panel" style="margin-bottom:8px">
-    <div class="section-label">Validate / View Any Card</div>
-    <div class="validate-row">
-      <input class="validate-inp" id="validate-inp" placeholder="Seq # or Code" oninput="this.value=this.value.toUpperCase()">
-      <button class="sm-btn sm-btn-p" onclick="validateCard()">View</button>
-    </div>
-    <div id="validate-result"></div>
-  </div>
-
-  <div class="panel" style="margin-bottom:8px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div class="section-label" style="margin-bottom:0">All Active Cards</div>
-      <button class="sm-btn sm-btn-s" style="font-size:10px;padding:3px 8px" onclick="toggleAllCards()">Show/Hide</button>
-    </div>
-    <div id="all-cards-wrap" style="display:none">
-      <div id="all-cards-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px"></div>
-    </div>
-  </div>
-</div>
-
-<!-- PLAYER -->
-<div class="screen" id="s-player">
-  <div class="player-topbar">
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding-bottom:6px">
-      <button class="back-btn" onclick="show('s-landing')">← Back</button>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span id="player-live-dot" style="display:none;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.5s infinite"></span>
-        <span class="topbar-title" id="player-title" style="font-size:14px">My Card</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:5px">
-        <div style="position:relative">
-          <button class="theme-icon-btn" style="font-size:12px;padding:4px 8px" onclick="toggleThemePopover('player')" id="theme-btn-player">🎨</button>
-          <div class="theme-popover" id="theme-pop-player" style="display:none">
-            <button class="theme-popover-item" data-t="midnight" onclick="setTheme('midnight');closeThemePopover()">🌙 Midnight</button>
-            <button class="theme-popover-item" data-t="forest" onclick="setTheme('forest');closeThemePopover()">🌿 Forest</button>
-            <button class="theme-popover-item" data-t="sunset" onclick="setTheme('sunset');closeThemePopover()">🌅 Sunset</button>
-            <button class="theme-popover-item" data-t="ocean" onclick="setTheme('ocean');closeThemePopover()">🌊 Ocean</button>
-          </div>
-        </div>
-        <button class="sm-btn sm-btn-s" style="font-size:11px;padding:4px 8px" onclick="resetMarks()">Reset</button>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-      <div style="background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:4px 12px;display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Last</span>
-        <span id="player-last-num" style="font-family:var(--mono);font-size:22px;font-weight:900;color:var(--accent);line-height:1">—</span>
-      </div>
-      <div id="win-alert" class="win-alert" style="margin:0;flex:1;padding:6px 10px">
-        <div class="win-alert-title" style="font-size:13px;margin:0" id="win-alert-title">🎉 You won!</div>
-      </div>
-    </div>
-  </div>
-  <!-- ticket is rendered here as a placeholder to reserve space -->
-  <div id="player-ticket-spacer"></div>
-  <div class="player-below">
-    <div id="player-prizes" style="margin-top:8px"></div>
-    <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px">Tap numbers as host calls them 🎱</div>
-  </div>
-</div>
-
-<!-- DISPLAY MODE -->
-<div class="screen" id="s-display" style="background:#000;min-height:100dvh">
-  <div style="font-size:13px;color:#444;text-transform:uppercase;letter-spacing:2px;font-weight:700">Last Number</div>
-  <div class="disp-last" id="disp-last">—</div>
-  <div class="disp-board" id="disp-board"></div>
-  <div class="disp-prizes" id="disp-prizes"></div>
-  <button class="sm-btn sm-btn-s" style="margin-top:10px;font-size:11px" onclick="show('s-landing')">Exit Display</button>
-</div>
-
-<!-- PRINT -->
-<div class="screen" id="s-print" style="background:#fff;color:#000">
-  <div class="print-controls">
-    <span style="font-size:13px;font-weight:600;color:#333">Print Cards:</span>
-    <input type="number" id="print-from" value="1" min="1" max="2000" style="width:70px;background:#fff;color:#333;border-color:#ccc">
-    <span style="color:#666">to</span>
-    <input type="number" id="print-to" value="20" min="1" max="2000" style="width:70px;background:#fff;color:#333;border-color:#ccc">
-    <button onclick="renderPrint()" style="padding:6px 12px;border:none;border-radius:6px;background:#ff6b35;color:#fff;font-weight:700;cursor:pointer;font-size:12px">Generate</button>
-    <button onclick="window.print()" style="padding:6px 12px;border:none;border-radius:6px;background:#333;color:#fff;font-weight:700;cursor:pointer;font-size:12px">🖨 Print</button>
-    <button onclick="show('s-creategame')" style="padding:6px 12px;border:none;border-radius:6px;background:#eee;color:#333;font-weight:600;cursor:pointer;font-size:12px">← Back</button>
-  </div>
-  <div class="print-grid" id="print-grid"></div>
-</div>
-
-<!-- MODALS -->
-<div class="modal-bg" id="modal-end">
-  <div class="modal">
-    <div class="modal-title">End Game?</div>
-    <div class="modal-body">This will end the current game. All progress will be lost.</div>
-    <div class="modal-btns">
-      <button class="sm-btn sm-btn-r" onclick="endGame()">Yes, End Game</button>
-      <button class="sm-btn sm-btn-s" onclick="closeModal('modal-end')">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modal-claim">
-  <div class="modal">
-    <div class="modal-title" id="claim-modal-title">🏆 Claim Verified!</div>
-    <div class="modal-body" id="claim-modal-body"></div>
-    <div class="modal-btns">
-      <button class="sm-btn sm-btn-g" onclick="closeModal('modal-claim')">Great!</button>
-    </div>
-  </div>
-</div>
-
-<!-- HOST CLAIM REVIEW MODAL -->
-<div class="modal-bg" id="modal-review-claim">
-  <div class="modal" style="max-width:380px;max-height:88vh;overflow-y:auto">
-    <div class="modal-title" id="rcm-title">Review Claim</div>
-    <div id="rcm-card-view" style="margin:8px 0"></div>
-    <div id="rcm-prize-info" style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:4px"></div>
-    <div class="modal-btns">
-      <button class="sm-btn sm-btn-g" id="rcm-accept-btn" onclick="hostAcceptClaim()">✅ Accept</button>
-      <button class="sm-btn sm-btn-r" id="rcm-reject-btn" onclick="hostRejectClaim()">❌ Reject</button>
-      <button class="sm-btn sm-btn-s" onclick="closeModal('modal-review-claim')">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modal-winners">
-  <div class="modal" style="max-width:400px;max-height:80vh;overflow-y:auto">
-    <div class="modal-title">🏆 Winners So Far</div>
-    <div id="modal-winners-body" style="text-align:left"></div>
-    <div class="modal-btns"><button class="sm-btn sm-btn-s" onclick="closeModal('modal-winners')">Close</button></div>
-  </div>
-</div>
-
-<div class="modal-bg" id="modal-called">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-title">🔢 Called Numbers</div>
-    <div id="modal-called-sequence" style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text);margin-bottom:8px;max-height:200px;overflow-y:auto"></div>
-    <div id="modal-called-grid" style="display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-bottom:12px"></div>
-    <div class="modal-btns"><button class="sm-btn sm-btn-s" onclick="closeModal('modal-called')">Close</button></div>
-  </div>
-</div>
-
-<!-- PLAYER VIEW (Host sees player perspective) -->
-<div class="screen" id="s-playerview" style="padding:10px 12px">
-  <div class="topbar">
-    <button class="back-btn" onclick="show('s-hostgame')">← Host</button>
-    <div class="topbar-title" id="pv-title">👁 Player View</div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <button class="sm-btn sm-btn-s" style="font-size:11px;padding:5px 8px" onclick="pvPrev()">◀</button>
-      <span id="pv-card-num" style="font-size:12px;font-weight:700;color:var(--accent);min-width:50px;text-align:center">Card 1</span>
-      <button class="sm-btn sm-btn-s" style="font-size:11px;padding:5px 8px" onclick="pvNext()">▶</button>
-    </div>
-  </div>
-  <div style="background:rgba(255,154,0,.1);border:1px solid rgba(255,154,0,.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent);text-align:center">
-    👁 Host viewing as Player — this is what the player sees
-  </div>
-  <div id="pv-win-alert" class="win-alert">
-    <div class="win-alert-title" id="pv-win-alert-title">🎉 This card may have won!</div>
-    <div class="win-alert-sub">Verify with the player</div>
-  </div>
-  <div id="pv-ticket-wrap"></div>
-  <div style="margin-top:6px;width:100%">
-    <div class="section-label">Prizes for this card</div>
-    <div id="pv-prizes" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
-  </div>
-</div>
-
 <div id="toast"></div>
 
-<script>
-// ═══════════════════════════════════════════════════
-// CARD GENERATION — seed based, deterministic
-// ═══════════════════════════════════════════════════
-// Each column in a Tambola ticket covers a range:
-// Col 0: 1-9, Col 1: 10-19, ..., Col 8: 80-90
-// Each row has exactly 5 numbers, 4 blanks
-// Ticket has 3 rows, 9 cols = 15 numbers total
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModalOutside(event)">
+  <div id="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
 
+<!-- ===== LANDING ===== -->
+<div class="screen active" id="s-landing">
+  <div class="landing-topright">
+    <div class="theme-dropdown-wrap">
+      <button class="icon-btn" onclick="toggleThemeMenu()" title="Theme" id="theme-toggle-btn">🎨</button>
+      <div class="theme-menu" id="theme-menu"></div>
+    </div>
+  </div>
+  <div class="logo-wrap">
+    <svg class="logo-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f97316"/>
+          <stop offset="50%" style="stop-color:#a78bfa"/>
+          <stop offset="100%" style="stop-color:#22c55e"/>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="4" width="72" height="72" rx="16" fill="url(#cg1)"/>
+      <rect x="12" y="12" width="56" height="18" rx="5" fill="rgba(255,255,255,.15)"/>
+      <rect x="12" y="35" width="56" height="18" rx="5" fill="rgba(255,255,255,.1)"/>
+      <rect x="12" y="58" width="56" height="14" rx="5" fill="rgba(255,255,255,.08)"/>
+      <text x="40" y="25" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" font-weight="700" fill="#fff">7  23  45</text>
+      <text x="40" y="48" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" font-weight="700" fill="#fff">12  56  78</text>
+      <text x="40" y="68" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" font-weight="700" fill="#fff">3  34  67</text>
+    </svg>
+    <h1 class="app-title">Housie</h1>
+    <p class="app-sub">Digital Housie · Play Together</p>
+  </div>
+  <button class="btn btn-primary no-print" id="install-btn" onclick="installApp()">📲 Add to Home Screen</button>
+  <button class="btn btn-primary btn-full" style="max-width:320px" onclick="goCreateGame()">🏠 Create New Game</button>
+  <div class="divider">or join</div>
+  <div class="landing-input-row">
+    <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase()"/>
+    <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
+  </div>
+</div>
+
+<!-- ===== CREATE GAME ===== -->
+<div class="screen" id="s-creategame">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">New Game</div>
+    <button class="topbar-btn accent" onclick="startHostGame()">Start →</button>
+  </div>
+  <div class="content">
+    <div class="panel">
+      <div class="panel-title">Host Password</div>
+      <input type="text" id="host-pw-input" maxlength="20" oninput="this.value=this.value.toUpperCase()"/>
+      <p class="hint mt8">Others enter this to become host</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Active Card Range</div>
+      <div class="panel-row">
+        <span class="text2" style="font-size:.85rem">From</span>
+        <input type="number" id="range-from" value="1" min="1" max="9999" style="width:80px"/>
+        <span class="text2" style="font-size:.85rem">to</span>
+        <input type="number" id="range-to" value="100" min="1" max="9999" style="width:80px"/>
+      </div>
+      <div class="mt8 hint" id="card-range-hint">100 cards active</div>
+      <button class="btn btn-outline btn-full mt8" onclick="show('s-print')">🖨 Print Cards</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Prize Categories</div>
+      <div id="prize-setup"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Game Settings</div>
+      <div class="prize-setup-row">
+        <span style="flex:1;font-weight:600;font-size:.9rem">🔊 Text-to-Speech</span>
+        <div class="prize-toggle" id="tts-toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JOIN GAME ===== -->
+<div class="screen" id="s-joingame">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title" id="join-game-title">Game XXXX</div>
+  </div>
+  <div class="content">
+    <div class="panel" style="display:flex;align-items:center;gap:10px">
+      <span id="join-status-badge" class="status-badge">⏳ Not started</span>
+      <span id="join-called-count" class="text3 mono" style="font-size:.82rem"></span>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Play with a Card</div>
+      <div class="panel-row">
+        <input type="text" id="player-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-primary btn-sm" onclick="goPlayerFromJoin()">View My Card →</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Switch to Host</div>
+      <div class="panel-row">
+        <input type="password" id="host-pw-join" placeholder="Host Password" style="flex:1"/>
+        <button class="btn btn-outline btn-sm" onclick="goHostFromJoin()">Enter as Host →</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Display Screen</div>
+      <button class="btn btn-outline btn-full" onclick="show('s-display')">📺 Open Display Mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOST GAME ===== -->
+<div class="screen" id="s-hostgame">
+  <div class="topbar">
+    <button class="topbar-btn danger" onclick="endGame()">End</button>
+    <div class="topbar-title mono" id="host-game-id" style="font-size:1.4rem;letter-spacing:.18em"></div>
+    <button class="icon-btn" onclick="show('s-playerview')" title="Browse Cards">👁</button>
+    <button class="icon-btn" onclick="show('s-display')" title="Display">📺</button>
+    <div class="theme-dropdown-wrap">
+      <button class="icon-btn" onclick="toggleThemeMenu('host')" id="theme-toggle-host">🎨</button>
+      <div class="theme-menu" id="theme-menu-host"></div>
+    </div>
+  </div>
+  <div class="content" id="host-content">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0">
+      <div class="last-called-big" id="host-last-num">—</div>
+      <div class="called-count" id="host-called-count">0 / 90 called</div>
+    </div>
+    <button class="btn-call" onclick="callNextNumber()">🎱 Call Next Number</button>
+    <div class="panel">
+      <div class="panel-title">Called Numbers</div>
+      <div class="num-grid" id="host-num-grid"></div>
+    </div>
+    <!-- Claims panel -->
+    <div class="panel">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)">
+        <span class="panel-title" style="margin:0">🏆 Prize Claims</span>
+        <span id="pending-badge" style="font-size:.7rem;padding:2px 7px;border-radius:10px;background:var(--warn);color:#fff;font-weight:700;display:none">0</span>
+        <span class="arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="collapsible-body open" id="claims-panel"></div>
+    </div>
+    <!-- Host close prize manually -->
+    <div class="panel">
+      <div class="panel-title">Close Prize Manually (Hard Copy Cards)</div>
+      <div class="panel-row" style="flex-wrap:wrap;gap:8px">
+        <select id="manual-prize-select" style="flex:1;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:.9rem"></select>
+        <input type="text" id="manual-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-warn btn-sm btn-full" onclick="hostManualWin()">✓ Award Prize</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span class="panel-title" style="margin:0">Validate / View Card</span>
+        <span class="arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="panel-row mt8">
+          <input type="text" id="validate-input" placeholder="Seq # or Code" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+          <button class="btn btn-outline btn-sm" onclick="validateCard()">View</button>
+        </div>
+        <div id="validate-result" class="mt8"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span class="panel-title" style="margin:0">All Active Cards</span>
+        <span class="arrow" style="margin-left:auto">▶</span>
+      </div>
+      <div class="collapsible-body" id="all-cards-panel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLAYER SCREEN ===== -->
+<div class="screen" id="s-player">
+  <div class="topbar" id="player-topbar">
+    <button class="topbar-btn" onclick="show('s-joingame')">← Back</button>
+    <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
+      <div class="live-dot"></div>
+      <span class="mono" style="font-size:.86rem;letter-spacing:.08em" id="player-card-label">Card</span>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--accent)" id="player-last-called">—</div>
+    <button class="icon-btn" onclick="resetMarks()" title="Reset">↺</button>
+    <div class="theme-dropdown-wrap">
+      <button class="icon-btn" onclick="toggleThemeMenu('player')" id="theme-toggle-player">🎨</button>
+      <div class="theme-menu" id="theme-menu-player"></div>
+    </div>
+  </div>
+  <div class="content" id="player-content">
+    <div id="player-win-alert"></div>
+    <div class="player-spacer" id="player-spacer"></div>
+    <p class="hint">Tap numbers as host calls them 🎱</p>
+    <div class="panel">
+      <div class="panel-title">Prizes</div>
+      <div class="prize-grid-2" id="player-prize-grid"></div>
+    </div>
+  </div>
+</div>
+<div id="player-ticket-wrapper"></div>
+
+<!-- ===== PLAYER VIEW (HOST) ===== -->
+<div class="screen" id="s-playerview">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-hostgame')">← Back</button>
+    <div class="topbar-title">Browse Cards</div>
+    <span class="mono text3" id="pv-card-indicator" style="font-size:.82rem"></span>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-outline" onclick="pvNav(-1)">← Prev</button>
+      <button class="btn btn-outline" onclick="pvNav(1)">Next →</button>
+    </div>
+    <div id="pv-ticket-area"></div>
+    <div id="pv-prize-area" class="prize-grid-2"></div>
+  </div>
+</div>
+
+<!-- ===== DISPLAY ===== -->
+<div class="screen" id="s-display">
+  <div class="topbar" style="background:#000;border-color:#222">
+    <button class="topbar-btn" onclick="displayBack()">← Back</button>
+    <div class="topbar-title" style="color:#fff">Display Mode</div>
+  </div>
+  <div class="content" style="background:#000">
+    <div class="last-called-big" id="disp-last-num">—</div>
+    <div class="called-count" id="disp-called-count" style="color:#666">Waiting...</div>
+    <div class="num-grid" id="disp-num-grid" style="margin-top:14px"></div>
+    <div id="disp-prizes" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- ===== PRINT ===== -->
+<div class="screen" id="s-print">
+  <div class="topbar no-print">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">Print Cards</div>
+    <button class="topbar-btn accent" onclick="window.print()">🖨 Print</button>
+  </div>
+  <div class="content no-print">
+    <div class="panel">
+      <div class="panel-title">Card Range</div>
+      <div class="panel-row">
+        <span class="text2" style="font-size:.85rem">From</span>
+        <input type="number" id="print-from" value="1" min="1" max="9999" style="width:80px"/>
+        <span class="text2" style="font-size:.85rem">to</span>
+        <input type="number" id="print-to" value="10" min="1" max="9999" style="width:80px"/>
+      </div>
+      <button class="btn btn-primary btn-full mt8" onclick="generatePrintCards()">Generate Cards</button>
+    </div>
+  </div>
+  <div id="print-area" style="padding:14px"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyDmpc8MMBW8u6Vu8E4RsZnxFVou2Tk9A6o",
+  authDomain: "housie-36e75.firebaseapp.com",
+  databaseURL: "https://housie-36e75-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "housie-36e75",
+  storageBucket: "housie-36e75.firebasestorage.app",
+  messagingSenderId: "330375959956",
+  appId: "1:330375959956:web:8e48bf58b90a6d21d42b81"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===== PRIZE DEFINITIONS =====
+const PRIZE_DEFS = [
+  {id:'topline',    name:'Top Line',        rule:'Row 1 complete'},
+  {id:'midline',    name:'Middle Line',     rule:'Row 2 complete'},
+  {id:'botline',    name:'Bottom Line',     rule:'Row 3 complete'},
+  {id:'corners',   name:'Corners',         rule:'1st & last of rows 1+2'},
+  {id:'fullhouse', name:'Full House',      rule:'All 15 numbers'},
+  {id:'temperature',name:'Temperature 🌡', rule:'Highest & lowest called'},
+  {id:'unlucky',   name:'Most Unlucky 😬', rule:'Most uncalled at full house'},
+];
+
+// ===== GAME STATE =====
+let gs = {
+  gameId:'', hostPW:'', active:false,
+  calledNums:new Set(), calledOrder:[],
+  prizes:{},         // {prizeId: [{code,seq,status:'accepted'|'rejected'}]}
+  claims:{},         // {prizeId: [{code,seq,ts}]} — pending/rejected/accepted by host
+  enabledPrizes:{}, winnerCounts:{},
+  rangeFrom:1, rangeTo:100, tts:false,
+};
+// playerState
+let ps = {code:'', seq:0, grid:[], marked:new Set(), eligibleAt:{}};
+// eligibleAt: {prizeId: calledOrder.length at time of eligibility} — used to enforce "must tap immediately"
+
+let fbListener = null;
+let pvIndex = 1;
+let displayBackTarget = 's-landing';
+let deferredPrompt = null;
+
+// ===== THEMES =====
+const THEMES = [
+  {id:'midnight', label:'🌙 Midnight'},
+  {id:'forest',   label:'🌿 Forest'},
+  {id:'sunset',   label:'🌅 Sunset'},
+  {id:'ocean',    label:'🌊 Ocean'},
+];
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('housie-theme',t);
+  document.querySelectorAll('.theme-menu-item').forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
+}
+function buildThemeMenus(){
+  ['theme-menu','theme-menu-host','theme-menu-player'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML='';
+    THEMES.forEach(t=>{
+      const b=document.createElement('div');
+      b.className='theme-menu-item';
+      b.dataset.theme=t.id;
+      b.textContent=t.label;
+      b.onclick=(e)=>{e.stopPropagation();setTheme(t.id);closeAllThemeMenus();};
+      el.appendChild(b);
+    });
+  });
+  setTheme(localStorage.getItem('housie-theme')||'midnight');
+}
+function toggleThemeMenu(which){
+  const id = which ? 'theme-menu-'+which : 'theme-menu';
+  const menu=document.getElementById(id);
+  const isOpen=menu.classList.contains('open');
+  closeAllThemeMenus();
+  if(!isOpen) menu.classList.add('open');
+}
+function closeAllThemeMenus(){
+  document.querySelectorAll('.theme-menu').forEach(m=>m.classList.remove('open'));
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.theme-dropdown-wrap')) closeAllThemeMenus();
+});
+
+// ===== SCREEN NAV =====
+function show(id){
+  if(id!=='s-player') stopPlayerSync();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='s-hostgame') renderHostScreen();
+  if(id==='s-display') renderDisplay();
+  if(id==='s-playerview'){pvIndex=gs.rangeFrom;renderPlayerView();}
+  if(id==='s-player') positionPlayerTicket();
+  if(id==='s-display'){
+    const cur=document.querySelector('.screen.active');
+    if(cur&&cur.id!=='s-display') displayBackTarget=cur.id;
+  }
+}
+function displayBack(){show(displayBackTarget);}
+
+// ===== RNG =====
 function seededRng(seed){
   let s=0;
-  for(let i=0;i<seed.length;i++) s=(s*31+seed.charCodeAt(i))>>>0;
-  return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};
+  for(let i=0;i<seed.length;i++) s=((s*31)+seed.charCodeAt(i))>>>0;
+  return function(){s=((s*1664525)+1013904223)>>>0;return s/4294967296;};
 }
 
+// ===== CARD GENERATION =====
+const CODE_CHARS='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function seqToCode(seq){
+  const rng=seededRng('TAMBOLA_'+seq);
+  let code='';
+  for(let i=0;i<6;i++) code+=CODE_CHARS[Math.floor(rng()*CODE_CHARS.length)];
+  return code;
+}
+function codeToSeq(code,maxSeq){
+  for(let i=1;i<=maxSeq;i++) if(seqToCode(i)===code) return i;
+  return -1;
+}
 function generateTicket(code){
   const rng=seededRng(code+'TAMBOLA');
-
-  // STRICT Tambola layout:
-  // 3 rows × 9 cols. Each row EXACTLY 5 numbers, 4 blanks. Total 15 numbers.
-  // Col c covers: 0→1-9, 1→10-19, ..., 8→80-90
-  // 6 columns get 2 numbers across rows, 3 cols get 1 number. Total = 6×2 + 3×1 = 15.
-
-  // Step 1: For each column, pick available numbers (shuffled)
-  const colPools=[];
+  const colRanges=[[1,9],[10,19],[20,29],[30,39],[40,49],[50,59],[60,69],[70,79],[80,90]];
+  // 6 cols get 2 numbers, 3 cols get 1 — total 15
+  const colCounts=[2,2,2,2,2,2,1,1,1];
+  for(let i=colCounts.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [colCounts[i],colCounts[j]]=[colCounts[j],colCounts[i]];
+  }
+  const colNums=[];
   for(let c=0;c<9;c++){
-    const lo=c===0?1:c*10, hi=c===8?90:c*10+9;
-    const pool=[];for(let n=lo;n<=hi;n++)pool.push(n);
-    for(let i=pool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-    colPools.push(pool);
-  }
-
-  // Step 2: Decide which 6 columns get 2 numbers (the rest get 1)
-  const colOrder=[0,1,2,3,4,5,6,7,8];
-  for(let i=8;i>0;i--){const j=Math.floor(rng()*(i+1));[colOrder[i],colOrder[j]]=[colOrder[j],colOrder[i]];}
-  const colCount=new Array(9).fill(1);
-  for(let i=0;i<6;i++) colCount[colOrder[i]]=2;
-
-  // Step 3: Pick actual numbers per column, sorted ascending
-  const colNums=colPools.map((pool,c)=>pool.slice(0,colCount[c]).sort((a,b)=>a-b));
-
-  // Step 4: Build a GUARANTEED valid row-assignment mask using deterministic algorithm
-  // We need mask[r][c] = 1 meaning row r has a number in col c
-  // Constraints: sum(mask[r]) = 5 for all r; sum(mask[:,c]) = colCount[c]
-  // Use a constrained shuffle approach with guaranteed fallback
-
-  // Build list of (col, slot_index) pairs
-  const slots=[];
-  for(let c=0;c<9;c++) for(let k=0;k<colCount[c];k++) slots.push({c,k});
-  // slots.length === 15
-
-  // Try random assignment first (fast in most cases)
-  let rowAssign=null;
-  for(let attempt=0;attempt<500&&!rowAssign;attempt++){
-    const arr=[0,0,0,0,0,1,1,1,1,1,2,2,2,2,2];
-    for(let i=14;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
-    let valid=true;
-    for(let c=0;c<9;c++){
-      if(colCount[c]===2){
-        const i0=slots.findIndex(s=>s.c===c&&s.k===0);
-        const i1=slots.findIndex(s=>s.c===c&&s.k===1);
-        if(arr[i0]===arr[i1]){valid=false;break;}
-      }
+    const [lo,hi]=colRanges[c];
+    const nums=[];
+    while(nums.length<colCounts[c]){
+      const n=lo+Math.floor(rng()*(hi-lo+1));
+      if(!nums.includes(n)) nums.push(n);
     }
-    if(valid) rowAssign=arr;
+    nums.sort((a,b)=>a-b);
+    colNums.push(nums);
   }
-
-  // Deterministic guaranteed fallback: assign greedily row by row
-  if(!rowAssign){
-    rowAssign=new Array(15).fill(-1);
-    const rowFill=[0,0,0]; // how many slots each row has filled
-    // Process slots in column order; for cols with 2 slots, force them to different rows
-    for(let i=0;i<slots.length;i++){
-      const {c,k}=slots[i];
-      // Rows still needing numbers, sorted by fewest filled first (balance)
-      const candidates=[0,1,2].filter(r=>rowFill[r]<5).sort((a,b)=>rowFill[a]-rowFill[b]);
-      let chosen=-1;
-      for(const r of candidates){
-        // For cols with 2 slots: the two slots must go to different rows
-        if(colCount[c]===2){
-          const otherK=k===0?1:0;
-          const otherIdx=slots.findIndex(s=>s.c===c&&s.k===otherK);
-          if(otherIdx<i&&rowAssign[otherIdx]===r) continue; // already used this row for other slot
-        }
-        chosen=r;break;
-      }
-      if(chosen===-1) chosen=candidates[0]; // safety — shouldn't happen
-      rowAssign[i]=chosen;
-      rowFill[chosen]++;
+  // Place into 3x9: each row exactly 5 numbers
+  const grid=Array.from({length:3},()=>Array(9).fill(0));
+  const queue=[];
+  colNums.forEach((nums,c)=>nums.forEach(n=>queue.push({c,n})));
+  // Shuffle
+  for(let i=queue.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [queue[i],queue[j]]=[queue[j],queue[i]];
+  }
+  const rowCounts=[0,0,0];
+  const colUsed=Array.from({length:3},()=>new Set());
+  function assign(idx){
+    if(idx===queue.length) return rowCounts.every(r=>r===5);
+    const {c,n}=queue[idx];
+    const rows=[];
+    for(let r=0;r<3;r++) if(!colUsed[r].has(c)&&rowCounts[r]<5) rows.push(r);
+    for(const r of rows){
+      rowCounts[r]++;colUsed[r].add(c);grid[r][c]=n;
+      if(assign(idx+1)) return true;
+      rowCounts[r]--;colUsed[r].delete(c);grid[r][c]=0;
     }
-    // Verify and fix if row fill wrong (final safety pass)
-    for(let r=0;r<3;r++){
-      const mySlots=rowAssign.map((v,i)=>v===r?i:-1).filter(i=>i>=0);
-      while(mySlots.length>5){
-        // Remove a slot from this row that can be moved to a row with <5
-        for(let i=mySlots.length-1;i>=0;i--){
-          const si=mySlots[i];
-          const {c,k}=slots[si];
-          for(let r2=0;r2<3;r2++){
-            if(r2===r) continue;
-            const r2Slots=rowAssign.filter(v=>v===r2).length;
-            if(r2Slots>=5) continue;
-            if(colCount[c]===2){
-              const otherK=k===0?1:0;
-              const otherIdx=slots.findIndex(s=>s.c===c&&s.k===otherK);
-              if(rowAssign[otherIdx]===r2) continue;
-            }
-            rowAssign[si]=r2;mySlots.splice(i,1);break;
-          }
-          if(mySlots.length<=5) break;
-        }
-        break;
-      }
-    }
+    return false;
   }
-
-  // Step 5: Build grid
-  const grid=Array.from({length:3},()=>new Array(9).fill(0));
-  for(let i=0;i<slots.length;i++){
-    const {c,k}=slots[i];
-    const r=rowAssign[i];
-    if(r>=0&&r<3) grid[r][c]=colNums[c][k];
-  }
-
-  // Final strict verify — log any violation (should never trigger)
-  for(let r=0;r<3;r++){
-    const cnt=grid[r].filter(n=>n>0).length;
-    if(cnt!==5) console.error(`TICKET BUG: Card ${code} row ${r} has ${cnt} numbers (expected 5)`);
-  }
-
+  assign(0);
   return grid;
 }
 
-// Generate alphanumeric code from sequence number
-function seqToCode(seq){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const seed='TAMBOLA_'+seq;
-  const rng=seededRng(seed);
-  let code='';
-  for(let i=0;i<6;i++) code+=chars[Math.floor(rng()*chars.length)];
-  return code;
-}
-
-function codeToSeq(code,maxSeq){
-  // Search (for small ranges, precompute)
-  for(let i=1;i<=maxSeq;i++) if(seqToCode(i)===code.toUpperCase()) return i;
-  return null;
-}
-
-// ═══════════════════════════════════════════════════
-// GAME ID + DEFAULT PW GENERATION
-// ═══════════════════════════════════════════════════
-function genGameId(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let id='';for(let i=0;i<4;i++) id+=chars[Math.floor(Math.random()*chars.length)];
-  return id;
-}
-function genDefaultPW(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const rng=seededRng('HOSTPW'+Date.now());
-  let pw='';for(let i=0;i<5;i++) pw+=chars[Math.floor(rng()*chars.length)];
-  return pw;
-}
-
-// ═══════════════════════════════════════════════════
-// GAME STATE
-// ═══════════════════════════════════════════════════
-const PRIZE_DEFS=[
-  {id:'topline',name:'Top Line',icon:'1️⃣',desc:'First to complete row 1'},
-  {id:'midline',name:'Middle Line',icon:'2️⃣',desc:'First to complete row 2'},
-  {id:'botline',name:'Bottom Line',icon:'3️⃣',desc:'First to complete row 3'},
-  {id:'corners',name:'Corners',icon:'⬛',desc:'All 4 corner numbers'},
-  {id:'fullhouse',name:'Full House',icon:'🏠',desc:'All 15 numbers — set winners count for multiple'},
-  {id:'temperature',name:'Temperature 🌡',icon:'🌡️',desc:'Both highest AND lowest number on card are called'},
-  {id:'unlucky',name:'Most Unlucky',icon:'😬',desc:'Most uncalled numbers remaining at end'},
-];
-
-let gs={
-  active:false,
-  calledNums:new Set(),
-  calledOrder:[],
-  prizes:{},
-  enabledPrizes:{},
-  winnerCounts:{},
-  winOrder:0,
-  rangeFrom:1,rangeTo:100,
-  tts:true,
-  gameId:'',hostPW:'',
-  claims:{}, // claims[prizeId][cardCode] = {seq, code, ts, status:'pending'|'rejected'}
-};
-
-// Player local state
-let playerState={
-  code:'',seq:0,grid:null,marked:new Set(),
-  eligibleAt:{}, // eligibleAt[prizeId] = calledOrder.length at the moment tap made them eligible
-  claimStatus:{}, // claimStatus[prizeId] = 'pending'|'rejected'|'none'
-};
-
-// ═══════════════════════════════════════════════════
-// SCREEN NAVIGATION
-// ═══════════════════════════════════════════════════
-function show(id){
-  const prev=document.querySelector('.screen.active');
-  if(prev&&prev.id==='s-player'&&id!=='s-player'){
-    stopPlayerSync();
-    document.getElementById('player-ticket-wrap').style.display='none';
+// ===== PRIZE CHECK =====
+function checkPrize(pid, grid, markedSet){
+  // Prizes are based on player's MARKED numbers, not called numbers
+  switch(pid){
+    case 'topline': return grid[0].filter(x=>x>0).every(n=>markedSet.has(n));
+    case 'midline': return grid[1].filter(x=>x>0).every(n=>markedSet.has(n));
+    case 'botline': return grid[2].filter(x=>x>0).every(n=>markedSet.has(n));
+    case 'corners':{
+      const r0=grid[0].filter(x=>x>0);const r1=grid[1].filter(x=>x>0);
+      return [r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]].every(n=>markedSet.has(n));
+    }
+    case 'fullhouse': return grid.flat().filter(x=>x>0).every(n=>markedSet.has(n));
+    case 'temperature':{
+      const nums=grid.flat().filter(x=>x>0).sort((a,b)=>a-b);
+      return markedSet.has(nums[0])&&markedSet.has(nums[nums.length-1]);
+    }
+    case 'unlucky': return false; // host-only
   }
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+  return false;
 }
 
-// ═══════════════════════════════════════════════════
-// ENTRY FLOW — Game ID based
-// ═══════════════════════════════════════════════════
-function goCreateGame(){
-  try{
-    buildSetupUI();
-    document.getElementById('host-pw-inp').value=genDefaultPW();
-    show('s-creategame');
-  }catch(e){
-    showToast('Error: '+e.message);
-    console.error('goCreateGame error:',e);
-    alert('Create game error: '+e.message+'\n\nCheck console for details.');
-  }
-}
+// Check which prizes player is NEWLY eligible for after tapping a number
+function checkPlayerEligibility(newNum){
+  // Only check if player tapped this number RIGHT NOW (called this turn)
+  // "immediately" means: the last called number equals newNum
+  const lastCalled=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  if(newNum!==lastCalled) return; // tapped an old number, no new eligibility
 
-function cleanOldGames(){
-  // Delete any game older than 24 hours from Firebase
-  const cutoff=Date.now()-(24*60*60*1000);
-  db.ref('games').once('value').then(snap=>{
-    snap.forEach(child=>{
-      const d=child.val();
-      if(d&&d.ts&&d.ts<cutoff) db.ref('games/'+child.key).remove();
-    });
-  }).catch(()=>{});
-}
-
-function goJoinGame(){
-  const id=document.getElementById('join-game-id-inp').value.trim().toUpperCase();
-  if(id.length<3){showToast('⚠️ Enter a Game ID');return;}
-  showToast('🔍 Looking up game...');
-  cleanOldGames(); // silently clean up stale games
-  db.ref('games/'+id).once('value').then(snap=>{
-    const data=snap.val();
-    if(!data){showToast('❌ Game not found. Check the ID.');return;}
-    applyLiveSnapshot(data);
-    gs.gameId=id;
-    gs.hostPW=data.hostPW||'';
-    document.getElementById('jg-title').textContent='Game '+id;
-    document.getElementById('jg-status').textContent=
-      data.active?`🟢 Live · ${data.calledOrder.length} numbers called`:'⏳ Game not started yet';
-    document.getElementById('jg-card-inp').value='';
-    document.getElementById('jg-pw-inp').value='';
-    show('s-joingame');
-  }).catch(e=>{showToast('❌ Could not reach server. Check internet.');console.error(e);});
-}
-
-function goPlayerFromJoin(){
-  const val=document.getElementById('jg-card-inp').value.trim().toUpperCase();
-  if(!val){showToast('⚠️ Enter your card number or code');return;}
-  let code,seq;
-  if(/^\d+$/.test(val)){
-    seq=parseInt(val);
-    if(seq<gs.rangeFrom||seq>gs.rangeTo){showToast(`⚠️ Card must be between ${gs.rangeFrom} and ${gs.rangeTo}`);return;}
-    code=seqToCode(seq);
-  } else if(val.length===6){
-    code=val;seq=codeToSeq(code,gs.rangeTo);
-    if(!seq||seq<gs.rangeFrom||seq>gs.rangeTo){showToast('❌ Card not in this game');return;}
-  } else {showToast('⚠️ Enter card # or 6-char code');return;}
-  launchPlayer(code,seq);
-}
-
-function goHostFromJoin(){
-  const entered=document.getElementById('jg-pw-inp').value.trim().toUpperCase();
-  if(!entered){showToast('⚠️ Enter host password');return;}
-  if(entered!==gs.hostPW){showToast('❌ Wrong password');document.getElementById('jg-pw-inp').value='';return;}
-  buildHostGameUI();
-  show('s-hostgame');
-  startHostClaimsSync();
-}
-
-function launchPlayer(code,seq){
-  playerState.code=code;playerState.seq=seq;
-  playerState.grid=generateTicket(code);
-  playerState.lastSyncTs=null;
-  playerState.eligibleAt={};
-  playerState.claimStatus={};
-  const saved=localStorage.getItem('marks_'+code+'_'+(gs.gameId||''));
-  playerState.marked=saved?new Set(JSON.parse(saved)):new Set();
-  renderPlayerScreen();
-  show('s-player');
-  startPlayerSync();
-}
-
-function goDisplay(){
-  renderDisplayBoard();
-  show('s-display');
-}
-
-function goDisplayFromHost(){
-  renderDisplayBoard();
-  show('s-display');
-}
-
-function goprint(){
-  document.getElementById('print-from').value=gs.rangeFrom||1;
-  document.getElementById('print-to').value=Math.min(gs.rangeTo,gs.rangeFrom+19);
-  renderPrint();
-  show('s-print');
-}
-
-// ═══════════════════════════════════════════════════
-// SETUP UI
-// ═══════════════════════════════════════════════════
-function buildSetupUI(){
-  const cont=document.getElementById('prize-toggles');
-  cont.innerHTML='';
   PRIZE_DEFS.forEach(p=>{
-    if(!(p.id in gs.enabledPrizes)) gs.enabledPrizes[p.id]=true;
-    if(!(p.id in gs.winnerCounts)) gs.winnerCounts[p.id]=1;
-    const row=document.createElement('div');row.className='row';
-    const leftWrap=document.createElement('div');leftWrap.style.cssText='display:flex;align-items:center;gap:8px;flex:1';
-    const tog=document.createElement('button');
-    tog.className='toggle'+(gs.enabledPrizes[p.id]?' on':'');
-    tog.onclick=()=>{gs.enabledPrizes[p.id]=!gs.enabledPrizes[p.id];tog.classList.toggle('on',gs.enabledPrizes[p.id]);};
-    const nameEl=document.createElement('span');nameEl.className='row-label';
-    nameEl.textContent=`${p.icon} ${p.name}`;
-    leftWrap.append(tog,nameEl);
-    const stepWrap=document.createElement('div');stepWrap.style.cssText='display:flex;align-items:center;gap:4px';
-    const lbl=document.createElement('span');lbl.style.cssText='font-size:10px;color:var(--muted);white-space:nowrap';lbl.textContent='Winners:';
-    const btnM=document.createElement('button');btnM.className='sm-btn sm-btn-s';btnM.style.cssText='padding:2px 9px;font-size:16px;line-height:1.2';btnM.textContent='−';
-    const countDisp=document.createElement('span');countDisp.style.cssText='font-size:14px;font-weight:800;color:var(--accent);min-width:20px;text-align:center';countDisp.textContent=gs.winnerCounts[p.id];
-    const btnP=document.createElement('button');btnP.className='sm-btn sm-btn-s';btnP.style.cssText='padding:2px 9px;font-size:16px;line-height:1.2';btnP.textContent='+';
-    btnM.onclick=()=>{if(gs.winnerCounts[p.id]>1){gs.winnerCounts[p.id]--;countDisp.textContent=gs.winnerCounts[p.id];}};
-    btnP.onclick=()=>{if(gs.winnerCounts[p.id]<9){gs.winnerCounts[p.id]++;countDisp.textContent=gs.winnerCounts[p.id];}};
-    stepWrap.append(lbl,btnM,countDisp,btnP);
-    row.append(leftWrap,stepWrap);
-    cont.appendChild(row);
-  });
-  updateRangeInfo();
-  document.getElementById('range-from').oninput=updateRangeInfo;
-  document.getElementById('range-to').oninput=updateRangeInfo;
-}
-
-function updateRangeInfo(){
-  const f=parseInt(document.getElementById('range-from').value)||1;
-  const t=parseInt(document.getElementById('range-to').value)||100;
-  document.getElementById('range-info').textContent=`${Math.max(0,t-f+1)} cards active`;
-}
-
-function toggleTgl(key){
-  gs[key]=!gs[key];
-  document.getElementById('tgl-'+key).classList.toggle('on',gs[key]);
-}
-
-// ═══════════════════════════════════════════════════
-// HOST GAME
-// ═══════════════════════════════════════════════════
-function startHostGame(){
-  try{
-  const pw=document.getElementById('host-pw-inp').value.trim().toUpperCase();
-  if(!pw||pw.length<3){showToast('⚠️ Set a host password (min 3 chars)');return;}
-  gs.rangeFrom=Math.max(1,parseInt(document.getElementById('range-from').value)||1);
-  gs.rangeTo=Math.min(2000,parseInt(document.getElementById('range-to').value)||100);
-  if(gs.rangeFrom>gs.rangeTo){showToast('⚠️ Invalid range');return;}
-  // Generate unique Game ID
-  let id=genGameId(); // Firebase will overwrite if collision — rare with 4 chars, acceptable
-  gs.gameId=id;
-  gs.hostPW=pw;
-  gs.active=true;
-  gs.calledNums=new Set();
-  gs.calledOrder=[];
-  gs.prizes={};
-  gs.winOrder=0;
-  PRIZE_DEFS.forEach(p=>{
-    if(gs.enabledPrizes[p.id]){
-      const count=gs.winnerCounts[p.id]||1;
-      gs.prizes[p.id]=new Array(count).fill(null);
+    if(!gs.enabledPrizes[p.id]) return;
+    if(p.id==='unlucky') return;
+    const winners=gs.prizes[p.id]||[];
+    const maxW=gs.winnerCounts[p.id]||1;
+    if(winners.filter(w=>w.status==='accepted').length>=maxW) return; // prize closed
+    if(ps.eligibleAt[p.id]!==undefined) return; // already eligible
+    // Check eligibility with current marks
+    if(checkPrize(p.id, ps.grid, ps.marked)){
+      ps.eligibleAt[p.id]=gs.calledOrder.length;
+      savePlayerState();
     }
   });
-  // Delete ALL old games first, then write new one
-  const snapshot={
-    calledNums:[],
-    calledOrder:[],
-    prizes:Object.fromEntries(
-      Object.entries(gs.prizes).map(([k,v])=>[k,v.map(s=>null)])
-    ),
-    rangeFrom:gs.rangeFrom,rangeTo:gs.rangeTo,
-    active:gs.active,
-    hostPW:gs.hostPW,
-    gameId:gs.gameId,
-    ts:Date.now()
-  };
-  // Wipe all previous games, then write new one atomically
-  db.ref('games').once('value')
-    .then(snap=>{
-      const updates={};
-      snap.forEach(child=>{ updates['games/'+child.key]=null; }); // delete all old games
-      updates['games/'+id]=snapshot; // write new game
-      return db.ref('/').update(updates);
-    })
-    .then(()=>{
-      buildHostGameUI();
-      show('s-hostgame');
-      startHostClaimsSync();
-      showToast('🎱 Game '+id+' started!',3500);
-    })
-    .catch(e=>{
-      showToast('❌ Firebase error: '+e.message);
-      console.error('Firebase startHostGame error:',e);
-      alert('Firebase error: '+e.message);
+  renderPlayerPrizeGrid();
+}
+
+// ===== TICKET RENDER =====
+function renderTicketEl(grid, code, seq, calledSet, markedSet, prizeWinners, interactive){
+  const wrap=document.createElement('div');
+  wrap.className='ticket';
+  const wonPrizes=new Set();
+  if(prizeWinners){
+    Object.entries(prizeWinners).forEach(([pid,winners])=>{
+      if((winners||[]).some(w=>(w.code===code||w.seq===seq)&&w.status==='accepted'))
+        wonPrizes.add(pid);
     });
-  }catch(e){showToast('Error: '+e.message);alert('startHostGame JS error: '+e.message);console.error(e);}
-}
-
-function buildHostGameUI(){
-  document.getElementById('hg-game-id').textContent=gs.gameId||'----';
-  const board=document.getElementById('hg-board');board.innerHTML='';
-  for(let i=1;i<=90;i++){
-    const d=document.createElement('div');d.className='cb-num';d.id='cb-'+i;d.textContent=i;
-    if(gs.calledNums.has(i)) d.classList.add('called');
-    board.appendChild(d);
   }
-  renderHostPrizes();
-  renderClaimsPanel();
-  const last=gs.calledOrder[gs.calledOrder.length-1];
-  document.getElementById('hg-last-num').textContent=last||'—';
-  document.getElementById('call-btn').disabled=gs.calledNums.size>=90;
-  document.getElementById('hg-called-count').textContent=gs.calledNums.size+' called';
-  document.getElementById('winners-flash').classList.remove('show');
-  buildAllCardsList();
-}
-
-function buildAllCardsList(){
-  const cont=document.getElementById('all-cards-list');
-  if(!cont) return;
-  cont.innerHTML='';
-  for(let seq=gs.rangeFrom;seq<=gs.rangeTo;seq++){
-    const code=seqToCode(seq);
-    const hasWon=Object.values(gs.prizes).some(slots=>slots.some(s=>s&&s.code===code));
-    const chip=document.createElement('div');
-    chip.style.cssText=`padding:3px 7px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ${hasWon?'var(--green)':'var(--border)'};background:${hasWon?'rgba(57,211,83,.15)':'var(--card2)'};color:${hasWon?'var(--green)':'var(--muted)'}`;
-    chip.textContent='#'+seq+' '+code;
-    chip.title='Card #'+seq;
-    chip.onclick=()=>hostViewCard(seq,code);
-    cont.appendChild(chip);
-  }
-}
-
-function toggleAllCards(){
-  const w=document.getElementById('all-cards-wrap');
-  if(!w) return;
-  const show=w.style.display==='none';
-  w.style.display=show?'block':'none';
-  if(show) buildAllCardsList();
-}
-
-function callNumber(){
-  const remaining=[];
-  for(let i=1;i<=90;i++) if(!gs.calledNums.has(i)) remaining.push(i);
-  if(remaining.length===0){showToast('All 90 numbers called!');document.getElementById('call-btn').disabled=true;broadcastGameState();return;}
-  const n=remaining[Math.floor(Math.random()*remaining.length)];
-  gs.calledNums.add(n);gs.calledOrder.push(n);
-  document.getElementById('hg-last-num').textContent=n;
-  document.getElementById('hg-last-num').style.animation='none';
-  requestAnimationFrame(()=>{document.getElementById('hg-last-num').style.animation='';});
-  document.getElementById('cb-'+n).classList.add('called');
-  document.getElementById('hg-called-count').textContent=gs.calledNums.size+' called';
-  if(gs.tts) speak(n);
-  updateDisplayBoard(n);
-  broadcastGameState();
-  if(gs.calledNums.size===90){document.getElementById('call-btn').disabled=true;showToast('🎱 All 90 numbers called!');}
-}
-
-function speak(n){
-  if(!window.speechSynthesis)return;
-  const u=new SpeechSynthesisUtterance(String(n));u.rate=.85;u.pitch=1.1;
-  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
-}
-
-function gridNums(grid){
-  const nums=[];
-  for(let r=0;r<3;r++)for(let c=0;c<9;c++)if(grid[r][c])nums.push(grid[r][c]);
-  return nums;
-}
-
-function getCorners(grid){
-  // Top-left, top-right of row 0; bottom-left, bottom-right of row 2
-  const corners=[];
-  // First and last number in row 0
-  const row0=grid[0].filter(n=>n>0);
-  const row2=grid[2].filter(n=>n>0);
-  if(row0.length>=2){corners.push(row0[0],row0[row0.length-1]);}
-  if(row2.length>=2){corners.push(row2[0],row2[row2.length-1]);}
-  return corners;
-}
-
-function showWinnersFlash(winners){
-  const flash=document.getElementById('winners-flash');
-  flash.classList.add('show');
-  flash.innerHTML=`<div class="wf-title">🎉 New Winner${winners.length>1?'s':''}!</div>`;
-  winners.forEach(w=>{
-    const prize=PRIZE_DEFS.find(p=>p.id===w.prize);
-    const slotLabel=w.slot>0?` (Winner ${w.slot+1})`:'';
-    const item=document.createElement('div');
-    item.className='wf-item';
-    item.style.cssText='cursor:pointer;color:var(--green);font-weight:700';
-    item.textContent=`${prize?.icon||'🏆'} ${prize?.name||w.prize}${slotLabel}: Card #${w.seq} · ${w.code} — tap to view`;
-    item.onclick=()=>hostViewCard(w.seq,w.code);
-    flash.appendChild(item);
-  });
-  if(flashTimer) clearTimeout(flashTimer);
-  flashTimer=setTimeout(()=>flash.classList.remove('show'),8000);
-}
-let flashTimer=null;
-
-function renderHostPrizes(){
-  const cont=document.getElementById('hg-prizes');cont.innerHTML='';
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    const row=document.createElement('div');row.className='prize-row';
-
-    const left=document.createElement('div');
-    left.style.cssText='display:flex;align-items:center;gap:6px;flex:1;min-width:0';
-    const allFilled=slots.every(s=>s!==null);
-    const anyFilled=slots.some(s=>s!==null);
-
-    // Status icon
-    const statusIcon=document.createElement('span');
-    statusIcon.style.cssText='font-size:16px;flex-shrink:0';
-    if(allFilled) statusIcon.textContent='✅';
-    else if(anyFilled) statusIcon.textContent='🔶';
-    else statusIcon.textContent='○';
-
-    const nameEl=document.createElement('div');
-    nameEl.style.cssText=`font-size:13px;font-weight:700;color:${allFilled?'var(--green)':anyFilled?'var(--accent)':'var(--text)'}`;
-    nameEl.textContent=`${def?.name||pid}`;
-    left.append(statusIcon,nameEl);
-
-    const right=document.createElement('div');
-    right.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;max-width:55%';
-
-    if(allFilled){
-      // Show all winners as chips
-      const isShared=slots.length>1;
-      const chipRow=document.createElement('div');
-      chipRow.style.cssText='display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end';
-      if(isShared){
-        const lbl=document.createElement('span');lbl.className='shared-label';lbl.textContent='Shared:';
-        chipRow.appendChild(lbl);
-      }
-      slots.forEach(w=>{
-        if(!w) return;
-        const chip=document.createElement('span');chip.className='winner-chip';
-        chip.innerHTML=`✅ #${w.seq}`;
-        chip.title=w.code;
-        chip.onclick=()=>hostViewCard(w.seq,w.code);
-        chipRow.appendChild(chip);
-      });
-      right.appendChild(chipRow);
-    } else {
-      // Show filled slots + open slots
-      slots.forEach((w,i)=>{
-        if(w){
-          const chip=document.createElement('span');chip.className='winner-chip';
-          chip.innerHTML=`✅ #${w.seq}`;chip.title=w.code;
-          chip.onclick=()=>hostViewCard(w.seq,w.code);
-          right.appendChild(chip);
-        } else {
-          // Manual close button for hard-copy cards
-          const closeBtn=document.createElement('button');
-          closeBtn.className='sm-btn sm-btn-s';
-          closeBtn.style.cssText='font-size:10px;padding:3px 7px;white-space:nowrap';
-          closeBtn.textContent='+ Manual Winner';
-          closeBtn.onclick=()=>hostManualClose(pid,i);
-          right.appendChild(closeBtn);
-        }
-      });
-    }
-
-    row.append(left,right);cont.appendChild(row);
-  }
-}
-
-// Host manually closes a prize slot (for hard-copy card holders)
-function hostManualClose(pid,slot){
-  const val=prompt(`Enter card # or code for ${PRIZE_DEFS.find(p=>p.id===pid)?.name} winner:`);
-  if(!val) return;
-  const v=val.trim().toUpperCase();
-  let seq,code;
-  if(/^\d+$/.test(v)){seq=parseInt(v);code=seqToCode(seq);}
-  else if(v.length===6){code=v;seq=codeToSeq(code,gs.rangeTo)||0;}
-  else{showToast('⚠️ Enter card # or 6-char code');return;}
-  const slots=gs.prizes[pid];
-  if(!slots){showToast('Prize not found');return;}
-  slots[slot]={seq,code,name:`Card ${seq}`,order:gs.winOrder++};
-  // Clear any pending claim for this prize+code
-  if(gs.claims[pid]) delete gs.claims[pid][code];
-  renderHostPrizes();
-  buildAllCardsList();
-  renderClaimsPanel();
-  broadcastGameState();
-  showToast(`✅ ${PRIZE_DEFS.find(p=>p.id===pid)?.name} awarded to Card #${seq}`);
-}
-
-// ─── HOST CLAIMS PANEL ─────────────────────────────
-function renderClaimsPanel(){
-  const panel=document.getElementById('hg-claims-panel');
-  const body=document.getElementById('hg-claims-body');
-  if(!panel||!body) return;
-
-  // Collect all pending claims, grouped by prize
-  const grouped={}; // grouped[pid] = [{seq,code,ts}]
-  for(const [pid,cardMap] of Object.entries(gs.claims||{})){
-    if(!gs.prizes[pid]) continue; // prize not active
-    const prizeSlots=gs.prizes[pid];
-    const open=prizeSlots.some(s=>s===null);
-    if(!open) continue; // prize already fully closed
-    for(const [code,claim] of Object.entries(cardMap||{})){
-      if(claim.status!=='pending') continue;
-      if(!grouped[pid]) grouped[pid]=[];
-      grouped[pid].push(claim);
-    }
-  }
-
-  const pids=Object.keys(grouped);
-  if(pids.length===0){panel.classList.remove('show');return;}
-  panel.classList.add('show');
-  body.innerHTML='';
-
-  pids.forEach(pid=>{
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    const group=document.createElement('div');group.className='claim-prize-group';
-    const label=document.createElement('div');label.className='claim-prize-label';
-    label.innerHTML=`<span style="font-size:14px">${def?.icon||'🏆'}</span><span>${def?.name||pid}</span><span style="font-size:10px;color:var(--muted)">(${grouped[pid].length} claim${grouped[pid].length>1?'s':''})</span>`;
-    group.appendChild(label);
-    const cardsRow=document.createElement('div');cardsRow.className='claim-cards-row';
-    grouped[pid].sort((a,b)=>a.ts-b.ts).forEach(claim=>{
-      const chip=document.createElement('div');chip.className='claim-card-chip';
-      chip.innerHTML=`<span class="claim-card-chip-num">#${claim.seq}</span><span style="font-size:10px;color:var(--muted)">${claim.code}</span>`;
-      chip.onclick=()=>openClaimReview(pid,claim);
-      cardsRow.appendChild(chip);
-    });
-    group.appendChild(cardsRow);
-    body.appendChild(group);
-  });
-}
-
-// State for currently reviewing claim
-let reviewingClaim={pid:null,claim:null};
-
-function openClaimReview(pid,claim){
-  reviewingClaim={pid,claim};
-  const def=PRIZE_DEFS.find(p=>p.id===pid);
-  document.getElementById('rcm-title').textContent=`Review: ${def?.name||pid}`;
-
-  const cardView=document.getElementById('rcm-card-view');
-  cardView.innerHTML='';
-
-  const grid=generateTicket(claim.code);
-  const playerMarked=new Set(claim.markedNums||[]);
-
-  // Work out which numbers are REQUIRED for this prize
-  const required=new Set();
-  if(pid==='topline') grid[0].forEach(n=>{if(n)required.add(n);});
-  else if(pid==='midline') grid[1].forEach(n=>{if(n)required.add(n);});
-  else if(pid==='botline') grid[2].forEach(n=>{if(n)required.add(n);});
-  else if(pid==='corners') getCorners(grid).forEach(n=>required.add(n));
-  else if(pid==='fullhouse') gridNums(grid).forEach(n=>required.add(n));
-  else if(pid==='temperature'){
-    const nums=gridNums(grid);
-    required.add(Math.max(...nums));
-    required.add(Math.min(...nums));
-  }
-
-  // Verification checks
-  const requiredArr=[...required];
-  const allCalled=requiredArr.every(n=>gs.calledNums.has(n));
-  const allTapped=requiredArr.every(n=>playerMarked.has(n));
-  const noFalseTaps=[...playerMarked].every(n=>gs.calledNums.has(n)); // no uncalled numbers tapped
-  const valid=allCalled&&allTapped&&noFalseTaps;
-
-  // Verification summary
-  const summary=document.createElement('div');
-  summary.style.cssText='display:flex;flex-direction:column;gap:4px;margin-bottom:10px';
-
-  const checks=[
-    {label:'All required numbers called by host', pass:allCalled},
-    {label:'Player tapped all required numbers', pass:allTapped},
-    {label:'No uncalled numbers tapped', pass:noFalseTaps},
-  ];
-  checks.forEach(({label,pass})=>{
+  for(let r=0;r<3;r++){
     const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600';
-    row.innerHTML=`<span style="font-size:14px">${pass?'✅':'❌'}</span><span style="color:${pass?'var(--green)':'var(--red)'}">${label}</span>`;
-    summary.appendChild(row);
-  });
-
-  // Overall verdict
-  const verdict=document.createElement('div');
-  verdict.style.cssText=`margin-top:6px;padding:8px 12px;border-radius:10px;font-size:13px;font-weight:800;text-align:center;background:${valid?'rgba(57,211,83,.15)':'rgba(255,68,68,.12)'};color:${valid?'var(--green)':'var(--red)'};border:1.5px solid ${valid?'rgba(57,211,83,.3)':'rgba(255,68,68,.3)'}`;
-  verdict.textContent=valid?'✅ Claim looks VALID':'⚠️ Claim looks INVALID — verify before accepting';
-  summary.appendChild(verdict);
-  cardView.appendChild(summary);
-
-  // Prize info line
-  const info=document.createElement('div');
-  info.style.cssText='font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center';
-  info.textContent=`Card #${claim.seq} · ${claim.code} · Required: ${requiredArr.join(', ')}`;
-  cardView.appendChild(info);
-
-  // Render ticket: show player's taps as marked, required-but-not-tapped highlighted in red
-  // Build a custom ticket render
-  const ticket=document.createElement('div');ticket.className='ticket';
-  const hdr=document.createElement('div');hdr.className='ticket-header';
-  const seqEl=document.createElement('div');seqEl.className='ticket-seq';seqEl.textContent='#'+claim.seq;
-  const codeEl=document.createElement('div');codeEl.className='ticket-code';codeEl.textContent=claim.code;
-  hdr.append(seqEl,codeEl);ticket.appendChild(hdr);
-  const tgrid=document.createElement('div');tgrid.className='ticket-grid';
-
-  for(let r=0;r<3;r++){
+    row.className='ticket-row';
     for(let c=0;c<9;c++){
       const n=grid[r][c];
       const cell=document.createElement('div');
-      if(n===0){cell.className='tnum empty';}
-      else{
+      cell.className='ticket-cell'+(n===0?' blank':'');
+      if(n>0){
         cell.textContent=n;
-        const isTapped=playerMarked.has(n);
-        const isCalled=gs.calledNums.has(n);
-        const isRequired=required.has(n);
-        // Colour coding:
-        // Green fill = tapped AND called (correct)
-        // Red outline = required but NOT tapped (missed)
-        // Orange outline = tapped but NOT called (cheat/error)
-        // Grey = not relevant, not tapped
-        let cls='tnum';
-        if(isTapped&&isCalled) cls+=' marked'; // correct tap — orange fill
-        else if(isRequired&&!isTapped) cls+=' callable'; // missed required — pulse red outline
-        cell.className=cls;
-        // Override callable to red for missed required
-        if(isRequired&&!isTapped) cell.style.cssText='box-shadow:inset 0 0 0 2px var(--red);color:var(--red);animation:none';
-        // Flag tapped-but-uncalled as a bright warning
-        if(isTapped&&!isCalled) cell.style.cssText='background:rgba(255,68,68,.3);color:var(--red);border:2px solid var(--red)';
-      }
-      tgrid.appendChild(cell);
-    }
-  }
-  ticket.appendChild(tgrid);
-
-  // Legend
-  const legend=document.createElement('div');
-  legend.style.cssText='display:flex;flex-wrap:wrap;gap:8px;padding:8px 10px;background:var(--card2);border-top:1px solid var(--border);font-size:10px;font-weight:600';
-  legend.innerHTML=`
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:var(--accent);border-radius:2px;display:inline-block"></span>Tapped ✓</span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border:2px solid var(--red);border-radius:2px;display:inline-block"></span>Required, not tapped</span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:rgba(255,68,68,.3);border-radius:2px;display:inline-block"></span>Tapped but not called!</span>
-  `;
-  ticket.appendChild(legend);
-  cardView.appendChild(ticket);
-
-  // Auto-disable accept button if claim is clearly invalid
-  document.getElementById('rcm-accept-btn').style.opacity=valid?'1':'0.5';
-  document.getElementById('rcm-accept-btn').title=valid?'':'Claim appears invalid — check carefully';
-
-  document.getElementById('rcm-prize-info').textContent='';
-  document.getElementById('modal-review-claim').classList.add('show');
-}
-
-function hostAcceptClaim(){
-  const {pid,claim}=reviewingClaim;
-  if(!pid||!claim) return;
-  closeModal('modal-review-claim');
-  const slots=gs.prizes[pid];
-  if(!slots){showToast('Prize not found');return;}
-  const nextSlot=slots.findIndex(s=>s===null);
-  if(nextSlot===-1){showToast('Prize already fully claimed');return;}
-  slots[nextSlot]={seq:claim.seq,code:claim.code,name:`Card ${claim.seq}`,order:gs.winOrder++};
-  // Update claim status to accepted
-  if(!gs.claims[pid]) gs.claims[pid]={};
-  gs.claims[pid][claim.code]={...claim,status:'accepted'};
-  renderHostPrizes();
-  renderClaimsPanel();
-  buildAllCardsList();
-  showWinnersFlash([{prize:pid,seq:claim.seq,code:claim.code,slot:nextSlot}]);
-  broadcastGameState();
-  showToast(`✅ Accepted! Card #${claim.seq} wins ${PRIZE_DEFS.find(p=>p.id===pid)?.name}`);
-}
-
-function hostRejectClaim(){
-  const {pid,claim}=reviewingClaim;
-  if(!pid||!claim) return;
-  closeModal('modal-review-claim');
-  if(!gs.claims[pid]) gs.claims[pid]={};
-  gs.claims[pid][claim.code]={...claim,status:'rejected'};
-  // Clear player's eligibleAt so they can't re-claim unless they re-earn it
-  broadcastGameState();
-  renderClaimsPanel();
-  showToast(`❌ Claim rejected for Card #${claim.seq}`);
-}
-
-function validateCard(){
-  const val=document.getElementById('validate-inp').value.trim().toUpperCase();
-  let seq,code;
-  if(/^\d+$/.test(val)){
-    seq=parseInt(val);
-    if(seq<1||seq>2000){showToast('Card # out of range');return;}
-    code=seqToCode(seq);
-  } else if(val.length===6){
-    code=val;seq=codeToSeq(code,2000);
-    if(!seq){showToast('Card not found');return;}
-  } else {showToast('Enter sequence # or 6-char code');return;}
-  hostViewCard(seq,code);
-}
-
-function hostViewCard(seq,code){
-  const grid=generateTicket(code);
-  const res=document.getElementById('validate-result');
-  res.innerHTML='';
-  const prizeStatus=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    if(slots.some(s=>s&&s.code===code)) prizeStatus.push({pid,status:'won'});
-  }
-  const wrap=document.createElement('div');wrap.style.marginTop='8px';
-  document.getElementById('validate-inp').value=String(seq);
-  wrap.appendChild(renderTicketEl(grid,code,seq,gs.calledNums,new Set(),prizeStatus));
-  if(prizeStatus.length>0){
-    const ps=document.createElement('div');ps.style.cssText='margin-top:8px;display:flex;flex-wrap:wrap;gap:6px';
-    prizeStatus.forEach(({pid})=>{
-      const def=PRIZE_DEFS.find(p=>p.id===pid);
-      const b=document.createElement('span');b.className='badge badge-g';
-      b.textContent=(def?.icon||'')+' Won: '+def?.name;
-      ps.appendChild(b);
-    });
-    wrap.appendChild(ps);
-  }
-  res.appendChild(wrap);
-  res.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function confirmEndGame(){document.getElementById('modal-end').classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-function endGame(){closeModal('modal-end');gs.active=false;stopHostClaimsSync();if(gs.gameId){db.ref('games/'+gs.gameId).remove().then(()=>console.log('Game '+gs.gameId+' deleted from Firebase')).catch(e=>console.error(e));}gs.gameId='';gs.hostPW='';gs.claims={};show('s-landing');}
-
-// ═══════════════════════════════════════════════════
-// PLAYER SCREEN
-// ═══════════════════════════════════════════════════
-function renderPlayerScreen(){
-  document.getElementById('player-title').textContent=`Card ${playerState.code}`;
-  const lastEl=document.getElementById('player-last-num');
-  if(lastEl) lastEl.textContent=gs.calledOrder.length>0?gs.calledOrder[gs.calledOrder.length-1]:'—';
-
-  const wrap=document.getElementById('player-ticket-wrap');
-  wrap.style.display='block';
-  wrap.innerHTML='';
-  const myWins=getPlayerPrizes();
-  wrap.appendChild(renderTicketEl(playerState.grid,playerState.code,playerState.seq,gs.calledNums,playerState.marked,myWins,true));
-
-  // After render: measure topbar height, position ticket below it, push prizes below ticket
-  requestAnimationFrame(()=>{
-    const topbar=document.querySelector('.player-topbar');
-    const topH=topbar?topbar.getBoundingClientRect().bottom:80;
-    wrap.style.top=topH+'px';
-    const ticketH=wrap.getBoundingClientRect().height;
-    const spacer=document.getElementById('player-ticket-spacer');
-    if(spacer) spacer.style.height=(ticketH)+'px';
-  });
-
-  renderPlayerPrizes();
-  const winAlert=document.getElementById('win-alert');
-  if(myWins.length>0){
-    winAlert.classList.add('show');
-    document.getElementById('win-alert-title').textContent='🎉 Won: '+myWins.map(p=>PRIZE_DEFS.find(x=>x.id===p.pid)?.name).join(', ')+'!';
-  } else winAlert.classList.remove('show');
-}
-
-// Player only sees: prizes won globally (by anyone) vs prizes still open.
-// They see if THEIR card won a prize. No "eligible" concept.
-function getPlayerPrizes(){
-  const results=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    const myWin=slots.find(s=>s&&s.code===playerState.code);
-    if(myWin) results.push({pid,status:'won',order:myWin.order});
-  }
-  return results.sort((a,b)=>(a.order??999)-(b.order??999));
-}
-
-// Returns all prizes with their global status (won by anyone / still open)
-function getAllPrizeStatus(){
-  const results=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    const filledSlots=slots.filter(s=>s!==null);
-    const open=slots.some(s=>s===null);
-    results.push({pid,filledSlots,open,totalSlots:slots.length});
-  }
-  return results;
-}
-
-function renderPlayerPrizes(){
-  const cont=document.getElementById('player-prizes');cont.innerHTML='';
-  const myWins=getPlayerPrizes();
-  const myWinPids=new Set(myWins.map(w=>w.pid));
-  const allStatus=getAllPrizeStatus();
-  if(allStatus.length===0){
-    cont.innerHTML='<span style="font-size:12px;color:var(--muted)">Waiting for game to start...</span>';
-    return;
-  }
-  const grid=document.createElement('div');
-  grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px';
-  allStatus.forEach(({pid,filledSlots,open,totalSlots})=>{
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    const cell=document.createElement('div');
-    const isMine=myWinPids.has(pid);
-    const allClaimed=!open;
-    const isEligible=(pid in playerState.eligibleAt)&&!isMine&&open;
-    const claimSt=playerState.claimStatus[pid]||'none';
-    const isPending=claimSt==='pending';
-    const isRejected=claimSt==='rejected';
-
-    let borderColor=isMine?'var(--green)':isEligible?'var(--green)':allClaimed?'var(--border)':'var(--border)';
-    let bgColor=isMine?'rgba(57,211,83,.12)':isEligible?'rgba(57,211,83,.07)':allClaimed?'rgba(255,255,255,.03)':'var(--card2)';
-    cell.style.cssText=`display:flex;flex-direction:column;padding:6px 8px;border-radius:10px;border:1.5px solid ${borderColor};background:${bgColor}`;
-
-    const topRow=document.createElement('div');
-    topRow.style.cssText='display:flex;align-items:center;justify-content:space-between';
-    const nameEl=document.createElement('span');
-    nameEl.style.cssText=`font-size:11px;font-weight:700;color:${isMine?'var(--green)':allClaimed?'var(--muted)':'var(--text)'}`;
-    nameEl.textContent=`${def?.icon||''} ${def?.name||pid}`;
-
-    const st=document.createElement('span');
-    st.style.cssText='font-size:13px;margin-left:4px';
-    if(isMine) st.textContent='✅';
-    else if(isPending) st.textContent='⏳';
-    else if(isRejected) st.textContent='❌';
-    else if(allClaimed) st.textContent='🔒';
-    else if(isEligible) st.textContent='🎯';
-    else if(filledSlots.length>0) st.textContent=`${filledSlots.length}/${totalSlots}`;
-    else{st.style.cssText='font-size:10px;color:var(--muted)';st.textContent='○';}
-    topRow.append(nameEl,st);
-    cell.appendChild(topRow);
-
-    // Claim button
-    if(isEligible&&!isPending&&!isMine){
-      const btn=document.createElement('button');
-      btn.className='claim-prize-btn eligible';
-      btn.textContent='Claim!';
-      btn.onclick=(e)=>{e.stopPropagation();submitClaim(pid);};
-      cell.appendChild(btn);
-    } else if(isPending){
-      const btn=document.createElement('button');
-      btn.className='claim-prize-btn pending';
-      btn.textContent='⏳ Pending...';
-      cell.appendChild(btn);
-    } else if(isRejected){
-      const btn=document.createElement('button');
-      btn.className='claim-prize-btn rejected';
-      btn.textContent='❌ Rejected';
-      cell.appendChild(btn);
-    } else if(isMine){
-      const btn=document.createElement('button');
-      btn.className='claim-prize-btn won';
-      btn.textContent='✅ Won!';
-      cell.appendChild(btn);
-    }
-
-    grid.appendChild(cell);
-  });
-  cont.appendChild(grid);
-}
-
-function updateClaimBtn(){}// Claim button hidden; auto-detect handles winners
-
-function doClaim(){} // No manual claim needed
-
-function resetMarks(){
-  if(!confirm('Reset all marked numbers?'))return;
-  playerState.marked=new Set();
-  playerState.eligibleAt={};
-  playerState.claimStatus={};
-  localStorage.removeItem('marks_'+playerState.code+'_'+(gs.gameId||''));
-  renderPlayerScreen();
-  showToast('Marks reset');
-}
-
-// ═══════════════════════════════════════════════════
-// TICKET RENDERING
-// ═══════════════════════════════════════════════════
-function renderTicketEl(grid,code,seq,calledSet,markedSet,prizeStatus,interactive=false){
-  const wrap=document.createElement('div');wrap.style.width='100%';
-  const ticket=document.createElement('div');ticket.className='ticket';
-  const hdr=document.createElement('div');hdr.className='ticket-header';
-  const seqEl=document.createElement('div');seqEl.className='ticket-seq';seqEl.textContent='#'+seq;
-  const codeEl=document.createElement('div');codeEl.className='ticket-code';codeEl.textContent=code;
-  hdr.append(seqEl,codeEl);ticket.appendChild(hdr);
-  const tgrid=document.createElement('div');tgrid.className='ticket-grid';
-  const winHighlights=new Set();
-  const cornerHighlights=new Set();
-  prizeStatus.forEach(({pid})=>{
-    if(pid==='topline') grid[0].forEach(n=>{if(n)winHighlights.add(n);});
-    if(pid==='midline') grid[1].forEach(n=>{if(n)winHighlights.add(n);});
-    if(pid==='botline') grid[2].forEach(n=>{if(n)winHighlights.add(n);});
-    if(pid==='corners') getCorners(grid).forEach(n=>cornerHighlights.add(n));
-    if(pid==='fullhouse'||pid==='unlucky') gridNums(grid).forEach(n=>winHighlights.add(n));
-    if(pid==='temperature'){const nums=gridNums(grid);cornerHighlights.add(Math.max(...nums));cornerHighlights.add(Math.min(...nums));}
-  });
-
-  for(let r=0;r<3;r++){
-    for(let c=0;c<9;c++){
-      const n=grid[r][c];
-      const cell=document.createElement('div');
-      if(n===0){cell.className='tnum empty';cell.textContent='';}
-      else{
-        const isMarked=markedSet.has(n);
-        const isCalled=!interactive&&calledSet.has(n);
-        const isCallable=interactive&&calledSet.has(n)&&!isMarked;
-        const isWin=winHighlights.has(n);
-        const isCorner=cornerHighlights.has(n);
-        cell.textContent=n;
-        let cls='tnum';
-        if(isCorner&&(isMarked||isCalled)) cls+=' corner-highlight';
-        else if(isWin&&(isMarked||isCalled)) cls+=' win-highlight';
-        else if(isMarked||isCalled) cls+=' marked';
-        else if(isCallable) cls+=' callable';
-        cell.className=cls;
         if(interactive){
-          cell.onclick=()=>{
-            if(playerState.marked.has(n)){
-              playerState.marked.delete(n);
-            } else if(gs.calledNums.has(n)){
-              playerState.marked.add(n);
-              // Check prize eligibility IMMEDIATELY on this tap
-              checkPlayerEligibilityOnTap(n);
-            }
-            localStorage.setItem('marks_'+playerState.code+'_'+(gs.gameId||''),JSON.stringify([...playerState.marked]));
-            renderPlayerScreen();
-          };
+          const isCalled=calledSet&&calledSet.has(n);
+          const isMarked=markedSet&&markedSet.has(n);
+          if(isMarked) cell.classList.add('marked');
+          else if(isCalled) cell.classList.add('callable');
+          cell.addEventListener('click',()=>playerTapNumber(n));
+        } else {
+          if(calledSet&&calledSet.has(n)) cell.classList.add('called-only');
+          if(markedSet&&markedSet.has(n)) cell.classList.add('marked');
+        }
+        // Prize highlights
+        if(wonPrizes.has('fullhouse')) cell.classList.add('win-hi');
+        else {
+          if(r===0&&wonPrizes.has('topline')) cell.classList.add('win-hi');
+          if(r===1&&wonPrizes.has('midline')) cell.classList.add('win-hi');
+          if(r===2&&wonPrizes.has('botline')) cell.classList.add('win-hi');
+          if(wonPrizes.has('corners')){
+            const r0=grid[0].filter(x=>x>0);const r1=grid[1].filter(x=>x>0);
+            const cn=[r0[0],r0[r0.length-1],r1[0],r1[r1.length-1]];
+            if(cn.includes(n)) cell.classList.add('corner-hi');
+          }
         }
       }
-      tgrid.appendChild(cell);
+      row.appendChild(cell);
     }
+    wrap.appendChild(row);
   }
-  ticket.appendChild(tgrid);
-  wrap.appendChild(ticket);
+  const codeEl=document.createElement('div');
+  codeEl.className='ticket-code';
+  codeEl.textContent='#'+seq+' · '+code;
+  wrap.appendChild(codeEl);
   return wrap;
 }
 
-// Called immediately when player taps a number.
-// Checks if this tap completes any open prize. If so, marks them eligible NOW.
-// Eligibility is only valid at the INSTANT the completing tap happens.
-function checkPlayerEligibilityOnTap(tappedNum){
-  const grid=playerState.grid;
-  const marked=playerState.marked; // already includes tappedNum
-  const calledNow=gs.calledNums;
-
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    // Skip if prize already won by anyone
-    if(slots.every(s=>s!==null)) continue;
-    // Skip if player already claimed/won this prize
-    if(playerState.claimStatus[pid]==='pending') continue;
-    const myWin=slots.find(s=>s&&s.code===playerState.code);
-    if(myWin) continue;
-    // Skip if already eligible (don't double-set)
-    if(pid in playerState.eligibleAt) continue;
-
-    // Check if player's MARKED numbers (not just called) satisfy the prize
-    const markedSet=marked;
-    let eligible=false;
-    if(pid==='topline') eligible=grid[0].every(n=>n===0||markedSet.has(n));
-    else if(pid==='midline') eligible=grid[1].every(n=>n===0||markedSet.has(n));
-    else if(pid==='botline') eligible=grid[2].every(n=>n===0||markedSet.has(n));
-    else if(pid==='corners') eligible=getCorners(grid).every(n=>markedSet.has(n));
-    else if(pid==='fullhouse') eligible=gridNums(grid).every(n=>markedSet.has(n));
-    else if(pid==='temperature'){
-      const nums=gridNums(grid);
-      eligible=markedSet.has(Math.max(...nums))&&markedSet.has(Math.min(...nums));
-    }
-
-    if(eligible){
-      // ALSO verify all marked numbers are actually called (player can't mark uncalled)
-      // This is already enforced in onclick, but double-check
-      const allValid=[...markedSet].every(n=>calledNow.has(n));
-      if(allValid){
-        playerState.eligibleAt[pid]=gs.calledOrder.length; // snapshot call count at eligibility moment
-      }
-    }
-  }
+// ===== PRIZE SETUP UI =====
+function buildPrizeSetup(){
+  const c=document.getElementById('prize-setup');c.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    const row=document.createElement('div');row.className='prize-setup-row';
+    const tog=document.createElement('div');tog.className='prize-toggle on';tog.id='ps-tog-'+p.id;
+    tog.onclick=()=>tog.classList.toggle('on');
+    const nameCol=document.createElement('div');nameCol.style.flex='1';
+    nameCol.innerHTML='<div style="font-weight:600;font-size:.9rem">'+p.name+'</div><div style="font-size:.72rem;color:var(--text3)">'+p.rule+'</div>';
+    const step=document.createElement('div');step.className='stepper';
+    const minus=document.createElement('button');minus.className='stepper-btn';minus.textContent='−';
+    const val=document.createElement('span');val.className='stepper-val';val.id='ps-cnt-'+p.id;val.textContent='1';
+    const plus=document.createElement('button');plus.className='stepper-btn';plus.textContent='+';
+    minus.onclick=()=>{let v=parseInt(val.textContent);if(v>1)val.textContent=v-1;};
+    plus.onclick=()=>{let v=parseInt(val.textContent);if(v<9)val.textContent=v+1;};
+    step.append(minus,val,plus);
+    row.append(nameCol,tog,step);
+    c.appendChild(row);
+  });
+}
+document.getElementById('range-from').addEventListener('input',updateRangeHint);
+document.getElementById('range-to').addEventListener('input',updateRangeHint);
+function updateRangeHint(){
+  const f=parseInt(document.getElementById('range-from').value)||1;
+  const t=parseInt(document.getElementById('range-to').value)||1;
+  document.getElementById('card-range-hint').textContent=Math.max(0,t-f+1)+' cards active';
 }
 
-// Submit a claim from player to Firebase
-function submitClaim(pid){
-  if(!gs.gameId||!playerState.code) return;
-  const claimPath='games/'+gs.gameId+'/claims/'+pid+'/'+playerState.code;
-  const claimData={
-    seq:playerState.seq,
-    code:playerState.code,
-    pid,
+// ===== CREATE GAME =====
+function goCreateGame(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pw='';for(let i=0;i<5;i++) pw+=chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('host-pw-input').value=pw;
+  document.getElementById('range-from').value=1;
+  document.getElementById('range-to').value=100;
+  updateRangeHint();
+  buildPrizeSetup();
+  show('s-creategame');
+}
+function randId(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let id='';for(let i=0;i<4;i++) id+=c[Math.floor(Math.random()*c.length)];
+  return id;
+}
+
+async function startHostGame(){
+  const pw=document.getElementById('host-pw-input').value.trim();
+  if(pw.length<3){toast('Password must be at least 3 chars');return;}
+  const from=parseInt(document.getElementById('range-from').value)||1;
+  const to=parseInt(document.getElementById('range-to').value)||100;
+  if(to<from){toast('Invalid card range');return;}
+  gs.hostPW=pw; gs.rangeFrom=from; gs.rangeTo=to;
+  gs.calledNums=new Set(); gs.calledOrder=[];
+  gs.active=true; gs.tts=document.getElementById('tts-toggle').classList.contains('on');
+  gs.prizes={}; gs.claims={}; gs.enabledPrizes={}; gs.winnerCounts={};
+  PRIZE_DEFS.forEach(p=>{
+    gs.enabledPrizes[p.id]=document.getElementById('ps-tog-'+p.id)?.classList.contains('on')??true;
+    gs.winnerCounts[p.id]=parseInt(document.getElementById('ps-cnt-'+p.id)?.textContent)||1;
+    gs.prizes[p.id]=[];
+    gs.claims[p.id]=[];
+  });
+  const id=randId(); gs.gameId=id;
+  try{
+    const existing=await db.ref('games').once('value');
+    const updates={};
+    existing.forEach(child=>{updates['games/'+child.key]=null;});
+    updates['games/'+id]=buildSnapshot();
+    await db.ref('/').update(updates);
+    show('s-hostgame');
+    toast('Game '+id+' started!');
+  } catch(e){ toast('Firebase error: '+e.message); }
+}
+
+function buildSnapshot(){
+  const prizesSer={};
+  PRIZE_DEFS.forEach(p=>{
+    prizesSer[p.id]=(gs.prizes[p.id]||[]).map(w=>({code:w.code,seq:w.seq,status:w.status}));
+  });
+  const claimsSer={};
+  PRIZE_DEFS.forEach(p=>{
+    claimsSer[p.id]=(gs.claims[p.id]||[]).map(c=>({code:c.code,seq:c.seq,ts:c.ts,status:c.status}));
+  });
+  return {
+    gameId:gs.gameId, hostPW:gs.hostPW, active:gs.active,
+    calledNums:[...gs.calledNums], calledOrder:gs.calledOrder,
+    prizes:prizesSer, claims:claimsSer,
+    enabledPrizes:gs.enabledPrizes, winnerCounts:gs.winnerCounts,
+    rangeFrom:gs.rangeFrom, rangeTo:gs.rangeTo, tts:gs.tts,
     ts:Date.now(),
-    status:'pending',
-    eligibleAt:playerState.eligibleAt[pid]||0,
-    markedNums:[...playerState.marked], // player's actual taps — host uses this to verify
   };
-  db.ref(claimPath).set(claimData)
-    .then(()=>{
-      playerState.claimStatus[pid]='pending';
-      renderPlayerScreen();
-      showToast('📩 Claim submitted! Waiting for host...');
-    })
-    .catch(e=>{showToast('❌ Could not submit claim: '+e.message);});
 }
 
-// ═══════════════════════════════════════════════════
-// DISPLAY MODE
-// ═══════════════════════════════════════════════════
-function renderDisplayBoard(){
-  const board=document.getElementById('disp-board');board.innerHTML='';
-  for(let i=1;i<=90;i++){
-    const d=document.createElement('div');d.className='disp-num'+(gs.calledNums.has(i)?' called':'');
-    d.id='disp-'+i;d.textContent=i;board.appendChild(d);
-  }
-  const last=gs.calledOrder[gs.calledOrder.length-1];
-  document.getElementById('disp-last').textContent=last||'—';
-  renderDisplayPrizes();
-}
-
-function updateDisplayBoard(n){
-  const el=document.getElementById('disp-'+n);
-  if(el)el.classList.add('called');
-  document.getElementById('disp-last').textContent=n;
-  document.getElementById('disp-last').style.animation='none';
-  requestAnimationFrame(()=>{document.getElementById('disp-last').style.animation='';});
-}
-
-function renderDisplayPrizes(){
-  const cont=document.getElementById('disp-prizes');cont.innerHTML='';
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    const winner=slots.find(s=>s!==null);
-    const allWon=slots.every(s=>s!==null);
-    const d=document.createElement('div');
-    d.className='disp-prize'+(winner?' won':'');
-    d.textContent=(def?.icon||'')+' '+(def?.name||pid)+(winner?` ✓ #${winner.seq||'?'}`:'');
-    cont.appendChild(d);
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// PRINT SHEET
-// ═══════════════════════════════════════════════════
-function renderPrint(){
-  const from=Math.max(1,parseInt(document.getElementById('print-from').value)||1);
-  const to=Math.min(2000,parseInt(document.getElementById('print-to').value)||20);
-  const grid=document.getElementById('print-grid');grid.innerHTML='';
-  for(let seq=from;seq<=to;seq++){
-    const code=seqToCode(seq);
-    const tgrid=generateTicket(code);
-    const card=document.createElement('div');card.className='print-ticket';
-    const hdr=document.createElement('div');hdr.className='pt-header';
-    hdr.innerHTML=`<span class="pt-seq">#${seq}</span><span class="pt-code">${code}</span>`;
-    card.appendChild(hdr);
-    const g=document.createElement('div');g.className='pt-grid';
-    for(let r=0;r<3;r++)for(let c=0;c<9;c++){
-      const n=tgrid[r][c];const cell=document.createElement('div');
-      cell.className='pt-cell'+(n===0?' empty':'');cell.textContent=n||'';
-      g.appendChild(cell);
-    }
-    card.appendChild(g);
-    const title=document.createElement('div');title.className='pt-title';title.textContent='HOUSIE · '+code;
-    card.appendChild(title);
-    grid.appendChild(card);
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// LIVE SYNC — host writes to localStorage, players listen
-// Works across tabs on the same device/browser session
-// ═══════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════
-// FIREBASE SYNC — host writes, players listen in real-time
-// ═══════════════════════════════════════════════════
 function broadcastGameState(){
   if(!gs.gameId) return;
-  const snapshot={
-    calledNums:[...gs.calledNums],
-    calledOrder:gs.calledOrder,
-    prizes:Object.fromEntries(
-      Object.entries(gs.prizes).map(([k,v])=>[k,v.map(s=>s?{seq:s.seq,code:s.code,order:s.order}:null)])
-    ),
-    claims:gs.claims||{},
-    rangeFrom:gs.rangeFrom,rangeTo:gs.rangeTo,
-    active:gs.active,
-    hostPW:gs.hostPW,
-    gameId:gs.gameId,
-    ts:Date.now()
-  };
-  db.ref('games/'+gs.gameId).set(snapshot).catch(e=>console.error('Firebase write error:',e));
+  db.ref('games/'+gs.gameId).set(buildSnapshot()).catch(e=>console.error(e));
 }
 
-function applyLiveSnapshot(snap){
-  gs.calledNums=new Set(snap.calledNums||[]);
-  gs.calledOrder=snap.calledOrder||[];
-  gs.rangeFrom=snap.rangeFrom||1;
-  gs.rangeTo=snap.rangeTo||100;
-  gs.active=snap.active||false;
-  if(snap.gameId) gs.gameId=snap.gameId;
-  if(snap.hostPW) gs.hostPW=snap.hostPW;
-  gs.prizes={};
-  for(const [pid,slots] of Object.entries(snap.prizes||{})){
-    gs.prizes[pid]=slots.map(s=>s?{seq:s.seq,code:s.code,name:`Card ${s.seq}`,order:s.order}:null);
-  }
-  gs.claims=snap.claims||{};
-  // Sync player's claim statuses + clear eligibility for closed prizes
-  if(playerState.code){
-    for(const pid of Object.keys(gs.prizes)){
-      const claimForMe=(gs.claims[pid]||{})[playerState.code];
-      if(claimForMe) playerState.claimStatus[pid]=claimForMe.status;
-      // If prize fully closed (all slots filled), remove our eligibility record
-      const slots=gs.prizes[pid];
-      if(slots&&slots.every(s=>s!==null)){
-        delete playerState.eligibleAt[pid];
-        if(playerState.claimStatus[pid]!=='accepted') delete playerState.claimStatus[pid];
-      }
-    }
-  }
-}
-
-let fbListener=null;
-let hostClaimsListener=null;
-
-function startPlayerSync(){
-  const dot=document.getElementById('player-live-dot');
-  if(dot) dot.style.display='inline-block';
-  if(fbListener){fbListener.off();fbListener=null;}
-  fbListener=db.ref('games/'+gs.gameId);
-  fbListener.on('value', snap=>{
+// ===== JOIN =====
+async function goJoinGame(){
+  const id=document.getElementById('join-id-input').value.trim().toUpperCase();
+  if(id.length<2){toast('Enter a Game ID');return;}
+  try{
+    const snap=await db.ref('games/'+id).once('value');
     const data=snap.val();
-    if(!data) return;
-    if(data.ts===playerState.lastSyncTs) return;
-    playerState.lastSyncTs=data.ts;
+    if(!data){toast('Game not found');return;}
+    applyLiveSnapshot(data);
+    document.getElementById('join-game-title').textContent='Game '+id;
+    updateJoinStatus(data);
+    show('s-joingame');
+    cleanOldGames();
+  } catch(e){ toast('Error: '+e.message); }
+}
+function updateJoinStatus(data){
+  const badge=document.getElementById('join-status-badge');
+  const cnt=document.getElementById('join-called-count');
+  if(data&&data.active){
+    badge.className='status-badge live';badge.textContent='🟢 Live';
+    cnt.textContent=(data.calledNums?data.calledNums.length:0)+' numbers called';
+  } else {
+    badge.className='status-badge';badge.textContent='⏳ Not started';cnt.textContent='';
+  }
+}
+async function cleanOldGames(){
+  try{
+    const snap=await db.ref('games').once('value');
+    const updates={};const cutoff=Date.now()-86400000;
+    snap.forEach(child=>{const d=child.val();if(d&&d.ts&&d.ts<cutoff) updates['games/'+child.key]=null;});
+    if(Object.keys(updates).length) await db.ref('/').update(updates);
+  } catch(e){}
+}
+function goPlayerFromJoin(){
+  const val=document.getElementById('player-card-input').value.trim().toUpperCase();
+  if(!val){toast('Enter card # or code');return;}
+  let seq,code;
+  if(/^\d+$/.test(val)){
+    seq=parseInt(val);
+    if(seq<gs.rangeFrom||seq>gs.rangeTo){toast('Card not in range ('+gs.rangeFrom+'–'+gs.rangeTo+')');return;}
+    code=seqToCode(seq);
+  } else {
+    seq=codeToSeq(val,gs.rangeTo);
+    if(seq<0||seq<gs.rangeFrom){toast('Code not found in active range');return;}
+    code=val;
+  }
+  ps.code=code; ps.seq=seq; ps.grid=generateTicket(code);
+  const savedMarks=localStorage.getItem('marks_'+code+'_'+gs.gameId);
+  ps.marked=savedMarks?new Set(JSON.parse(savedMarks)):new Set();
+  const savedElig=localStorage.getItem('elig_'+code+'_'+gs.gameId);
+  ps.eligibleAt=savedElig?JSON.parse(savedElig):{};
+  startPlayerSync();
+  renderPlayerScreen();
+  show('s-player');
+}
+function goHostFromJoin(){
+  const pw=document.getElementById('host-pw-join').value.trim();
+  if(pw.toUpperCase()!==gs.hostPW.toUpperCase()){toast('Wrong password');return;}
+  show('s-hostgame');
+}
+
+// ===== PLAYER SYNC =====
+function startPlayerSync(){
+  stopPlayerSync();
+  if(!gs.gameId) return;
+  fbListener=db.ref('games/'+gs.gameId);
+  fbListener.on('value',snap=>{
+    const data=snap.val();if(!data)return;
     applyLiveSnapshot(data);
     renderPlayerScreen();
-  }, err=>{
-    console.error('Firebase listen error:',err);
-    const dot=document.getElementById('player-live-dot');
-    if(dot){dot.style.background='var(--red)';dot.style.boxShadow='0 0 6px var(--red)';}
+  });
+}
+function stopPlayerSync(){if(fbListener){fbListener.off();fbListener=null;}}
+
+function applyLiveSnapshot(data){
+  if(!data) return;
+  gs.calledNums=new Set(data.calledNums||[]);
+  gs.calledOrder=data.calledOrder||[];
+  gs.rangeFrom=data.rangeFrom||1; gs.rangeTo=data.rangeTo||100;
+  gs.active=data.active||false;
+  gs.gameId=data.gameId||gs.gameId; gs.hostPW=data.hostPW||gs.hostPW;
+  gs.enabledPrizes=data.enabledPrizes||{}; gs.winnerCounts=data.winnerCounts||{};
+  gs.tts=data.tts||false;
+  gs.prizes={};
+  PRIZE_DEFS.forEach(p=>{
+    gs.prizes[p.id]=(data.prizes&&data.prizes[p.id]||[]).map(w=>({code:w.code,seq:w.seq,status:w.status,grid:generateTicket(w.code)}));
+  });
+  gs.claims={};
+  PRIZE_DEFS.forEach(p=>{
+    gs.claims[p.id]=(data.claims&&data.claims[p.id]||[]).map(c=>({code:c.code,seq:c.seq,ts:c.ts,status:c.status}));
   });
 }
 
-function startHostClaimsSync(){
-  if(hostClaimsListener){hostClaimsListener.off();hostClaimsListener=null;}
-  if(!gs.gameId) return;
-  hostClaimsListener=db.ref('games/'+gs.gameId+'/claims');
-  hostClaimsListener.on('value', snap=>{
-    gs.claims=snap.val()||{};
-    renderClaimsPanel();
-    renderHostPrizes();
-    // Show a toast if new pending claim arrives
-    let hasNew=false;
-    for(const cardMap of Object.values(gs.claims)){
-      for(const claim of Object.values(cardMap||{})){
-        if(claim.status==='pending') hasNew=true;
-      }
-    }
-    if(hasNew){
-      const panel=document.getElementById('hg-claims-panel');
-      if(panel&&!panel.classList.contains('show')){
-        showToast('⚡ New prize claim received!',3000);
-      }
-    }
+// ===== PLAYER SCREEN =====
+function renderPlayerScreen(){
+  if(!ps.code) return;
+  document.getElementById('player-card-label').textContent='Card '+ps.code;
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('player-last-called').textContent=last||'—';
+  // Win alerts
+  const alerts=[];
+  PRIZE_DEFS.forEach(p=>{
+    if((gs.prizes[p.id]||[]).some(w=>w.code===ps.code&&w.status==='accepted')) alerts.push(p.name);
+  });
+  const alertEl=document.getElementById('player-win-alert');
+  alertEl.innerHTML=alerts.length?'<div class="win-alert-bar">🏆 Won: '+alerts.join(', ')+'</div>':'';
+  // Ticket
+  const wrapper=document.getElementById('player-ticket-wrapper');
+  wrapper.innerHTML='';
+  const ticketEl=renderTicketEl(ps.grid,ps.code,ps.seq,gs.calledNums,ps.marked,gs.prizes,true);
+  ticketEl.style.borderRadius='0';ticketEl.style.border='none';
+  ticketEl.style.borderTop='1px solid var(--border)';ticketEl.style.borderBottom='1px solid var(--border)';
+  wrapper.appendChild(ticketEl);
+  positionPlayerTicket();
+  renderPlayerPrizeGrid();
+}
+
+function positionPlayerTicket(){
+  requestAnimationFrame(()=>{
+    const topbar=document.getElementById('player-topbar');
+    const wrapper=document.getElementById('player-ticket-wrapper');
+    const spacer=document.getElementById('player-spacer');
+    if(!topbar||!wrapper||!spacer) return;
+    wrapper.style.top=topbar.getBoundingClientRect().bottom+'px';
+    const wh=wrapper.getBoundingClientRect().height||120;
+    spacer.style.height=wh+'px';
   });
 }
 
-function stopHostClaimsSync(){
-  if(hostClaimsListener){hostClaimsListener.off();hostClaimsListener=null;}
-}
-
-function stopPlayerSync(){
-  if(fbListener){fbListener.off();fbListener=null;}
-  const dot=document.getElementById('player-live-dot');
-  if(dot) dot.style.display='none';
-}
-// ═══════════════════════════════════════════════════
-let toastT=null;
-function showToast(msg,ms=2400){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  if(toastT)clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms);
-}
-
-// ═══════════════════════════════════════════════════
-// WINNERS MODAL
-// ═══════════════════════════════════════════════════
-function showWinnersModal(){
-  const body=document.getElementById('modal-winners-body');
-  body.innerHTML='';
-  // Collect all won slots in order
-  const wonList=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    slots.forEach((winner,i)=>{
-      if(winner) wonList.push({pid,def,winner,slot:i,slotCount:slots.length});
-    });
-  }
-  wonList.sort((a,b)=>(a.winner.order??999)-(b.winner.order??999));
-
-  if(wonList.length===0){
-    body.innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:12px">No winners yet!</p>';
-  } else {
-    wonList.forEach(({pid,def,winner,slot,slotCount},idx)=>{
-      const div=document.createElement('div');
-      div.style.cssText='padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px';
-      const slotLabel=slotCount>1?` (${slot+1})`:'';
-      const order=document.createElement('span');order.style.cssText='font-size:11px;color:var(--muted);min-width:20px';order.textContent=`${idx+1}.`;
-      const nameEl=document.createElement('span');nameEl.style.cssText='font-size:13px;font-weight:600;flex:1';
-      nameEl.textContent=`${def?.icon||'🏆'} ${def?.name||pid}${slotLabel}`;
-      const link=document.createElement('span');
-      link.style.cssText='font-size:12px;color:var(--accent);cursor:pointer;font-family:var(--mono);font-weight:700';
-      link.textContent=`#${winner.seq} · ${winner.code}`;
-      link.onclick=()=>{closeModal('modal-winners');hostViewCard(winner.seq,winner.code);};
-      div.append(order,nameEl,link);
-      body.appendChild(div);
-    });
-  }
-  document.getElementById('modal-winners').classList.add('show');
-}
-
-// ═══════════════════════════════════════════════════
-// CALLED NUMBERS MODAL
-// ═══════════════════════════════════════════════════
-function showCalledModal(){
-  // Sequence of called numbers
-  const seq=document.getElementById('modal-called-sequence');
-  seq.textContent=gs.calledOrder.length>0?gs.calledOrder.join('  →  '):'No numbers called yet.';
-  // Grid view
-  const grid=document.getElementById('modal-called-grid');
+function renderPlayerPrizeGrid(){
+  const grid=document.getElementById('player-prize-grid');
   grid.innerHTML='';
-  for(let i=1;i<=90;i++){
-    const d=document.createElement('div');
-    d.style.cssText=`aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;${gs.calledNums.has(i)?'background:var(--accent);color:#000;':'background:var(--card2);color:var(--muted);'}`;
-    d.textContent=i;grid.appendChild(d);
-  }
-  document.getElementById('modal-called').classList.add('show');
-}
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const winners=gs.prizes[p.id]||[];
+    const maxW=gs.winnerCounts[p.id]||1;
+    const acceptedCount=winners.filter(w=>w.status==='accepted').length;
+    const isClosed=acceptedCount>=maxW;
+    const iWon=winners.some(w=>w.code===ps.code&&w.status==='accepted');
+    const myClaim=(gs.claims[p.id]||[]).find(c=>c.code===ps.code);
+    const isEligible=ps.eligibleAt[p.id]!==undefined;
 
-// ═══════════════════════════════════════════════════
-// PLAYER VIEW MODE (HOST)
-// ═══════════════════════════════════════════════════
-let pvSeq=1;
+    const mini=document.createElement('div');
+    let cls='prize-mini';
+    if(iWon) cls+=' won-prize';
+    else if(myClaim&&myClaim.status==='pending') cls+=' claimed';
+    else if(isEligible&&!isClosed) cls+=' claimable';
+    else if(isClosed) cls+=' closed-prize';
+    mini.className=cls;
 
-function goPlayerView(){
-  pvSeq=gs.rangeFrom||1;
-  renderPlayerView();
-  show('s-playerview');
-}
+    const nm=document.createElement('div');nm.className='prize-mini-name';nm.textContent=p.name;
+    const st=document.createElement('div');st.className='prize-mini-status';
+    if(iWon) st.innerHTML='✅ Won!';
+    else if(myClaim&&myClaim.status==='pending') st.innerHTML='⏳ Claim sent';
+    else if(myClaim&&myClaim.status==='rejected') st.innerHTML='❌ Rejected';
+    else if(isClosed) st.innerHTML='🔒 Closed ('+acceptedCount+' won)';
+    else if(isEligible) st.innerHTML='🎯 Eligible!';
+    else st.innerHTML=(acceptedCount?acceptedCount+' won · ':'')+((maxW-acceptedCount)+' left');
 
-function pvPrev(){
-  if(pvSeq>gs.rangeFrom) pvSeq--;
-  renderPlayerView();
-}
-function pvNext(){
-  if(pvSeq<gs.rangeTo) pvSeq++;
-  renderPlayerView();
-}
+    mini.appendChild(nm);mini.appendChild(st);
 
-function renderPlayerView(){
-  const code=seqToCode(pvSeq);
-  const grid=generateTicket(code);
-  document.getElementById('pv-title').textContent=`👁 Player View`;
-  document.getElementById('pv-card-num').textContent=`Card ${pvSeq}`;
-  const wonPrizes=[];
-  for(const [pid,slots] of Object.entries(gs.prizes)){
-    if(slots.some(s=>s&&s.code===code)) wonPrizes.push({pid,status:'won'});
-  }
-  const wrap=document.getElementById('pv-ticket-wrap');
-  wrap.innerHTML='';
-  wrap.appendChild(renderTicketEl(grid,code,pvSeq,gs.calledNums,gs.calledNums,wonPrizes,false));
-  // Prize list — same as what player sees
-  const pvOldPlayerState=playerState;
-  playerState={code,seq:pvSeq,grid,marked:gs.calledNums};
-  const prizeCont=document.getElementById('pv-prizes');
-  prizeCont.innerHTML='';
-  // Show all prize statuses without card codes
-  const allStatus=getAllPrizeStatus();
-  allStatus.forEach(({pid,filledSlots,open,totalSlots})=>{
-    const def=PRIZE_DEFS.find(p=>p.id===pid);
-    const b=document.createElement('div');
-    b.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)';
-    const myWon=wonPrizes.some(w=>w.pid===pid);
-    b.innerHTML=`<span style="font-size:12px;font-weight:600">${def?.icon||''} ${def?.name||pid}</span>`;
-    const st=document.createElement('span');
-    if(myWon){st.className='badge badge-g';st.textContent='🏆 Won!';}
-    else if(filledSlots.length===totalSlots){st.className='badge badge-r';st.textContent='Claimed';}
-    else if(filledSlots.length>0){st.className='badge badge-a';st.textContent=`${filledSlots.length}/${totalSlots} Won`;}
-    else{st.style.cssText='font-size:11px;color:var(--muted)';st.textContent='Open';}
-    b.appendChild(st);prizeCont.appendChild(b);
-  });
-  playerState=pvOldPlayerState;
-  // Win alert
-  const alert=document.getElementById('pv-win-alert');
-  if(wonPrizes.length>0){
-    alert.classList.add('show');
-    document.getElementById('pv-win-alert-title').textContent='🏆 This card won: '+wonPrizes.map(p=>PRIZE_DEFS.find(x=>x.id===p.pid)?.name).join(', ');
-  } else alert.classList.remove('show');
-}
-
-// ═══════════════════════════════════════════════════
-// THEME
-// ═══════════════════════════════════════════════════
-let activeThemePop=null;
-
-function toggleThemePopover(id){
-  const pop=document.getElementById('theme-pop-'+id);
-  if(!pop) return;
-  const isVisible=pop.style.display==='flex';
-  closeThemePopover();
-  if(!isVisible){pop.style.display='flex';activeThemePop=id;}
-}
-
-function closeThemePopover(){
-  document.querySelectorAll('.theme-popover').forEach(p=>p.style.display='none');
-  activeThemePop=null;
-}
-
-// Close popover when clicking outside
-document.addEventListener('click',e=>{
-  if(activeThemePop&&!e.target.closest('.theme-icon-btn')&&!e.target.closest('.theme-popover')){
-    closeThemePopover();
-  }
-});
-
-function setTheme(name){
-  document.documentElement.setAttribute('data-theme',name);
-  localStorage.setItem('housie_theme',name);
-  // Mark active item in all popovers
-  document.querySelectorAll('.theme-popover-item').forEach(b=>{
-    b.classList.toggle('active',b.getAttribute('data-t')===name);
-  });
-}
-// Apply saved theme on load
-(()=>{const t=localStorage.getItem('housie_theme')||localStorage.getItem('tambola_theme')||'midnight';setTheme(t);})();
-
-// ═══════════════════════════════════════════════════
-// URL param routing
-const params=new URLSearchParams(location.search);
-const modeParam=params.get('mode');
-const gameParam=params.get('game');
-if(modeParam==='display'){goDisplay();}
-else if(gameParam){
-  document.getElementById('join-game-id-inp').value=gameParam.toUpperCase();
-  goJoinGame();
-}
-
-// Pre-init gs prizes toggles
-PRIZE_DEFS.forEach(p=>{gs.enabledPrizes[p.id]=true;gs.winnerCounts[p.id]=1;});
-
-// Test Firebase connection on load
-db.ref('.info/connected').on('value', snap=>{
-  const connected = snap.val();
-  console.log('Firebase connected:', connected);
-});
-</script>
-<!-- PLAYER TICKET WRAP — direct <body> child, no container, truly 100vw -->
-<div id="player-ticket-wrap" style="display:none;position:fixed;left:0;top:0;width:100vw;z-index:20;background:var(--card)"></div>
-
-
-<!-- PWA: Manifest + Service Worker (inline, no server needed) -->
-<script>
-// ═══════════════════════════════════════════════════
-// PWA MANIFEST — injected inline so no separate file needed
-// ═══════════════════════════════════════════════════
-(function(){
-  const manifest = {
-    name: "Housie",
-    short_name: "Housie",
-    description: "Digital Housie — multiplayer Housie for everyone",
-    start_url: "./",
-    display: "standalone",
-    orientation: "portrait",
-    background_color: "#0f0d1a",
-    theme_color: "#0f0d1a",
-    icons: [
-      {
-        src: "data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f0d1a'/><polygon points='50,8 82,26 50,44 18,26' fill='%23ff9a00'/><polygon points='18,26 50,44 50,82 18,64' fill='%23a855f7'/><polygon points='82,26 50,44 50,82 82,64' fill='%2338bdf8'/><text x='50' y='36' text-anchor='middle' fill='white' font-size='18' font-weight='900' font-family='monospace'>7</text></svg>"),
-        sizes: "any",
-        type: "image/svg+xml",
-        purpose: "any maskable"
+    // Claim button
+    if(isEligible&&!iWon&&!isClosed&&p.id!=='unlucky'){
+      const btn=document.createElement('button');
+      if(myClaim&&myClaim.status==='pending'){
+        btn.className='claim-btn already';btn.textContent='⏳ Pending';btn.disabled=true;
+      } else if(myClaim&&myClaim.status==='rejected'){
+        btn.className='claim-btn already';btn.textContent='❌ Rejected';btn.disabled=true;
+      } else {
+        btn.className='claim-btn';btn.textContent='🙋 Claim '+p.name;
+        btn.onclick=()=>playerClaim(p.id);
       }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-  const url = URL.createObjectURL(blob);
-  document.getElementById('pwa-manifest').href = url;
-})();
+      mini.appendChild(btn);
+    }
+    grid.appendChild(mini);
+  });
+}
 
-// ═══════════════════════════════════════════════════
-// SERVICE WORKER — registers inline worker for offline support
-// ═══════════════════════════════════════════════════
-if('serviceWorker' in navigator){
-  const swCode = `
-const CACHE = 'housie-v1';
-self.addEventListener('install', e => {
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
-});
-self.addEventListener('fetch', e => {
-  // For navigation requests serve from cache or network
-  if(e.request.mode === 'navigate'){
-    e.respondWith(
-      fetch(e.request).then(r => {
-        const clone = r.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return r;
-      }).catch(() => caches.match(e.request))
-    );
+async function playerClaim(prizeId){
+  if(!gs.gameId||!ps.code) return;
+  // Check not already claimed
+  const existing=(gs.claims[prizeId]||[]).find(c=>c.code===ps.code);
+  if(existing&&(existing.status==='pending'||existing.status==='accepted')){
+    toast('Already claimed');return;
   }
-});
-  `;
-  const swBlob = new Blob([swCode], {type:'application/javascript'});
-  const swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl, {type:'classic'})
-    .then(() => console.log('Housie PWA ready'))
-    .catch(e => console.log('SW registration failed (blob SW needs HTTPS):', e));
+  const claim={code:ps.code,seq:ps.seq,ts:Date.now(),status:'pending'};
+  try{
+    await db.ref('games/'+gs.gameId+'/claims/'+prizeId).transaction(current=>{
+      const arr=current||[];
+      // Remove old rejected claim from same card
+      const filtered=arr.filter(c=>c.code!==ps.code);
+      filtered.push(claim);
+      return filtered;
+    });
+    toast('Claim sent for '+PRIZE_DEFS.find(p=>p.id===prizeId).name+'!');
+  } catch(e){ toast('Error: '+e.message); }
 }
 
-// ═══════════════════════════════════════════════════
-// INSTALL PROMPT — show "Add to Home Screen" button
-// ═══════════════════════════════════════════════════
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show install button on landing screen
-  const btn = document.getElementById('install-btn');
-  if(btn) btn.style.display = 'flex';
-});
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('install-btn');
-  if(btn) btn.style.display = 'none';
-  deferredPrompt = null;
-});
-function installApp(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+function savePlayerState(){
+  localStorage.setItem('marks_'+ps.code+'_'+gs.gameId, JSON.stringify([...ps.marked]));
+  localStorage.setItem('elig_'+ps.code+'_'+gs.gameId, JSON.stringify(ps.eligibleAt));
 }
+
+function playerTapNumber(n){
+  if(!gs.calledNums.has(n)) return;
+  if(ps.marked.has(n)) ps.marked.delete(n);
+  else ps.marked.add(n);
+  savePlayerState();
+  checkPlayerEligibility(n);
+  renderPlayerScreen();
+}
+
+function resetMarks(){
+  if(!confirm('Reset all marks on this card?')) return;
+  ps.marked=new Set(); ps.eligibleAt={};
+  localStorage.removeItem('marks_'+ps.code+'_'+gs.gameId);
+  localStorage.removeItem('elig_'+ps.code+'_'+gs.gameId);
+  renderPlayerScreen();
+}
+
+// ===== HOST SCREEN =====
+function renderHostScreen(){
+  document.getElementById('host-game-id').textContent=gs.gameId;
+  renderHostNumbers();
+  renderClaimsPanel();
+  renderAllCardsPanel();
+  buildManualPrizeSelect();
+  // Start listening to claims from Firebase
+  startHostClaimsListener();
+}
+
+let hostClaimsListener=null;
+function startHostClaimsListener(){
+  if(hostClaimsListener) return;
+  if(!gs.gameId) return;
+  hostClaimsListener=db.ref('games/'+gs.gameId);
+  hostClaimsListener.on('value',snap=>{
+    const data=snap.val();if(!data)return;
+    applyLiveSnapshot(data);
+    if(document.getElementById('s-hostgame').classList.contains('active')){
+      renderHostNumbers();
+      renderClaimsPanel();
+      renderAllCardsPanel();
+    }
+  });
+}
+
+function renderHostNumbers(){
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('host-last-num').textContent=last||'—';
+  document.getElementById('host-called-count').textContent=gs.calledNums.size+' / 90 called';
+  const grid=document.getElementById('host-num-grid');grid.innerHTML='';
+  for(let n=1;n<=90;n++){
+    const cell=document.createElement('div');
+    cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');
+    cell.textContent=n;grid.appendChild(cell);
+  }
+}
+
+function renderClaimsPanel(){
+  const panel=document.getElementById('claims-panel');panel.innerHTML='';
+  let totalPending=0;
+
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const claims=gs.claims[p.id]||[];
+    const winners=gs.prizes[p.id]||[];
+    const maxW=gs.winnerCounts[p.id]||1;
+    const acceptedCount=winners.filter(w=>w.status==='accepted').length;
+    const isClosed=acceptedCount>=maxW;
+    const pendingClaims=claims.filter(c=>c.status==='pending');
+    totalPending+=pendingClaims.length;
+
+    const block=document.createElement('div');block.className='claim-prize-block';
+    const nameRow=document.createElement('div');nameRow.className='claim-prize-name';
+    nameRow.innerHTML=p.name+' <span class="'+(isClosed?'closed-badge':'open-badge')+'">'+(isClosed?'✓ Closed':'Open · '+acceptedCount+'/'+maxW+'</span>');
+    block.appendChild(nameRow);
+
+    // Accepted winners
+    if(acceptedCount>0){
+      const wonRow=document.createElement('div');wonRow.className='winner-chips-row';
+      winners.filter(w=>w.status==='accepted').forEach(w=>{
+        const chip=document.createElement('span');chip.className='winner-chip';
+        chip.innerHTML='🏆 #'+w.seq+' '+w.code;
+        chip.style.cursor='pointer';
+        chip.onclick=()=>showCardModal(w.code,w.seq,'Winner');
+        wonRow.appendChild(chip);
+      });
+      block.appendChild(wonRow);
+    }
+
+    // Pending/rejected claims
+    if(claims.length>0){
+      const clRow=document.createElement('div');clRow.style.marginTop='8px';
+      const clLabel=document.createElement('div');
+      clLabel.style.cssText='font-size:.72rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px';
+      clLabel.textContent='Claims';
+      clRow.appendChild(clLabel);
+      const chips=document.createElement('div');chips.className='claim-cards-row';
+      claims.forEach(c=>{
+        const chip=document.createElement('div');
+        chip.className='claim-card-chip '+c.status;
+        chip.innerHTML=(c.status==='pending'?'⏳':c.status==='accepted'?'✅':'❌')+' #'+c.seq+' '+c.code;
+        if(c.status==='pending'&&!isClosed){
+          chip.onclick=()=>showClaimReview(p.id,c);
+        } else if(c.status!=='pending'){
+          chip.onclick=()=>showCardModal(c.code,c.seq,'Card #'+c.seq);
+        }
+        chips.appendChild(chip);
+      });
+      clRow.appendChild(chips);
+      block.appendChild(clRow);
+    } else {
+      const nc=document.createElement('div');nc.className='no-claims';nc.textContent='No claims yet';
+      block.appendChild(nc);
+    }
+    panel.appendChild(block);
+  });
+
+  // Update pending badge
+  const badge=document.getElementById('pending-badge');
+  badge.style.display=totalPending>0?'inline':'none';
+  badge.textContent=totalPending;
+}
+
+function showClaimReview(prizeId, claim){
+  const grid=generateTicket(claim.code);
+  const ticketEl=renderTicketEl(grid,claim.code,claim.seq,gs.calledNums,null,gs.prizes,false);
+  openModal(
+    'Review Claim — #'+claim.seq+' '+claim.code,
+    ticketEl,
+    [
+      {label:'✅ Accept',cls:'btn btn-green btn-sm',cb:()=>hostResolveClaim(prizeId,claim.code,'accepted')},
+      {label:'❌ Reject',cls:'btn btn-danger btn-sm',cb:()=>hostResolveClaim(prizeId,claim.code,'rejected')},
+      {label:'Cancel',cls:'btn btn-outline btn-sm',cb:closeModal},
+    ]
+  );
+}
+
+async function hostResolveClaim(prizeId, code, decision){
+  closeModal();
+  const maxW=gs.winnerCounts[prizeId]||1;
+  const acceptedCount=(gs.prizes[prizeId]||[]).filter(w=>w.status==='accepted').length;
+  if(decision==='accepted'&&acceptedCount>=maxW){toast('Prize already has max winners');return;}
+
+  // Update claim status
+  const claims=gs.claims[prizeId]||[];
+  const ci=claims.findIndex(c=>c.code===code);
+  if(ci>=0) claims[ci].status=decision;
+
+  if(decision==='accepted'){
+    const seq=codeToSeq(code,gs.rangeTo);
+    gs.prizes[prizeId]=gs.prizes[prizeId]||[];
+    if(!gs.prizes[prizeId].some(w=>w.code===code)){
+      gs.prizes[prizeId].push({code,seq,status:'accepted',grid:generateTicket(code)});
+    } else {
+      gs.prizes[prizeId].find(w=>w.code===code).status='accepted';
+    }
+  }
+  broadcastGameState();
+  renderClaimsPanel();
+  renderAllCardsPanel();
+  toast(decision==='accepted'?'✅ Claim accepted!':'❌ Claim rejected');
+}
+
+function buildManualPrizeSelect(){
+  const sel=document.getElementById('manual-prize-select');sel.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const opt=document.createElement('option');opt.value=p.id;opt.textContent=p.name;
+    sel.appendChild(opt);
+  });
+}
+
+function hostManualWin(){
+  const prizeId=document.getElementById('manual-prize-select').value;
+  const val=document.getElementById('manual-card-input').value.trim().toUpperCase();
+  if(!val){toast('Enter a card number or code');return;}
+  let seq,code;
+  if(/^\d+$/.test(val)){seq=parseInt(val);code=seqToCode(seq);}
+  else{seq=codeToSeq(val,gs.rangeTo);if(seq<0){toast('Code not found');return;}code=val;}
+  const maxW=gs.winnerCounts[prizeId]||1;
+  const acceptedCount=(gs.prizes[prizeId]||[]).filter(w=>w.status==='accepted').length;
+  if(acceptedCount>=maxW){toast('Prize already full');return;}
+  gs.prizes[prizeId]=gs.prizes[prizeId]||[];
+  if(gs.prizes[prizeId].some(w=>w.code===code)){toast('Card already a winner for this prize');return;}
+  gs.prizes[prizeId].push({code,seq,status:'accepted',grid:generateTicket(code)});
+  broadcastGameState();
+  renderClaimsPanel();
+  renderAllCardsPanel();
+  toast('✅ Prize awarded to #'+seq);
+  document.getElementById('manual-card-input').value='';
+}
+
+function renderAllCardsPanel(){
+  const panel=document.getElementById('all-cards-panel');panel.innerHTML='';
+  const wonCodes=new Set();
+  PRIZE_DEFS.forEach(p=>{(gs.prizes[p.id]||[]).filter(w=>w.status==='accepted').forEach(w=>wonCodes.add(w.code));});
+  for(let s=gs.rangeFrom;s<=gs.rangeTo;s++){
+    const code=seqToCode(s);
+    const chip=document.createElement('div');
+    chip.className='card-chip'+(wonCodes.has(code)?' won':'');
+    chip.textContent='#'+s+' '+code;
+    chip.onclick=()=>showCardModal(code,s,'Card #'+s);
+    panel.appendChild(chip);
+  }
+}
+
+function validateCard(){
+  const val=document.getElementById('validate-input').value.trim().toUpperCase();
+  if(!val) return;
+  let seq,code;
+  if(/^\d+$/.test(val)){seq=parseInt(val);code=seqToCode(seq);}
+  else{seq=codeToSeq(val,gs.rangeTo);if(seq<0){toast('Code not found');return;}code=val;}
+  showCardModal(code,seq,'Card #'+seq+' '+code);
+}
+
+function showCardModal(code,seq,title){
+  const grid=generateTicket(code);
+  const el=renderTicketEl(grid,code,seq,gs.calledNums,null,gs.prizes,false);
+  openModal(title,el,[{label:'Close',cls:'btn btn-outline btn-sm',cb:closeModal}]);
+}
+
+// ===== CALL NUMBER =====
+function callNextNumber(){
+  if(gs.calledNums.size>=90){toast('All 90 numbers called!');return;}
+  let n;
+  do{n=Math.floor(Math.random()*90)+1;}while(gs.calledNums.has(n));
+  gs.calledNums.add(n); gs.calledOrder.push(n);
+  if(gs.tts) speakNumber(n);
+  broadcastGameState();
+  renderHostNumbers();
+  renderDisplay();
+}
+function speakNumber(n){
+  if(!('speechSynthesis' in window)) return;
+  const u=new SpeechSynthesisUtterance(String(n));
+  u.lang='en-IN';u.rate=0.8;speechSynthesis.speak(u);
+}
+
+// ===== END GAME =====
+async function endGame(){
+  if(!confirm('End this game?')) return;
+  gs.active=false;
+  if(hostClaimsListener){hostClaimsListener.off();hostClaimsListener=null;}
+  try{await db.ref('games/'+gs.gameId).remove();}catch(e){}
+  show('s-landing');
+}
+
+// ===== PLAYER VIEW =====
+function pvNav(dir){pvIndex=Math.max(gs.rangeFrom,Math.min(gs.rangeTo,pvIndex+dir));renderPlayerView();}
+function renderPlayerView(){
+  const seq=pvIndex;const code=seqToCode(seq);const grid=generateTicket(code);
+  document.getElementById('pv-card-indicator').textContent='#'+seq+' of '+gs.rangeTo;
+  const area=document.getElementById('pv-ticket-area');area.innerHTML='';
+  area.appendChild(renderTicketEl(grid,code,seq,gs.calledNums,null,gs.prizes,false));
+  const pa=document.getElementById('pv-prize-area');pa.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const isWon=(gs.prizes[p.id]||[]).some(w=>w.code===code&&w.status==='accepted');
+    const mini=document.createElement('div');
+    mini.className='prize-mini'+(isWon?' won-prize':'');
+    mini.innerHTML='<div class="prize-mini-name">'+p.name+'</div><div class="prize-mini-status">'+(isWon?'✅ Won':'—')+'</div>';
+    pa.appendChild(mini);
+  });
+}
+
+// ===== DISPLAY =====
+function renderDisplay(){
+  const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
+  document.getElementById('disp-last-num').textContent=last||'—';
+  document.getElementById('disp-called-count').textContent=gs.calledNums.size+' / 90 called';
+  const grid=document.getElementById('disp-num-grid');grid.innerHTML='';
+  for(let n=1;n<=90;n++){
+    const cell=document.createElement('div');
+    cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');
+    cell.textContent=n;grid.appendChild(cell);
+  }
+  const prizes=document.getElementById('disp-prizes');prizes.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    if(!gs.enabledPrizes[p.id]) return;
+    const winners=(gs.prizes[p.id]||[]).filter(w=>w.status==='accepted');
+    const item=document.createElement('div');item.className='display-prize-item';
+    item.innerHTML='<span class="pw">'+p.name+'</span> — '+(winners.length?winners.map(w=>'#'+w.seq).join(', '):'—');
+    prizes.appendChild(item);
+  });
+}
+
+// ===== PRINT =====
+function generatePrintCards(){
+  const from=parseInt(document.getElementById('print-from').value)||1;
+  const to=parseInt(document.getElementById('print-to').value)||10;
+  const area=document.getElementById('print-area');area.innerHTML='';
+  for(let s=from;s<=to;s++){
+    const code=seqToCode(s);const grid=generateTicket(code);
+    const wrap=document.createElement('div');wrap.className='print-card';
+    wrap.appendChild(renderTicketEl(grid,code,s,new Set(),null,{},false));
+    area.appendChild(wrap);
+  }
+  toast('Generated '+(to-from+1)+' cards');
+}
+
+// ===== COLLAPSIBLE =====
+function toggleCollapsible(header){
+  header.classList.toggle('open');
+  const body=header.nextElementSibling;
+  if(body){body.classList.toggle('open');}
+}
+
+// ===== MODAL =====
+function openModal(title, bodyEl, actions){
+  document.getElementById('modal-title').textContent=title;
+  const body=document.getElementById('modal-body');body.innerHTML='';
+  if(typeof bodyEl==='string') body.innerHTML=bodyEl;
+  else body.appendChild(bodyEl);
+  const actDiv=document.getElementById('modal-actions');actDiv.innerHTML='';
+  (actions||[]).forEach(a=>{
+    const btn=document.createElement('button');btn.className=a.cls;btn.textContent=a.label;
+    btn.onclick=a.cb;actDiv.appendChild(btn);
+  });
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+// ===== TOAST =====
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ===== PWA =====
+const manifestData={
+  name:'Housie',short_name:'Housie',description:'Digital Housie · Play Together',
+  start_url:'/',display:'standalone',background_color:'#0e0b1e',theme_color:'#1a1230',
+  icons:[{
+    src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f97316'/%3E%3Cstop offset='50%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%2322c55e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='80' height='80' rx='16' fill='url(%23g)'/%3E%3Ctext x='40' y='30' text-anchor='middle' font-size='10' font-family='monospace' fill='white' font-weight='700'%3E7 23 45%3C/text%3E%3Ctext x='40' y='48' text-anchor='middle' font-size='10' font-family='monospace' fill='white' font-weight='700'%3E12 56 78%3C/text%3E%3Ctext x='40' y='66' text-anchor='middle' font-size='10' font-family='monospace' fill='white' font-weight='700'%3E3 34 67%3C/text%3E%3C/svg%3E",
+    sizes:'any',type:'image/svg+xml'
+  }],
+};
+const manifestBlob=new Blob([JSON.stringify(manifestData)],{type:'application/json'});
+const manifestURL=URL.createObjectURL(manifestBlob);
+const pwaLink=document.createElement('link');pwaLink.rel='manifest';pwaLink.href=manifestURL;
+document.head.appendChild(pwaLink);
+const swCode=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>clients.claim());self.addEventListener('fetch',e=>{if(e.request.mode==='navigate'){e.respondWith(fetch(e.request).catch(()=>caches.match('/')));}});`;
+if('serviceWorker' in navigator){
+  const swBlob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('install-btn').style.display='flex';});
+window.addEventListener('appinstalled',()=>{document.getElementById('install-btn').style.display='none';deferredPrompt=null;});
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});}}
+
+// ===== INIT =====
+buildThemeMenus();
+window.addEventListener('resize',()=>{
+  if(document.getElementById('s-player').classList.contains('active')) positionPlayerTicket();
+});
 </script>
-
 </body>
 </html>
