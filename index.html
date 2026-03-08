@@ -11,426 +11,520 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ===== THEMES ===== */
-/* ══════════════════════════════════════════════════
-   4 THEMES — 2 light, 2 dark
-   Key rules:
-   - bg vs panel: clearly different lightness (panels pop as cards)
-   - borders: thin, subtle — they define edges, not shout
-   - accent: one confident mid-tone color for buttons/interactive
-   - called: warm distinct color, never same as accent
-   - no neon, no violet, no purple
-   ══════════════════════════════════════════════════ */
-
-/* ── DARK 1: MIDNIGHT BLUE ──
-   Popular with Figma, Linear, Vercel dark
-   Page: #14181f deep blue-charcoal
-   Panels: #1e2630 — clearly lighter, cool blue-grey card
-   Topbar: #0e1218 — darkest, anchors the nav
-   Accent: #3d8ef0 — medium sky blue, calm and readable
-   Called: #f0a83d — warm amber, pops against dark bg
-   Tapped: #e05f5f — muted coral-red */
 :root,[data-theme="midnight"]{
-  --bg:#14181f;
-  --bg2:#1e2630;
-  --bg3:#28303e;
-  --surface:#323c4e;
-  --topbar-bg:#0e1218;
-  --panel-bg:#1e2630;
-  --border:#2a3444;
-  --accent:#3d8ef0;
-  --accent2:#2970d0;
-  --accent3:#a0c8ff;
-  --text:#e8eaf0;
-  --text2:#8a9ab8;
-  --text3:#4a5870;
-  --called:#f0a83d;
-  --marked:#e05f5f;
-  --win:#4caf78;--corner:#f0a83d;
-  --danger:#e05050;--warn:#f0a83d;--toast-bg:#1e2630;
-  --call-btn:#3d8ef0;--num-color:#f0a83d;
+  --bg:#09080f;--bg2:#130f23;--bg3:#1e1640;--surface:#15113a;
+  --border:#3b2d7a;
+  --accent:#e879f9;--accent2:#a21caf;--accent3:#f0abfc;
+  --text:#f8f4ff;--text2:#c4b8e8;--text3:#a89dcc;
+  --called:#22d3ee;--marked:#f97316;
+  --win:#4ade80;--corner:#f59e0b;
+  --danger:#f43f5e;--warn:#fb923c;--toast-bg:#1e1640;
+  --call-btn:#e879f9;--num-color:#22d3ee;
+  --topbar-bg:#0f0b2a;--panel-bg:#1a1445;
+  --btn-text:#fff;
 }
-
-/* ── DARK 2: FOREST NIGHT ──
-   Warm dark — like Bear, iA Writer dark
-   Page: #151a14 very dark warm olive-green
-   Panels: #1f2a1e — slightly lighter warm green-grey
-   Topbar: #0e1210 — darkest
-   Accent: #68b06a — medium sage green, natural
-   Called: #e8a84a — golden amber
-   Tapped: #d4704a — warm terracotta */
 [data-theme="forest"]{
-  --bg:#151a14;
-  --bg2:#1f2a1e;
-  --bg3:#28362a;
-  --surface:#324038;
-  --topbar-bg:#0e1210;
-  --panel-bg:#1f2a1e;
-  --border:#2a3828;
-  --accent:#68b06a;
-  --accent2:#4e9050;
-  --accent3:#a8d8aa;
-  --text:#e4e8e0;
-  --text2:#8aaa80;
-  --text3:#4a6848;
-  --called:#e8a84a;
-  --marked:#d4704a;
-  --win:#68b06a;--corner:#e8a84a;
-  --danger:#d05040;--warn:#e8a84a;--toast-bg:#1f2a1e;
-  --call-btn:#68b06a;--num-color:#e8a84a;
+  --bg:#0a1a14;--bg2:#0d2318;--bg3:#0f3020;--surface:#123d28;
+  --border:#1a5c38;
+  --accent:#f472b6;--accent2:#db2777;--accent3:#fda4af;
+  --text:#f0fff8;--text2:#a3e8c8;--text3:#6dc49a;
+  --called:#a3e635;--marked:#fb923c;
+  --win:#34d399;--corner:#c084fc;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0f3020;
+  --call-btn:#f472b6;--num-color:#a3e635;
+  --topbar-bg:#091a10;--panel-bg:#0e2d1c;
+  --btn-text:#fff;
 }
-
-/* ── LIGHT 1: WARM PARCHMENT ──
-   Clean modern light — like Notion, Linear light
-   Page: #f4f1ec warm off-white parchment (not stark white)
-   Panels: #ffffff pure white cards — clear pop against parchment bg
-   Topbar: #1e3a4a deep teal-navy — strong contrast, anchors top
-   Accent: #2a7ea8 medium teal-blue — calm, trustworthy
-   Called: #c06820 burnt sienna — warm, clearly visible on white
-   Tapped: #e85858 muted red */
 [data-theme="sunset"]{
-  --bg:#f4f1ec;
-  --bg2:#ffffff;
-  --bg3:#f0ece4;
-  --surface:#e8e0d4;
-  --topbar-bg:#1e3a4a;
-  --panel-bg:#ffffff;
-  --border:#ddd8ce;
-  --accent:#2a7ea8;
-  --accent2:#1a6090;
-  --accent3:#90c8e8;
-  --text:#1a1a2a;
-  --text2:#4a5868;
-  --text3:#8898a8;
-  --called:#c06820;
-  --marked:#e85858;
-  --win:#3a9a5a;--corner:#c06820;
-  --danger:#d03030;--warn:#c06820;--toast-bg:#ffffff;
-  --call-btn:#1e3a4a;--num-color:#c06820;
+  --bg:#fffbf0;--bg2:#fff8e6;--bg3:#fef3c7;--surface:#fde68a;
+  --border:#d97706;
+  --accent:#7c3aed;--accent2:#6d28d9;--accent3:#4c1d95;
+  --text:#1a0a2e;--text2:#3b1a78;--text3:#6b46c1;
+  --called:#0d9488;--marked:#ef4444;
+  --win:#16a34a;--corner:#db2777;
+  --danger:#dc2626;--warn:#b45309;--toast-bg:#fef3c7;
+  --call-btn:#7c3aed;--num-color:#0d9488;
+  --topbar-bg:#fef3c7;--panel-bg:#fde68a;
+  --btn-text:#fff;
 }
-
-/* ── LIGHT 2: SOFT ROSE ──
-   Warm light — popular in lifestyle/event apps
-   Page: #f8f4f0 very light warm rose-cream
-   Panels: #ffffff pure white — clear card definition
-   Topbar: #3a2a20 dark warm brown — rich contrast
-   Accent: #c05a3a terracotta-rust — warm, festive
-   Called: #2a8a70 medium teal-green — clear contrast on white
-   Tapped: #d4844a warm orange */
 [data-theme="ocean"]{
-  --bg:#f8f4f0;
-  --bg2:#ffffff;
-  --bg3:#f0e8e0;
-  --surface:#e8d8cc;
-  --topbar-bg:#3a2a20;
-  --panel-bg:#ffffff;
-  --border:#e0d0c4;
-  --accent:#c05a3a;
-  --accent2:#a04028;
-  --accent3:#f0a888;
-  --text:#1a1008;
-  --text2:#5a4030;
-  --text3:#9a8070;
-  --called:#2a8a70;
-  --marked:#d4844a;
-  --win:#3a9a5a;--corner:#d4844a;
-  --danger:#c03030;--warn:#c06820;--toast-bg:#ffffff;
-  --call-btn:#c05a3a;--num-color:#2a8a70;
+  --bg:#020617;--bg2:#0a1628;--bg3:#0f2040;--surface:#0d1e3d;
+  --border:#1e3a6e;
+  --accent:#f97316;--accent2:#ea580c;--accent3:#fed7aa;
+  --text:#f0f8ff;--text2:#93c5fd;--text3:#60a5fa;
+  --called:#10b981;--marked:#f59e0b;
+  --win:#34d399;--corner:#e879f9;
+  --danger:#f43f5e;--warn:#fbbf24;--toast-bg:#0f2040;
+  --call-btn:#f97316;--num-color:#10b981;
+  --topbar-bg:#050d1a;--panel-bg:#0c1c38;
+  --btn-text:#fff;
 }
 
-/* ===== LAYOUT ===== */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
-input,select,button{font-family:'DM Sans',sans-serif}
-.screen{display:none;flex-direction:column;min-height:100vh}
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
+input,button,select,textarea{font-family:inherit}
+button{cursor:pointer;border:none;background:none;color:inherit}
+button:active{transform:scale(0.97)}
+input[type="text"],input[type="password"],input[type="number"]{
+  background:var(--bg3);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;
+  font-size:.95rem;text-transform:uppercase;letter-spacing:.06em;width:100%;outline:none;transition:border .2s;
+}
+input:focus{border-color:var(--accent)}
+select{
+  background:var(--bg3);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:10px 12px;font-size:.9rem;outline:none;
+  -webkit-appearance:none;appearance:none;width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
-.content{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;width:100%}
-.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--topbar-bg,var(--bg2));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
-.topbar-title{font-weight:700;font-size:1rem;flex:1;text-align:center}
-.topbar-btn{background:none;border:1.5px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer}
-.topbar-btn.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
-.topbar-btn.danger{border-color:var(--danger);color:var(--danger)}
-.icon-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:4px 6px;border-radius:8px;color:var(--text2)}
-.icon-btn:hover{background:var(--bg3)}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 12px;
+  background:var(--topbar-bg,var(--bg2));
+  border-bottom:1.5px solid var(--border);
+  position:sticky;top:0;z-index:50;
+  min-height:52px;
+  /* no flex-wrap — items must stay on one line */
+}
+.topbar-title{
+  flex:1;min-width:0;
+  text-align:center;
+  font-family:'DM Mono',monospace;font-size:1rem;font-weight:700;
+  color:var(--accent);letter-spacing:.08em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.topbar-btn{
+  padding:6px 10px;border-radius:8px;font-weight:700;font-size:.8rem;
+  background:var(--surface);color:var(--text);
+  border:1.5px solid var(--border);white-space:nowrap;flex-shrink:0;
+}
+.topbar-btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.topbar-btn.accent{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:700}
+.icon-btn{
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;background:var(--surface);
+  border:1.5px solid var(--border);flex-shrink:0;
+}
+
+/* ===== THEME DROPDOWN ===== */
+.theme-dropdown-wrap{position:relative;flex-shrink:0}
+.theme-menu{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:200;
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;
+  padding:6px;display:none;flex-direction:column;gap:3px;min-width:156px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.theme-menu.open{display:flex}
+.theme-menu-item{
+  padding:9px 12px;border-radius:8px;font-size:.85rem;font-weight:600;
+  cursor:pointer;color:var(--text2);
+  display:flex;align-items:center;gap:8px;transition:background .15s;
+}
+.theme-menu-item:hover,.theme-menu-item.active{background:var(--surface);color:var(--text)}
+
+/* ===== CONTENT ===== */
+.content{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
 
 /* ===== PANELS ===== */
 .panel{background:var(--panel-bg,var(--bg2));border:1.5px solid var(--border);border-radius:14px;padding:14px}
-.panel-title{font-weight:700;font-size:.92rem;margin-bottom:10px;color:var(--text)}
+.panel-title{
+  font-size:.7rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:10px;
+}
 .panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.hint{font-size:.78rem;color:var(--text3)}
-.mt8{margin-top:8px}
-.text2{color:var(--text2)}
-.mono{font-family:'DM Mono',monospace}
-
-/* ===== BUTTONS ===== */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer;border:1.5px solid transparent;transition:all .18s}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{background:var(--accent2)}
-.btn-outline{background:transparent;color:var(--text);border-color:var(--border)}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-warn{background:var(--warn);color:#fff}
-.btn-green{background:var(--win);color:#fff}
-.btn-sm{padding:7px 13px;font-size:.82rem}
-.btn-full{width:100%}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* ===== INPUTS ===== */
-input[type=text],input[type=number],input[type=password]{
-  background:var(--bg3);border:1.5px solid var(--border);color:var(--text);
-  border-radius:10px;padding:10px 12px;font-size:.9rem;width:100%;outline:none;
-}
-input:focus{border-color:var(--accent)}
-
-/* ===== TOGGLE ===== */
-.toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
-.toggle-track{width:38px;height:22px;border-radius:11px;background:var(--bg3);border:1.5px solid var(--border);position:relative;transition:background .2s}
-.toggle-track.on{background:var(--accent);border-color:var(--accent)}
-.toggle-thumb{width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s}
-.toggle-track.on .toggle-thumb{left:18px}
-.toggle-label{font-size:.88rem;color:var(--text2)}
-
-/* ===== THEME DROPDOWN ===== */
-.theme-dropdown-wrap{position:relative}
-.theme-menu{
-  position:absolute;top:calc(100% + 6px);right:0;z-index:100;
-  background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;
-  overflow:hidden;min-width:160px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25);
-}
-.theme-menu.open{display:block}
-.theme-menu-item{padding:10px 14px;font-size:.88rem;cursor:pointer;color:var(--text2);transition:background .15s}
-.theme-menu-item:hover,.theme-menu-item.active{background:var(--bg3);color:var(--text)}
 
 /* ===== LANDING ===== */
-.app-icon{width:72px;height:72px;margin:0 auto}
-.app-title{font-size:1.8rem;font-weight:800;text-align:center;letter-spacing:-.02em}
-.app-sub{font-size:.9rem;color:var(--text2);text-align:center}
-.landing-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-
-/* ===== CALLED NUMBERS GRID ===== */
-.num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
-.num-cell{
-  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  font-family:'DM Mono',monospace;font-size:.72rem;font-weight:600;
-  border-radius:5px;background:var(--bg3);color:var(--text3);
-  transition:all .25s;min-height:28px;
+#s-landing{align-items:center;justify-content:center;padding:40px 24px;gap:22px;min-height:100vh;position:relative}
+.landing-topright{position:absolute;top:16px;right:16px}
+.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.logo-icon{width:80px;height:80px;animation:logoPulse 3s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 10px var(--accent))}50%{filter:drop-shadow(0 0 28px var(--accent))}}
+.app-title{font-size:2.8rem;font-weight:700;letter-spacing:-.02em;line-height:1}
+.app-sub{color:var(--text3);font-size:.82rem;letter-spacing:.12em;text-transform:uppercase}
+.divider{
+  width:100%;max-width:340px;
+  display:flex;align-items:center;gap:10px;
+  color:var(--text3);font-size:.75rem;letter-spacing:.1em;
 }
-.num-cell.called{background:var(--num-color);color:var(--bg);font-weight:700}
-.host-num-row{display:flex;align-items:center;gap:10px}
-.called-count{font-size:.78rem;color:var(--text3);font-family:'DM Mono',monospace}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.landing-input-row{display:flex;gap:8px;width:100%;max-width:340px;align-items:stretch}
+.landing-input-row input{flex:1}
+.landing-input-row .btn{flex-shrink:0;white-space:nowrap}
 
-.btn-call{font-size:1.2rem;padding:16px;border-radius:16px;background:var(--call-btn);color:#fff;font-weight:700;width:100%;box-shadow:0 4px 24px color-mix(in srgb,var(--call-btn) 40%,transparent)}
+/* ===== BUTTONS ===== */
+.btn{
+  padding:11px 18px;border-radius:12px;font-weight:700;font-size:.92rem;
+  border:none;cursor:pointer;transition:all .2s;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  line-height:1;
+}
+.btn-primary{background:var(--accent);color:#fff}
+[data-theme="sunset"] .btn-primary{color:#fff}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn-outline:hover{background:var(--accent);color:#fff}
+.btn-danger{background:var(--danger);color:#fff;border:none}
+.btn-warn{background:var(--warn);color:#fff;border:none}
+[data-theme="sunset"] .btn-warn{color:#fff}
+.btn-green{background:var(--win);color:#fff;border:none}
+.btn-full{width:100%;display:flex}
+.btn-sm{padding:8px 14px;font-size:.82rem;border-radius:9px}
+.btn-call{
+  font-size:1.15rem;padding:16px;border-radius:16px;
+  background:var(--call-btn);color:#fff;font-weight:700;
+  width:100%;border:none;cursor:pointer;
+  box-shadow:0 4px 20px color-mix(in srgb,var(--call-btn) 35%,transparent);
+  transition:all .2s;
+}
+.btn-call:active{transform:scale(.98)}
 #install-btn{display:none}
 
 /* ===== NUMBER DISPLAY ===== */
-.last-called-big{font-family:'DM Mono',monospace;font-size:4rem;font-weight:700;color:var(--num-color);text-align:center;line-height:1;text-shadow:0 0 30px color-mix(in srgb,var(--num-color) 60%,transparent)}
-.called-count{text-align:center;color:var(--text3);font-size:.82rem;margin-top:4px}
+.last-called-big{
+  font-family:'DM Mono',monospace;font-size:4.5rem;font-weight:700;
+  color:var(--num-color);text-align:center;line-height:1;
+  text-shadow:0 0 30px color-mix(in srgb,var(--num-color) 55%,transparent);
+  min-width:5rem;
+}
+.called-count{text-align:center;color:var(--text2);font-size:.82rem;margin-top:4px;font-weight:600}
 
 /* ===== NUMBER GRID ===== */
 .num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
-.num-cell{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:500;background:var(--bg3);color:var(--text3);transition:all .3s}
-.num-cell.called{background:var(--num-color);color:var(--bg);font-weight:700}
+.num-cell{
+  aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.7rem;font-weight:600;
+  background:var(--bg3);color:var(--text2);transition:all .25s;
+}
+.num-cell.called{background:var(--num-color);color:#000;font-weight:700}
+[data-theme="midnight"] .num-cell.called,[data-theme="ocean"] .num-cell.called{color:#000}
+[data-theme="forest"] .num-cell.called{color:#0a1a14}
+[data-theme="sunset"] .num-cell.called{color:#fff}
 
 /* ===== TICKET ===== */
 .ticket{border:2px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg2)}
 .ticket-row{display:grid;grid-template-columns:repeat(9,1fr)}
 .ticket-cell{
   aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-  font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;
-  border:.5px solid var(--border);background:var(--bg3);color:var(--text2);
-  position:relative;transition:all .22s;min-height:34px;user-select:none;
-  font-style:italic;
+  font-family:'DM Mono',monospace;font-size:.82rem;font-weight:600;
+  border:.5px solid var(--border);background:var(--bg3);color:var(--text);
+  position:relative;transition:all .2s;min-height:32px;user-select:none;
 }
-.ticket-cell.blank{background:var(--bg2);color:transparent;pointer-events:none}
-/* called but NOT yet tapped by player (host view) — strong accent fill + border */
+.ticket-cell.blank{background:color-mix(in srgb,var(--bg2) 80%,var(--border));color:transparent;pointer-events:none}
 .ticket-cell.called-only{
-  background:color-mix(in srgb,var(--called) 25%,var(--bg3));
-  color:var(--called);
-  border:2px solid var(--called);
-  font-weight:700;
-  text-shadow:0 0 8px color-mix(in srgb,var(--called) 60%,transparent);
+  background:color-mix(in srgb,var(--called) 22%,var(--bg3));
+  color:var(--called);border:2px solid var(--called);font-weight:700;
 }
-/* called + not yet tapped (player interactive) — pulsing orange, strong border */
 .ticket-cell.callable{
-  background:color-mix(in srgb,var(--marked) 15%,var(--bg3));
-  color:var(--marked);
-  border:2.5px solid var(--marked);
-  font-weight:700;
-  animation:callPulse 1.1s ease-in-out infinite;
-  cursor:pointer;
+  background:color-mix(in srgb,var(--marked) 18%,var(--bg3));
+  color:var(--marked);border:2.5px solid var(--marked);font-weight:700;
+  animation:callPulse 1.1s ease-in-out infinite;cursor:pointer;
 }
 @keyframes callPulse{
-  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 60%,transparent)}
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--marked) 55%,transparent)}
   50%{box-shadow:0 0 0 5px transparent}
 }
-/* tapped (marked) by player — solid orange fill, white text, tick */
 .ticket-cell.marked{
-  background:var(--marked);
-  color:#fff;
-  font-weight:700;
-  border:2px solid color-mix(in srgb,var(--marked) 60%,#000);
+  background:var(--marked);color:#fff;font-weight:700;
+  border:2px solid color-mix(in srgb,var(--marked) 50%,#000);
 }
-.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.5rem;opacity:.9}
-.ticket-cell.win-hi{background:color-mix(in srgb,var(--win) 35%,var(--bg3));outline:2.5px solid var(--win);color:var(--win)}
-.ticket-cell.corner-hi{background:color-mix(in srgb,var(--corner) 35%,var(--bg3));outline:2.5px solid var(--corner);color:var(--corner)}
-.ticket-code{text-align:center;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);padding:5px;letter-spacing:.1em}
+.ticket-cell.marked::after{content:'✓';position:absolute;top:1px;right:3px;font-size:.48rem;opacity:.9}
+.ticket-cell.win-hi{background:color-mix(in srgb,var(--win) 30%,var(--bg3));outline:2.5px solid var(--win);color:var(--win);font-weight:700}
+.ticket-cell.corner-hi{background:color-mix(in srgb,var(--corner) 30%,var(--bg3));outline:2.5px solid var(--corner);color:var(--corner);font-weight:700}
+.ticket-code{
+  text-align:center;font-family:'DM Mono',monospace;
+  font-size:.7rem;color:var(--text2);
+  padding:6px;letter-spacing:.1em;font-weight:500;
+}
 
 /* ===== PRIZE SETUP ===== */
-.prize-setup-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)}
+.prize-setup-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .prize-setup-row:last-child{border-bottom:none}
-.prize-toggle{width:36px;height:20px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
-.prize-toggle.on{background:var(--accent)}
-.prize-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:1px;left:2px;transition:left .2s}
-.prize-toggle.on::after{left:18px}
-.stepper{display:flex;align-items:center;gap:5px}
-.stepper-btn{width:26px;height:26px;border-radius:6px;background:var(--bg3);border:1.5px solid var(--border);font-size:.9rem;font-weight:700;display:flex;align-items:center;justify-content:center}
-.stepper-val{font-family:'DM Mono',monospace;font-size:.9rem;min-width:18px;text-align:center}
+.prize-toggle{
+  width:40px;height:22px;border-radius:11px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;
+}
+.prize-toggle.on{background:var(--accent);border-color:var(--accent)}
+.prize-toggle::after{
+  content:'';position:absolute;
+  width:16px;height:16px;border-radius:50%;background:#fff;
+  top:1px;left:2px;transition:left .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.prize-toggle.on::after{left:20px}
+.stepper{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.stepper-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  font-size:1rem;font-weight:700;color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+}
+.stepper-val{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:700;min-width:20px;text-align:center;color:var(--text)}
+
+/* ===== HOST CALL AREA ===== */
+.host-num-row{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0}
 
 /* ===== HOST PRIZE CLAIMS PANEL ===== */
-.claim-prize-block{margin-bottom:14px;padding:12px;background:var(--bg3);border-radius:12px;border:1.5px solid var(--border)}
-.claim-prize-name{font-weight:700;font-size:.95rem;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.claim-prize-name .closed-badge{font-size:.7rem;padding:2px 8px;border-radius:10px;background:var(--win);color:#fff;font-weight:700}
-.claim-prize-name .open-badge{font-size:.7rem;padding:2px 8px;border-radius:10px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.claim-prize-block{
+  margin-bottom:12px;padding:12px;
+  background:var(--bg3);border-radius:12px;border:1.5px solid var(--border);
+}
+.claim-prize-name{
+  font-weight:700;font-size:.92rem;color:var(--text);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.claim-prize-name .closed-badge{
+  font-size:.68rem;padding:2px 8px;border-radius:10px;
+  background:var(--win);color:#fff;font-weight:700;flex-shrink:0;
+}
+.claim-prize-name .open-badge{
+  font-size:.68rem;padding:2px 8px;border-radius:10px;
+  background:transparent;color:var(--text2);border:1.5px solid var(--border);flex-shrink:0;
+}
 .claim-cards-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
 .claim-card-chip{
-  display:inline-flex;align-items:center;gap:5px;padding:5px 10px;
-  border-radius:8px;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:600;
+  display:inline-flex;align-items:center;gap:5px;padding:6px 11px;
+  border-radius:9px;font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;
   cursor:pointer;transition:all .2s;border:1.5px solid;
 }
-.claim-card-chip.pending{background:color-mix(in srgb,var(--warn) 15%,var(--bg2));border-color:var(--warn);color:var(--warn)}
-.claim-card-chip.accepted{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border-color:var(--win);color:var(--win)}
-.claim-card-chip.rejected{background:color-mix(in srgb,var(--danger) 12%,var(--bg2));border-color:var(--border);color:var(--text3);text-decoration:line-through}
-.winner-chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.winner-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--win) 18%,var(--bg2));border:1.5px solid var(--win);font-family:'DM Mono',monospace;font-size:.78rem;color:var(--win);font-weight:600}
-.no-claims{font-size:.8rem;color:var(--text3);font-style:italic}
+.claim-card-chip.pending{
+  background:color-mix(in srgb,var(--warn) 18%,var(--bg2));
+  border-color:var(--warn);color:var(--warn);
+}
+.claim-card-chip.accepted{
+  background:color-mix(in srgb,var(--win) 18%,var(--bg2));
+  border-color:var(--win);color:var(--win);
+}
+.claim-card-chip.rejected{
+  background:var(--bg2);border-color:var(--border);
+  color:var(--text3);text-decoration:line-through;
+}
+.winner-chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.winner-chip{
+  display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:9px;
+  background:color-mix(in srgb,var(--win) 18%,var(--bg2));
+  border:1.5px solid var(--win);
+  font-family:'DM Mono',monospace;font-size:.78rem;color:var(--win);font-weight:700;
+  cursor:pointer;
+}
+.no-claims{font-size:.82rem;color:var(--text3);font-style:italic;padding:4px 0}
 
 /* ===== PLAYER PRIZE GRID ===== */
 .prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.prize-mini{background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:8px 10px}
-.prize-mini-name{font-weight:600;font-size:.82rem}
-.prize-mini-status{color:var(--text3);font-size:.73rem;margin-top:3px;display:flex;align-items:center;gap:4px}
-.prize-mini.claimable{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--bg2))}
-.prize-mini.claimed{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--bg2))}
-.prize-mini.won-prize{border-color:var(--win);background:color-mix(in srgb,var(--win) 12%,var(--bg2))}
-.prize-mini.closed-prize{opacity:.55}
-.claim-btn{width:100%;margin-top:6px;padding:6px;border-radius:7px;background:var(--warn);color:#fff;font-weight:700;font-size:.78rem;border:none;cursor:pointer}
+.prize-mini{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:11px;padding:9px 11px;
+}
+.prize-mini-name{font-weight:700;font-size:.85rem;color:var(--text);line-height:1.3}
+.prize-mini-status{
+  color:var(--text2);font-size:.76rem;margin-top:4px;
+  display:flex;align-items:center;gap:4px;font-weight:600;
+}
+.prize-mini.claimable{
+  border-color:var(--warn);
+  background:color-mix(in srgb,var(--warn) 12%,var(--bg2));
+}
+.prize-mini.claimed{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 10%,var(--bg2));
+}
+.prize-mini.won-prize{
+  border-color:var(--win);
+  background:color-mix(in srgb,var(--win) 12%,var(--bg2));
+}
+.prize-mini.closed-prize{opacity:.5}
+.claim-btn{
+  width:100%;margin-top:7px;padding:8px;border-radius:8px;
+  background:var(--warn);color:#fff;font-weight:700;font-size:.8rem;
+  border:none;cursor:pointer;transition:all .15s;
+}
 .claim-btn:active{transform:scale(.97)}
-.claim-btn.already{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.claim-btn.already{background:var(--bg3);color:var(--text2);border:1.5px solid var(--border)}
 
 /* ===== PLAYER SCREEN ===== */
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--win);animation:livePulse 1.5s ease-in-out infinite;flex-shrink:0}
-@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--win) 50%,transparent)}50%{opacity:.7;box-shadow:0 0 0 5px transparent}}
-#player-ticket-wrapper{position:fixed;left:0;width:100vw;z-index:20}
+.live-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--win);
+  animation:livePulse 1.5s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes livePulse{
+  0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--win) 50%,transparent)}
+  50%{opacity:.7;box-shadow:0 0 0 5px transparent}
+}
+#player-ticket-wrapper{position:fixed;left:0;width:100vw;z-index:20;background:var(--bg)}
 .player-spacer{width:100%;background:transparent}
-.win-alert-bar{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border:1.5px solid var(--win);border-radius:10px;padding:8px 12px;color:var(--win);font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px}
+.win-alert-bar{
+  background:color-mix(in srgb,var(--win) 15%,var(--bg2));
+  border:1.5px solid var(--win);border-radius:10px;padding:10px 14px;
+  color:var(--win);font-weight:700;font-size:.88rem;
+  display:flex;align-items:center;gap:8px;
+}
 
 /* ===== CARD CHIPS ===== */
-.card-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:var(--bg3);border:1.5px solid var(--border);font-family:'DM Mono',monospace;font-size:.76rem;cursor:pointer;color:var(--text2);transition:all .2s;margin:3px}
+.card-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 10px;border-radius:8px;
+  background:var(--bg3);border:1.5px solid var(--border);
+  font-family:'DM Mono',monospace;font-size:.76rem;
+  cursor:pointer;color:var(--text2);font-weight:600;
+  transition:all .2s;margin:3px;
+}
 .card-chip:hover{border-color:var(--accent);color:var(--text)}
-.card-chip.won{background:color-mix(in srgb,var(--win) 18%,var(--bg3));border-color:var(--win);color:var(--win);box-shadow:0 0 8px color-mix(in srgb,var(--win) 25%,transparent)}
+.card-chip.won{
+  background:color-mix(in srgb,var(--win) 16%,var(--bg3));
+  border-color:var(--win);color:var(--win);
+  box-shadow:0 0 8px color-mix(in srgb,var(--win) 22%,transparent);
+}
 
 /* ===== DISPLAY MODE ===== */
-#s-display{background:#000;color:#fff}
-#s-display .last-called-big{font-size:7rem;color:#fff}
-#s-display .num-cell.called{background:#fff;color:#000}
-#s-display .num-cell{background:#111;color:#333}
-.display-prize-item{padding:7px 0;border-bottom:1px solid #1a1a1a;font-size:.88rem;color:#888}
+#s-display{background:#050508;color:#fff}
+#s-display .last-called-big{font-size:6.5rem;color:#fff;text-shadow:0 0 40px rgba(255,255,255,.4)}
+#s-display .num-cell{background:#111;color:#555}
+#s-display .num-cell.called{background:#e0e0e0;color:#000;font-weight:700}
+#s-display .called-count{color:#888}
+.display-prize-item{padding:8px 0;border-bottom:1px solid #1f1f1f;font-size:.9rem;color:#777}
 .display-prize-item .pw{color:#fff;font-weight:700}
 
 /* ===== STATUS BADGE ===== */
-.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.8rem;font-weight:600;background:var(--bg3);color:var(--text2)}
-.status-badge.live{background:color-mix(in srgb,var(--win) 15%,var(--bg3));color:var(--win)}
+.status-badge{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 12px;
+  border-radius:20px;font-size:.82rem;font-weight:700;
+  background:var(--bg3);color:var(--text2);border:1px solid var(--border);
+}
+.status-badge.live{
+  background:color-mix(in srgb,var(--win) 14%,var(--bg3));
+  color:var(--win);border-color:var(--win);
+}
 
 /* ===== COLLAPSIBLE ===== */
 .collapsible-header{display:flex;align-items:center;cursor:pointer;user-select:none;gap:8px}
-.collapsible-header .arrow{transition:transform .2s;font-size:.72rem;color:var(--text3)}
+.collapsible-header .arrow{
+  margin-left:auto;flex-shrink:0;
+  font-size:.8rem;color:var(--text2);
+  transition:transform .2s;display:inline-block;
+}
 .collapsible-header.open .arrow{transform:rotate(90deg)}
-.collapsible-body{display:none;margin-top:10px}
+.collapsible-body{display:none;margin-top:12px}
 .collapsible-body.open{display:block}
 
 /* ===== TOAST ===== */
-#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--toast-bg);border:1.5px solid var(--border);color:var(--text);padding:9px 18px;border-radius:12px;font-size:.86rem;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none}
+#toast{
+  position:fixed;top:16px;left:50%;
+  transform:translateX(-50%) translateY(-100px);
+  background:var(--toast-bg);border:1.5px solid var(--border);color:var(--text);
+  padding:10px 20px;border-radius:12px;font-size:.88rem;font-weight:700;
+  z-index:9999;transition:transform .28s ease;
+  white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);pointer-events:none;
+}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
 /* ===== MODAL ===== */
-#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto}
-#modal-overlay.open{display:flex}
-#modal-box{background:var(--bg2);border:1.5px solid var(--border);border-radius:16px;padding:16px;width:100%;max-width:600px;margin:auto}
-.modal-title{font-weight:700;font-size:1rem;margin-bottom:12px;color:var(--text)}
-.modal-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-#modal-box .ticket{width:100%;table-layout:fixed}
-#modal-box .ticket-cell{font-size:clamp(.6rem,2.5vw,.9rem);min-height:28px}
-/* claim bubble */
-.claim-bubble{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 6px;border-radius:13px;background:var(--warn);color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;animation:bubblePop .4s ease;box-shadow:0 2px 8px color-mix(in srgb,var(--warn) 50%,transparent);transition:transform .15s}
-.claim-bubble:hover{transform:scale(1.12)}
-@keyframes bubblePop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
-.host-num-row{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0}
-/* ===== CLAIM REVIEW TICKET CELL STATES ===== */
-/* 1. GREEN ★ = trigger number (the last called, completing the prize) */
-.ticket-cell.tc-trigger{
-  background:#16a34a;color:#fff;font-weight:700;
-  border:2.5px solid #15803d;
-  box-shadow:0 0 0 2px rgba(34,197,94,.35);
+#modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);
+  z-index:500;display:none;align-items:flex-start;justify-content:center;
+  padding:16px 12px;overflow-y:auto;
 }
-.ticket-cell.tc-trigger::after{content:"★";position:absolute;top:1px;right:2px;font-size:.48rem;color:#bbf7d0}
-/* 2. ORANGE ✓ = correctly tapped (called + tapped, part of prize requirement) */
+#modal-overlay.open{display:flex}
+#modal-box{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:16px;padding:18px;
+  width:100%;max-width:520px;margin:auto;
+}
+.modal-title{font-weight:700;font-size:1rem;margin-bottom:14px;color:var(--text)}
+.modal-actions{
+  display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;
+}
+.modal-actions .btn{flex:1;min-width:80px}
+#modal-box .ticket{width:100%}
+#modal-box .ticket-cell{font-size:clamp(.58rem,2.4vw,.85rem);min-height:28px}
+
+/* ===== CLAIM BUBBLE ===== */
+.claim-bubble{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:28px;height:28px;padding:0 7px;border-radius:14px;
+  background:var(--danger);color:#fff;font-size:.78rem;font-weight:700;
+  cursor:pointer;animation:bubblePop .4s ease;
+  box-shadow:0 2px 10px color-mix(in srgb,var(--danger) 45%,transparent);
+  transition:transform .15s;
+}
+.claim-bubble:hover{transform:scale(1.1)}
+@keyframes bubblePop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* ===== CLAIM REVIEW TICKET STATES ===== */
+.ticket-cell.tc-trigger{
+  background:#15803d;color:#fff;font-weight:700;
+  border:2.5px solid #166534;
+  box-shadow:0 0 0 2px rgba(34,197,94,.3);
+}
+.ticket-cell.tc-trigger::after{content:"★";position:absolute;top:1px;right:2px;font-size:.46rem;color:#bbf7d0}
 .ticket-cell.tc-tapped-ok{
   background:var(--marked);color:#fff;font-weight:700;
-  border:2px solid color-mix(in srgb,var(--marked) 55%,#000);
+  border:2px solid color-mix(in srgb,var(--marked) 50%,#000);
 }
-.ticket-cell.tc-tapped-ok::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.48rem;opacity:.9}
-/* 3. RED ✗ = REQUIRED for prize but NOT tapped — INVALID CLAIM */
+.ticket-cell.tc-tapped-ok::after{content:"✓";position:absolute;top:1px;right:2px;font-size:.46rem;opacity:.9}
 .ticket-cell.tc-required-missing{
-  background:color-mix(in srgb,var(--danger) 20%,var(--bg3));
+  background:color-mix(in srgb,var(--danger) 18%,var(--bg3));
   color:var(--danger);font-weight:700;
   border:2.5px solid var(--danger);
   animation:missingPulse 1s ease-in-out infinite;
 }
-.ticket-cell.tc-required-missing::after{content:"✗";position:absolute;top:1px;right:2px;font-size:.48rem}
-@keyframes missingPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 50%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
-/* 4. BLUE/ACCENT dim = called but not a prize requirement, not tapped (irrelevant) */
-/* 4. Called but not a prize requirement — solid accent bg tint, accent text, thick border */
+.ticket-cell.tc-required-missing::after{content:"✗";position:absolute;top:1px;right:2px;font-size:.46rem}
+@keyframes missingPulse{
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 45%,transparent)}
+  50%{box-shadow:0 0 0 4px transparent}
+}
 .ticket-cell.tc-called-irrelevant{
-  background:color-mix(in srgb,var(--called) 22%,var(--bg3));
-  color:var(--called);
-  border:2px solid var(--called);
+  background:color-mix(in srgb,var(--called) 18%,var(--bg3));
+  color:var(--called);border:1.5px solid color-mix(in srgb,var(--called) 50%,transparent);
   font-weight:600;
 }
-/* 5. Not yet called — italic, muted, clearly inactive but still readable */
 .ticket-cell.tc-uncalled{
-  background:var(--bg3);
-  color:var(--text3);
-  font-style:italic;
-  font-weight:500;
-  border:.5px solid var(--border);
-  opacity:.65;
+  background:var(--bg3);color:var(--text3);
+  font-style:italic;font-weight:500;
+  border:.5px solid var(--border);opacity:.6;
 }
 .ticket-cell.tc-blank-cell{background:var(--bg2);color:transparent}
+
 /* Claim validity banner */
 .claim-valid-banner{
   padding:10px 14px;border-radius:10px;font-weight:700;font-size:.88rem;
-  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
 }
-.claim-valid-banner.valid{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border:1.5px solid var(--win);color:var(--win)}
+.claim-valid-banner.valid{background:color-mix(in srgb,var(--win) 14%,var(--bg2));border:1.5px solid var(--win);color:var(--win)}
 .claim-valid-banner.invalid{background:color-mix(in srgb,var(--danger) 12%,var(--bg2));border:1.5px solid var(--danger);color:var(--danger)}
-.ticket-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:.72rem}
-.tl-item{display:flex;align-items:center;gap:4px;color:var(--text2)}
+
+/* Claim review legend */
+.ticket-legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-bottom:12px;font-size:.72rem}
+.tl-item{display:flex;align-items:center;gap:5px;color:var(--text2);font-weight:600}
 .tl-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 
 /* ===== PRINT ===== */
 @media print{
   .no-print{display:none!important}
   body{background:#fff;color:#000}
-  .ticket-cell{border:1px solid #ccc;background:#fff;color:#000}
-  .ticket-cell.blank{background:#eee}
-  .print-card{page-break-inside:avoid;margin-bottom:20px}
+  .ticket-cell{border:1px solid #ccc!important;background:#fff!important;color:#000!important}
+  .ticket-cell.blank{background:#f0f0f0!important}
+  .print-card{page-break-inside:avoid;margin-bottom:24px}
   .screen:not(#s-print){display:none!important}
   #s-print{display:block!important}
 }
 
-/* ===== MISC ===== */
+/* ===== UTILS ===== */
 .mono{font-family:'DM Mono',monospace}
-.sep{height:1px;background:var(--border);margin:8px 0}
-.hint{font-size:.78rem;color:var(--text3);text-align:center}
+.sep{height:1px;background:var(--border);margin:10px 0}
+.hint{font-size:.78rem;color:var(--text3);text-align:center;line-height:1.5}
 .mt8{margin-top:8px}
 .flex{display:flex}.items-center{align-items:center}.gap8{gap:8px}.fw7{font-weight:700}
 .text3{color:var(--text3)}.text2{color:var(--text2)}.accent{color:var(--accent)}
@@ -531,14 +625,16 @@ input:focus{border-color:var(--accent)}
     <div class="topbar-title" id="join-game-title">Game XXXX</div>
   </div>
   <div class="content">
-    <div class="panel" style="display:flex;align-items:center;gap:10px">
+    <div class="panel" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <span id="join-status-badge" class="status-badge">⏳ Not started</span>
-      <span id="join-called-count" class="text3 mono" style="font-size:.82rem"></span>
+      <span id="join-called-count" class="mono text2" style="font-size:.82rem;font-weight:600"></span>
     </div>
     <div class="panel">
       <div class="panel-title">Play with a Card</div>
-      <div id="player-join-status" style="font-size:.85rem;color:var(--text3);margin-bottom:10px"></div>
-      <button class="btn btn-primary btn-full" id="btn-get-card" onclick="goPlayerFromJoin()">🎴 Get My Card →</button>
+      <div class="panel-row">
+        <input type="text" id="player-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-primary btn-sm" onclick="goPlayerFromJoin()">View My Card →</button>
+      </div>
     </div>
     <div class="panel">
       <div class="panel-title">Switch to Host</div>
@@ -558,7 +654,8 @@ input:focus{border-color:var(--accent)}
 <div class="screen" id="s-hostgame">
   <div class="topbar">
     <button class="topbar-btn danger" onclick="endGame()">End</button>
-    <div class="topbar-title mono" id="host-game-id" style="font-size:1.4rem;letter-spacing:.18em"></div>
+    <div class="topbar-title mono" id="host-game-id" style="font-size:1.5rem;letter-spacing:.2em;flex:0 0 auto;padding:0 6px"></div>
+    <div style="flex:1"></div>
     <button class="icon-btn" onclick="show('s-playerview')" title="Browse Cards">👁</button>
     <button class="icon-btn" onclick="show('s-display')" title="Display">📺</button>
     <div class="theme-dropdown-wrap">
@@ -591,10 +688,12 @@ input:focus{border-color:var(--accent)}
     <!-- Host close prize manually -->
     <div class="panel">
       <div class="panel-title">Close Prize Manually (Hard Copy Cards)</div>
-      <div class="panel-row" style="flex-wrap:wrap;gap:8px">
-        <select id="manual-prize-select" style="flex:1;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:.9rem"></select>
-        <input type="text" id="manual-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
-        <button class="btn btn-warn btn-sm btn-full" onclick="hostManualWin()">✓ Award Prize</button>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <select id="manual-prize-select"></select>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="manual-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+          <button class="btn btn-warn btn-sm" style="flex-shrink:0;white-space:nowrap" onclick="hostManualWin()">✓ Award</button>
+        </div>
       </div>
     </div>
     <div class="panel">
@@ -623,11 +722,11 @@ input:focus{border-color:var(--accent)}
 <div class="screen" id="s-player">
   <div class="topbar" id="player-topbar">
     <button class="topbar-btn" onclick="show('s-joingame')">← Back</button>
-    <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center">
+    <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:center;min-width:0">
       <div class="live-dot"></div>
-      <span class="mono" style="font-size:.86rem;letter-spacing:.08em" id="player-card-label">Card</span>
+      <span class="mono" style="font-size:.84rem;letter-spacing:.06em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="player-card-label">Card</span>
     </div>
-    <div style="font-family:'DM Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--accent)" id="player-last-called">—</div>
+    <div style="font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--num-color);min-width:2.5rem;text-align:center;flex-shrink:0" id="player-last-called">—</div>
     <button class="icon-btn" onclick="resetMarks()" title="Reset">↺</button>
     <div class="theme-dropdown-wrap">
       <button class="icon-btn" onclick="toggleThemeMenu('player')" id="theme-toggle-player">🎨</button>
@@ -748,10 +847,10 @@ let deferredPrompt = null;
 
 // ===== THEMES =====
 const THEMES = [
-  {id:'midnight', label:'🌙 Midnight Blue'},
-  {id:'forest',   label:'🌲 Forest Night'},
-  {id:'sunset',   label:'🌿 Warm Parchment'},
-  {id:'ocean',    label:'🌸 Soft Rose'},
+  {id:'midnight', label:'🎪 Carnival'},
+  {id:'forest',   label:'🌴 Jungle'},
+  {id:'sunset',   label:'🎉 Fiesta'},
+  {id:'ocean',    label:'🌊 Neon Reef'},
 ];
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
@@ -1014,7 +1113,7 @@ function buildPrizeSetup(){
     const tog=document.createElement('div');tog.className='prize-toggle on';tog.id='ps-tog-'+p.id;
     tog.onclick=()=>tog.classList.toggle('on');
     const nameCol=document.createElement('div');nameCol.style.flex='1';
-    nameCol.innerHTML='<div style="font-weight:600;font-size:.9rem">'+p.name+'</div><div style="font-size:.72rem;color:var(--text3)">'+p.rule+'</div>';
+    nameCol.innerHTML='<div style="font-weight:700;font-size:.9rem;color:var(--text)">'+p.name+'</div><div style="font-size:.72rem;color:var(--text3);margin-top:2px">'+p.rule+'</div>';
     const step=document.createElement('div');step.className='stepper';
     const minus=document.createElement('button');minus.className='stepper-btn';minus.textContent='−';
     const val=document.createElement('span');val.className='stepper-val';val.id='ps-cnt-'+p.id;val.textContent='1';
@@ -1068,19 +1167,11 @@ async function startHostGame(){
     gs.claims[p.id]=[];
   });
   const id=randId(); gs.gameId=id;
-  // Build shuffled card pool for atomic assignment
-  const pool=[];
-  for(let i=gs.rangeFrom;i<=gs.rangeTo;i++) pool.push(i);
-  // Fisher-Yates shuffle using seeded random (gameId as seed for reproducibility)
-  let seed=id.split('').reduce((a,c)=>a*31+c.charCodeAt(0),0);
-  const rng=()=>{seed=(seed*1664525+1013904223)&0xffffffff;return(seed>>>0)/0x100000000;};
-  for(let i=pool.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   try{
     const existing=await db.ref('games').once('value');
     const updates={};
     existing.forEach(child=>{updates['games/'+child.key]=null;});
     updates['games/'+id]=buildSnapshot();
-    updates['cardpool/'+id]={pool, nextIndex:0};
     await db.ref('/').update(updates);
     show('s-hostgame');
     toast('Game '+id+' started!');
@@ -1129,7 +1220,6 @@ async function goJoinGame(){
     updateJoinStatus(data);
     show('s-joingame');
     cleanOldGames();
-    pruneOldLocalCards(data.gameId);
   } catch(e){ toast('Error: '+e.message); }
 }
 function updateJoinStatus(data){
@@ -1141,101 +1231,28 @@ function updateJoinStatus(data){
   } else {
     badge.className='status-badge';badge.textContent='⏳ Not started';cnt.textContent='';
   }
-  // Show returning player their saved card
-  if(data&&data.gameId){
-    const saved=localStorage.getItem('card_'+data.gameId);
-    const statusEl=document.getElementById('player-join-status');
-    const btn=document.getElementById('btn-get-card');
-    if(saved&&statusEl&&btn){
-      const {code,seq}=JSON.parse(saved);
-      statusEl.textContent='Welcome back! Your card: #'+seq+' ('+code+')';
-      btn.textContent='🎴 Rejoin with Card #'+seq+' →';
-    }
-  }
 }
 async function cleanOldGames(){
   try{
     const snap=await db.ref('games').once('value');
     const updates={};const cutoff=Date.now()-86400000;
-    snap.forEach(child=>{
-      const d=child.val();
-      if(d&&d.ts&&d.ts<cutoff){
-        updates['games/'+child.key]=null;
-        updates['cardpool/'+child.key]=null;
-      }
-    });
+    snap.forEach(child=>{const d=child.val();if(d&&d.ts&&d.ts<cutoff) updates['games/'+child.key]=null;});
     if(Object.keys(updates).length) await db.ref('/').update(updates);
   } catch(e){}
 }
-function pruneOldLocalCards(currentGameId){
-  const prefix='card_';
-  Object.keys(localStorage)
-    .filter(k=>k.startsWith(prefix)&&k!==prefix+currentGameId)
-    .forEach(k=>{
-      try{
-        const {code}=JSON.parse(localStorage.getItem(k));
-        const gameId=k.slice(prefix.length);
-        localStorage.removeItem('marks_'+code+'_'+gameId);
-        localStorage.removeItem('elig_'+code+'_'+gameId);
-      }catch(e){}
-      localStorage.removeItem(k);
-    });
-}
-async function goPlayerFromJoin(){
-  if(!gs.gameId){toast('No game loaded');return;}
-
-  // ── Check localStorage for a previously assigned card for this game ──
-  const savedCard=localStorage.getItem('card_'+gs.gameId);
-  if(savedCard){
-    const {code,seq}=JSON.parse(savedCard);
-    loadPlayerCard(code,seq);
-    return;
+function goPlayerFromJoin(){
+  const val=document.getElementById('player-card-input').value.trim().toUpperCase();
+  if(!val){toast('Enter card # or code');return;}
+  let seq,code;
+  if(/^\d+$/.test(val)){
+    seq=parseInt(val);
+    if(seq<gs.rangeFrom||seq>gs.rangeTo){toast('Card not in range ('+gs.rangeFrom+'–'+gs.rangeTo+')');return;}
+    code=seqToCode(seq);
+  } else {
+    seq=codeToSeq(val,gs.rangeTo);
+    if(seq<0||seq<gs.rangeFrom){toast('Code not found in active range');return;}
+    code=val;
   }
-
-  // ── No saved card — atomically claim next card from pool ──
-  const btn=document.getElementById('btn-get-card');
-  const statusEl=document.getElementById('player-join-status');
-  btn.disabled=true; btn.textContent='Assigning card…';
-
-  try{
-    // Pre-fetch pool array (read-only, large) separately
-    // Then atomically increment only nextIndex (small integer node — no null issue)
-    const poolSnap=await db.ref('cardpool/'+gs.gameId).once('value');
-    const poolData=poolSnap.val();
-    if(!poolData||!poolData.pool){
-      statusEl.textContent='⚠️ No card pool found. Ask host to restart.';
-      btn.disabled=false; btn.textContent='🎴 Get My Card →';
-      return;
-    }
-    const pool=poolData.pool;
-    let assignedSeq=null;
-
-    await db.ref('cardpool/'+gs.gameId+'/nextIndex').transaction(idx=>{
-      const cur=idx||0;
-      if(cur>=pool.length) return cur; // exhausted — don't change
-      assignedSeq=pool[cur];
-      return cur+1;
-    });
-
-    if(assignedSeq===null){
-      statusEl.textContent='⚠️ No cards left in this game.';
-      btn.disabled=false; btn.textContent='🎴 Get My Card →';
-      return;
-    }
-
-    const code=seqToCode(assignedSeq);
-    // Persist assignment so player can rejoin
-    localStorage.setItem('card_'+gs.gameId, JSON.stringify({code, seq:assignedSeq}));
-    loadPlayerCard(code, assignedSeq);
-
-  } catch(e){
-    statusEl.textContent='Error getting card. Tap again.';
-    btn.disabled=false; btn.textContent='🎴 Get My Card →';
-    console.error(e);
-  }
-}
-
-function loadPlayerCard(code, seq){
   ps.code=code; ps.seq=seq; ps.grid=generateTicket(code);
   const savedMarks=localStorage.getItem('marks_'+code+'_'+gs.gameId);
   ps.marked=savedMarks?new Set(JSON.parse(savedMarks)):new Set();
@@ -1759,7 +1776,7 @@ async function endGame(){
   if(!confirm('End this game?')) return;
   gs.active=false;
   if(hostClaimsListener){hostClaimsListener.off();hostClaimsListener=null;}
-  try{await Promise.all([db.ref('games/'+gs.gameId).remove(),db.ref('cardpool/'+gs.gameId).remove()]);}catch(e){}
+  try{await db.ref('games/'+gs.gameId).remove();}catch(e){}
   show('s-landing');
 }
 
