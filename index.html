@@ -12,188 +12,212 @@
 <style>
 /* ===== THEMES ===== */
 /* ══════════════════════════════════════════════════
-   THEME DESIGN PHILOSOPHY
-   - bg: the canvas — subdued, never competes
-   - panels (bg2): noticeably different hue from bg, not just a lighter shade
-   - topbar: a third distinct color
-   - text: high contrast on its own bg, not just white/black
-   - accent (buttons, highlights): medium-vivid, not neon
-   - called numbers: a warm pop color distinct from accent
-   - marked/tapped: a reliable orange — familiar, readable
+   4 THEMES — 2 light, 2 dark
+   Key rules:
+   - bg vs panel: clearly different lightness (panels pop as cards)
+   - borders: thin, subtle — they define edges, not shout
+   - accent: one confident mid-tone color for buttons/interactive
+   - called: warm distinct color, never same as accent
+   - no neon, no violet, no purple
    ══════════════════════════════════════════════════ */
 
-/* ── SLATE NIGHT ──
-   Inspired by Linear, Vercel dark mode
-   bg: deep blue-grey slate · panels: soft dark navy card · topbar: near-black
-   accent: soft indigo-blue · called: warm amber · tapped: coral */
+/* ── DARK 1: MIDNIGHT BLUE ──
+   Popular with Figma, Linear, Vercel dark
+   Page: #14181f deep blue-charcoal
+   Panels: #1e2630 — clearly lighter, cool blue-grey card
+   Topbar: #0e1218 — darkest, anchors the nav
+   Accent: #3d8ef0 — medium sky blue, calm and readable
+   Called: #f0a83d — warm amber, pops against dark bg
+   Tapped: #e05f5f — muted coral-red */
 :root,[data-theme="midnight"]{
-  --bg:#0d1117;             /* GitHub dark — very slightly blue-tinted black */
-  --bg2:#161b27;            /* panels: slightly lighter, warmer navy */
-  --bg3:#1e2535;
-  --surface:#252d40;
-  --topbar-bg:#0a0d14;      /* topbar: darkest, near black */
-  --panel-bg:#161b27;
-  --border:#2d3748;
-  --accent:#5b8af5;         /* medium cornflower blue — calm, readable */
-  --accent2:#3b6fd4;
-  --accent3:#a8c4ff;
-  --text:#e6edf3;           /* GitHub light text — off-white, easy */
-  --text2:#8b949e;          /* secondary — muted blue-grey */
-  --text3:#484f58;
-  --called:#f0a050;         /* warm amber — called numbers stand out warmly */
-  --marked:#e05c5c;         /* medium coral-red — tapped, not neon */
-  --win:#3fb950;--corner:#d29922;
-  --danger:#f85149;--warn:#d29922;--toast-bg:#161b27;
-  --call-btn:#5b8af5;--num-color:#f0a050;
+  --bg:#14181f;
+  --bg2:#1e2630;
+  --bg3:#28303e;
+  --surface:#323c4e;
+  --topbar-bg:#0e1218;
+  --panel-bg:#1e2630;
+  --border:#2a3444;
+  --accent:#3d8ef0;
+  --accent2:#2970d0;
+  --accent3:#a0c8ff;
+  --text:#e8eaf0;
+  --text2:#8a9ab8;
+  --text3:#4a5870;
+  --called:#f0a83d;
+  --marked:#e05f5f;
+  --win:#4caf78;--corner:#f0a83d;
+  --danger:#e05050;--warn:#f0a83d;--toast-bg:#1e2630;
+  --call-btn:#3d8ef0;--num-color:#f0a83d;
 }
 
-/* ── FOREST DUSK ──
-   Inspired by Obsidian, Bear notes dark
-   bg: dark forest charcoal · panels: warm dark brown card · topbar: darkest brown
-   accent: sage green · called: golden yellow · tapped: terracotta */
+/* ── DARK 2: FOREST NIGHT ──
+   Warm dark — like Bear, iA Writer dark
+   Page: #151a14 very dark warm olive-green
+   Panels: #1f2a1e — slightly lighter warm green-grey
+   Topbar: #0e1210 — darkest
+   Accent: #68b06a — medium sage green, natural
+   Called: #e8a84a — golden amber
+   Tapped: #d4704a — warm terracotta */
 [data-theme="forest"]{
-  --bg:#1a1a16;             /* warm dark charcoal — not pure black, has warmth */
-  --bg2:#242218;            /* panels: warm dark brown, clearly different from bg */
-  --bg3:#2e2c20;
-  --surface:#383520;
-  --topbar-bg:#141410;      /* topbar: darkest warm brown */
-  --panel-bg:#242218;
-  --border:#3d3a28;
-  --accent:#7ab87a;         /* medium sage green — calm, natural */
-  --accent2:#5a9a5a;
-  --accent3:#b0d8b0;
-  --text:#e8e6d8;           /* warm off-white — easy on eyes */
-  --text2:#a09878;          /* warm grey-tan secondary */
-  --text3:#606050;
-  --called:#d4a832;         /* golden harvest — called numbers */
-  --marked:#c8603a;         /* terracotta — tapped */
-  --win:#7ab87a;--corner:#d4a832;
-  --danger:#d05040;--warn:#d4a832;--toast-bg:#242218;
-  --call-btn:#7ab87a;--num-color:#d4a832;
+  --bg:#151a14;
+  --bg2:#1f2a1e;
+  --bg3:#28362a;
+  --surface:#324038;
+  --topbar-bg:#0e1210;
+  --panel-bg:#1f2a1e;
+  --border:#2a3828;
+  --accent:#68b06a;
+  --accent2:#4e9050;
+  --accent3:#a8d8aa;
+  --text:#e4e8e0;
+  --text2:#8aaa80;
+  --text3:#4a6848;
+  --called:#e8a84a;
+  --marked:#d4704a;
+  --win:#68b06a;--corner:#e8a84a;
+  --danger:#d05040;--warn:#e8a84a;--toast-bg:#1f2a1e;
+  --call-btn:#68b06a;--num-color:#e8a84a;
 }
 
-/* ── PASTEL MORNING ──
-   Inspired by Notion, Linear light mode — soft pastels, easy on eyes
-   bg: warm off-white cream · panels: very light dusty rose card · topbar: dusty teal
-   accent: dusty rose-mauve · called: soft teal · tapped: warm terracotta */
+/* ── LIGHT 1: WARM PARCHMENT ──
+   Clean modern light — like Notion, Linear light
+   Page: #f4f1ec warm off-white parchment (not stark white)
+   Panels: #ffffff pure white cards — clear pop against parchment bg
+   Topbar: #1e3a4a deep teal-navy — strong contrast, anchors top
+   Accent: #2a7ea8 medium teal-blue — calm, trustworthy
+   Called: #c06820 burnt sienna — warm, clearly visible on white
+   Tapped: #e85858 muted red */
 [data-theme="sunset"]{
-  --bg:#faf8f5;             /* warm off-white — not pure white, has warmth */
-  --bg2:#f0eaf4;            /* panels: very soft dusty lavender — clearly different from cream */
-  --bg3:#e4dcea;
-  --surface:#d8cee0;
-  --topbar-bg:#2d5f5a;      /* topbar: dusty teal — completely different hue */
-  --panel-bg:#f0eaf4;
-  --border:#c8b8d8;
-  --accent:#9b6bb5;         /* medium dusty mauve — not neon, not dull */
-  --accent2:#7a4d94;
-  --accent3:#c8a8e0;
-  --text:#2d2030;           /* deep warm dark — readable on light bg */
-  --text2:#6b5080;          /* medium mauve-grey */
-  --text3:#a090b0;
-  --called:#2d8a82;         /* dusty teal — called numbers */
-  --marked:#c86840;         /* warm terracotta — tapped */
-  --win:#4a9e6a;--corner:#c86840;
-  --danger:#c04040;--warn:#b07820;--toast-bg:#f0eaf4;
-  --call-btn:#2d5f5a;--num-color:#2d8a82;
+  --bg:#f4f1ec;
+  --bg2:#ffffff;
+  --bg3:#f0ece4;
+  --surface:#e8e0d4;
+  --topbar-bg:#1e3a4a;
+  --panel-bg:#ffffff;
+  --border:#ddd8ce;
+  --accent:#2a7ea8;
+  --accent2:#1a6090;
+  --accent3:#90c8e8;
+  --text:#1a1a2a;
+  --text2:#4a5868;
+  --text3:#8898a8;
+  --called:#c06820;
+  --marked:#e85858;
+  --win:#3a9a5a;--corner:#c06820;
+  --danger:#d03030;--warn:#c06820;--toast-bg:#ffffff;
+  --call-btn:#1e3a4a;--num-color:#c06820;
 }
 
-/* ── OCEAN DEPTH ──
-   Inspired by Stripe, Figma dark
-   bg: deep ocean navy · panels: deep teal-green card — very different from navy · topbar: near-black navy
-   accent: soft coral-orange · called: bright teal · tapped: warm amber */
+/* ── LIGHT 2: SOFT ROSE ──
+   Warm light — popular in lifestyle/event apps
+   Page: #f8f4f0 very light warm rose-cream
+   Panels: #ffffff pure white — clear card definition
+   Topbar: #3a2a20 dark warm brown — rich contrast
+   Accent: #c05a3a terracotta-rust — warm, festive
+   Called: #2a8a70 medium teal-green — clear contrast on white
+   Tapped: #d4844a warm orange */
 [data-theme="ocean"]{
-  --bg:#0a1628;             /* deep ocean navy */
-  --bg2:#0d2e28;            /* panels: deep teal-green — clearly different hue from navy */
-  --bg3:#123830;
-  --surface:#184840;
-  --topbar-bg:#060e1a;      /* topbar: darkest navy */
-  --panel-bg:#0d2e28;
-  --border:#1e5048;
-  --accent:#e87040;         /* warm coral-orange — calm, inviting */
-  --accent2:#c85820;
-  --accent3:#f8b090;
-  --text:#e8f4f0;           /* cool off-white — easy on dark teal */
-  --text2:#7ab8a8;          /* muted teal secondary */
-  --text3:#3a7060;
-  --called:#40c8a8;         /* bright teal-mint — called numbers pop */
-  --marked:#e8a030;         /* warm amber — tapped */
-  --win:#40c870;--corner:#e8a030;
-  --danger:#e85050;--warn:#e8a030;--toast-bg:#0d2e28;
-  --call-btn:#e87040;--num-color:#40c8a8;
+  --bg:#f8f4f0;
+  --bg2:#ffffff;
+  --bg3:#f0e8e0;
+  --surface:#e8d8cc;
+  --topbar-bg:#3a2a20;
+  --panel-bg:#ffffff;
+  --border:#e0d0c4;
+  --accent:#c05a3a;
+  --accent2:#a04028;
+  --accent3:#f0a888;
+  --text:#1a1008;
+  --text2:#5a4030;
+  --text3:#9a8070;
+  --called:#2a8a70;
+  --marked:#d4844a;
+  --win:#3a9a5a;--corner:#d4844a;
+  --danger:#c03030;--warn:#c06820;--toast-bg:#ffffff;
+  --call-btn:#c05a3a;--num-color:#2a8a70;
 }
 
-/* ===== RESET ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow-x:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
-input,button,select{font-family:inherit}
-button{cursor:pointer;border:none;background:none;color:inherit}
-button:active{transform:scale(0.97)}
-input[type="text"],input[type="password"],input[type="number"]{
+/* ===== LAYOUT ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+input,select,button{font-family:'DM Sans',sans-serif}
+.screen{display:none;flex-direction:column;min-height:100vh}
+.screen.active{display:flex}
+.content{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;width:100%}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--topbar-bg,var(--bg2));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
+.topbar-title{font-weight:700;font-size:1rem;flex:1;text-align:center}
+.topbar-btn{background:none;border:1.5px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer}
+.topbar-btn.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.topbar-btn.danger{border-color:var(--danger);color:var(--danger)}
+.icon-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:4px 6px;border-radius:8px;color:var(--text2)}
+.icon-btn:hover{background:var(--bg3)}
+
+/* ===== PANELS ===== */
+.panel{background:var(--panel-bg,var(--bg2));border:1.5px solid var(--border);border-radius:14px;padding:14px}
+.panel-title{font-weight:700;font-size:.92rem;margin-bottom:10px;color:var(--text)}
+.panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hint{font-size:.78rem;color:var(--text3)}
+.mt8{margin-top:8px}
+.text2{color:var(--text2)}
+.mono{font-family:'DM Mono',monospace}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer;border:1.5px solid transparent;transition:all .18s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-warn{background:var(--warn);color:#fff}
+.btn-green{background:var(--win);color:#fff}
+.btn-sm{padding:7px 13px;font-size:.82rem}
+.btn-full{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ===== INPUTS ===== */
+input[type=text],input[type=number],input[type=password]{
   background:var(--bg3);border:1.5px solid var(--border);color:var(--text);
-  border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;
-  font-size:1rem;text-transform:uppercase;letter-spacing:.08em;width:100%;outline:none;transition:border .2s;
+  border-radius:10px;padding:10px 12px;font-size:.9rem;width:100%;outline:none;
 }
 input:focus{border-color:var(--accent)}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 
-/* ===== SCREENS ===== */
-.screen{display:none;min-height:100vh;flex-direction:column}
-.screen.active{display:flex}
-
-/* ===== TOPBAR ===== */
-.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--topbar-bg,var(--bg2));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;min-height:54px;flex-wrap:wrap}
-.topbar-title{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);letter-spacing:.1em}
-.topbar-btn{padding:6px 12px;border-radius:8px;font-weight:600;font-size:.82rem;background:var(--surface);color:var(--text);border:1.5px solid var(--border);white-space:nowrap}
-.topbar-btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
-.topbar-btn.accent{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-.icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--surface);border:1.5px solid var(--border);flex-shrink:0}
+/* ===== TOGGLE ===== */
+.toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.toggle-track{width:38px;height:22px;border-radius:11px;background:var(--bg3);border:1.5px solid var(--border);position:relative;transition:background .2s}
+.toggle-track.on{background:var(--accent);border-color:var(--accent)}
+.toggle-thumb{width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s}
+.toggle-track.on .toggle-thumb{left:18px}
+.toggle-label{font-size:.88rem;color:var(--text2)}
 
 /* ===== THEME DROPDOWN ===== */
 .theme-dropdown-wrap{position:relative}
 .theme-menu{
   position:absolute;top:calc(100% + 6px);right:0;z-index:100;
   background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;
-  padding:6px;display:none;flex-direction:column;gap:4px;min-width:160px;
-  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  overflow:hidden;min-width:160px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25);
 }
-.theme-menu.open{display:flex}
-.theme-menu-item{padding:8px 12px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:8px;transition:background .15s}
-.theme-menu-item:hover,.theme-menu-item.active{background:var(--surface);color:var(--text)}
-
-/* ===== CONTENT ===== */
-.content{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
-
-/* ===== PANELS ===== */
-.panel{background:var(--panel-bg,var(--bg2));border:1.5px solid var(--border);border-radius:14px;padding:14px}
-.panel-title{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
-.panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.theme-menu.open{display:block}
+.theme-menu-item{padding:10px 14px;font-size:.88rem;cursor:pointer;color:var(--text2);transition:background .15s}
+.theme-menu-item:hover,.theme-menu-item.active{background:var(--bg3);color:var(--text)}
 
 /* ===== LANDING ===== */
-#s-landing{align-items:center;justify-content:center;padding:32px 20px;gap:20px;min-height:100vh;position:relative}
-.landing-topright{position:absolute;top:16px;right:16px}
-.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
-.logo-icon{width:80px;height:80px;animation:logoPulse 3s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 10px var(--accent))}50%{filter:drop-shadow(0 0 28px var(--accent))}}
-.app-title{font-size:2.8rem;font-weight:700;letter-spacing:-.02em}
-.app-sub{color:var(--text3);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase}
-.divider{width:100%;display:flex;align-items:center;gap:10px;color:var(--text3);font-size:.78rem;letter-spacing:.1em;max-width:340px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.landing-input-row{display:flex;gap:8px;width:100%;max-width:340px}
-.landing-input-row input{flex:1}
+.app-icon{width:72px;height:72px;margin:0 auto}
+.app-title{font-size:1.8rem;font-weight:800;text-align:center;letter-spacing:-.02em}
+.app-sub{font-size:.9rem;color:var(--text2);text-align:center}
+.landing-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 
-/* ===== BUTTONS ===== */
-.btn{padding:12px 18px;border-radius:12px;font-weight:700;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-primary{background:var(--accent);color:var(--bg)}
-.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent)}
-.btn-outline:hover{background:var(--accent);color:var(--bg)}
-.btn-danger{background:var(--danger);color:#fff;border:none}
-.btn-warn{background:var(--warn);color:#fff;border:none}
-.btn-green{background:var(--win);color:#fff;border:none}
-.btn-full{width:100%}
-.btn-sm{padding:7px 12px;font-size:.82rem;border-radius:8px}
+/* ===== CALLED NUMBERS GRID ===== */
+.num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.num-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:.72rem;font-weight:600;
+  border-radius:5px;background:var(--bg3);color:var(--text3);
+  transition:all .25s;min-height:28px;
+}
+.num-cell.called{background:var(--num-color);color:var(--bg);font-weight:700}
+.host-num-row{display:flex;align-items:center;gap:10px}
+.called-count{font-size:.78rem;color:var(--text3);font-family:'DM Mono',monospace}
+
 .btn-call{font-size:1.2rem;padding:16px;border-radius:16px;background:var(--call-btn);color:#fff;font-weight:700;width:100%;box-shadow:0 4px 24px color-mix(in srgb,var(--call-btn) 40%,transparent)}
 #install-btn{display:none}
 
@@ -724,10 +748,10 @@ let deferredPrompt = null;
 
 // ===== THEMES =====
 const THEMES = [
-  {id:'midnight', label:'🌑 Slate Night'},
-  {id:'forest',   label:'🌲 Forest Dusk'},
-  {id:'sunset',   label:'🌸 Pastel Morning'},
-  {id:'ocean',    label:'🌊 Ocean Depth'},
+  {id:'midnight', label:'🌙 Midnight Blue'},
+  {id:'forest',   label:'🌲 Forest Night'},
+  {id:'sunset',   label:'🌿 Warm Parchment'},
+  {id:'ocean',    label:'🌸 Soft Rose'},
 ];
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
