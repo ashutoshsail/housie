@@ -408,27 +408,44 @@ select{
   html,body{
     height:auto!important;overflow:visible!important;
     background:#fff!important;color:#000!important;
+    margin:0!important;padding:0!important;
   }
   .screen{display:none!important;overflow:visible!important;min-height:0!important}
-  #s-print{
-    display:block!important;overflow:visible!important;
-    min-height:0!important;height:auto!important;
-  }
+  #s-print{display:block!important;overflow:visible!important;min-height:0!important;height:auto!important;}
   #print-area{
-    display:block!important;overflow:visible!important;
-    padding:8px!important;height:auto!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:6mm 4mm!important;
+    padding:5mm!important;
+    overflow:visible!important;height:auto!important;
   }
   .print-card{
     page-break-inside:avoid;break-inside:avoid;
-    margin-bottom:20px;display:block;
+    display:block;border:0.5pt solid #aaa;
+    padding:2mm;border-radius:2mm;
   }
-  .ticket{border:1px solid #999!important;border-radius:8px!important;overflow:visible!important;background:#fff!important}
-  .ticket-header{background:#ddd!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .ticket-cell{border:1px solid #bbb!important;background:#fff!important;color:#000!important}
-  .ticket-cell.blank{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .ticket-code{color:#444!important}
+  .print-ticket-grid{
+    width:100%;border-collapse:collapse;
+  }
+  .print-ticket-grid td{
+    border:0.5pt solid #888;text-align:center;
+    font-size:9pt;font-weight:700;font-family:monospace;
+    padding:1.5mm 0;line-height:1;
+  }
+  .print-ticket-grid td.blank{background:#e8e8e8;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .print-card-label{
+    text-align:center;font-size:6.5pt;color:#444;
+    margin-top:1.5mm;font-family:monospace;letter-spacing:.04em;
+  }
   * {-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* Print preview (on screen) */
+#print-area{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;overflow-x:hidden;}
+.print-card{border:1px solid #555;border-radius:6px;padding:5px;background:#fff;min-width:0;}
+.print-ticket-grid{width:100%;border-collapse:collapse;table-layout:fixed;}
+.print-ticket-grid td{border:1px solid #888;text-align:center;font-size:11px;font-weight:700;font-family:monospace;padding:3px 1px;color:#000;overflow:hidden;}
+.print-ticket-grid td.blank{background:#e0e0e0;}
+.print-card-label{text-align:center;font-size:9px;color:#555;margin-top:3px;font-family:monospace;}
 /* ===== UTILS ===== */
 .mono{font-family:'JetBrains Mono',monospace}
 .sep{height:1px;background:var(--border);margin:10px 0}
@@ -501,7 +518,7 @@ select{
   <div class="topbar">
     <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
     <div class="topbar-title">🎮 New Game Setup</div>
-    <button class="topbar-btn accent" onclick="startHostGame()">Start 🎉</button>
+    <button class="topbar-btn accent" onclick="startHostGame()">Create Game ✓</button>
   </div>
   <div class="content">
     <div class="panel">
@@ -574,8 +591,16 @@ select{
       <div class="join-panel panel" id="jp-host">
         <div class="panel-title">👑 Host Access</div>
         <p class="hint mt8" style="text-align:left;margin-bottom:10px">Enter the host password set during game creation</p>
-        <input type="password" id="host-pw-join" placeholder="Host Password" class="no-upper" style="text-transform:none;letter-spacing:normal;margin-bottom:10px"/>
+        <input type="password" id="host-pw-join" placeholder="Host Password" class="no-upper" style="text-transform:none;letter-spacing:normal;margin-bottom:8px"/>
         <button class="btn btn-primary btn-full" onclick="goHostFromJoin()">👑 Enter as Host →</button>
+        <div style="text-align:right;margin-top:8px">
+          <span style="font-size:.74rem;color:var(--text3);cursor:pointer;text-decoration:underline" onclick="toggleAdminPwSection()">🔑 Forgot password?</span>
+        </div>
+        <div id="admin-pw-section" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
+          <p class="hint" style="text-align:left;margin-bottom:8px;color:var(--text2)">Enter admin password to reset the host password for this game.</p>
+          <input type="password" id="admin-pw-input" placeholder="Admin password" class="no-upper" style="text-transform:none;letter-spacing:normal;margin-bottom:8px"/>
+          <button class="btn btn-outline btn-full btn-sm" onclick="goAdminResetFlow()">🔑 Verify &amp; Reset Password</button>
+        </div>
       </div>
       <!-- Display panel -->
       <div class="join-panel panel" id="jp-display">
@@ -607,7 +632,7 @@ select{
       </div>
       <div class="called-count" id="host-called-count">0 / 90 called</div>
     </div>
-    <button class="btn-call" onclick="callNextNumber()">🎱 Call Next Number</button>
+    <button class="btn-call" id="call-btn" onclick="callNextNumber()">🎱 Start Game</button>
     <div class="panel">
       <div class="panel-title">📊 Called Numbers</div>
       <div class="num-grid" id="host-num-grid"></div>
@@ -658,7 +683,6 @@ select{
       <div class="live-dot"></div>
       <span class="mono" style="font-size:.84rem;letter-spacing:.06em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700" id="player-card-label">Card</span>
     </div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--num-color);min-width:2.8rem;text-align:center;flex-shrink:0;text-shadow:0 0 12px var(--glow)" id="player-last-called">—</div>
     <button class="icon-btn" onclick="resetMarks()" title="Reset">↺</button>
     <div class="theme-dropdown-wrap">
       <button class="icon-btn" onclick="toggleThemeMenu('player')" id="theme-toggle-player">🎨</button>
@@ -669,6 +693,11 @@ select{
     <div id="player-win-alert"></div>
     <div class="player-spacer" id="player-spacer"></div>
     <p class="hint">Tap numbers as host calls them 🎱</p>
+    <!-- Last called number shown prominently between card and prizes -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0 2px">
+      <div style="font-size:.7rem;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase">Last Called</div>
+      <div id="player-last-called" style="font-family:'JetBrains Mono',monospace;font-size:3.2rem;font-weight:900;color:var(--num-color);text-shadow:0 0 20px var(--glow);line-height:1">—</div>
+    </div>
     <div class="panel">
       <div class="panel-title">🏆 Prizes</div>
       <div class="prize-grid-2" id="player-prize-grid"></div>
@@ -709,6 +738,7 @@ select{
         <input type="number" id="print-to" value="10" min="1" max="9999" style="width:80px"/>
       </div>
       <button class="btn btn-primary btn-full mt8" onclick="generatePrintCards()">Generate Cards</button>
+      <button class="btn btn-outline btn-full mt8" onclick="exportCardsExcel()">📊 Export to Excel</button>
     </div>
   </div>
   <!-- print-area is OUTSIDE .content so it is never clipped by overflow-y:auto -->
@@ -718,6 +748,7 @@ select{
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ===== FIREBASE =====
 const firebaseConfig={apiKey:"AIzaSyDmpc8MMBW8u6Vu8E4RsZnxFVou2Tk9A6o",authDomain:"housie-36e75.firebaseapp.com",databaseURL:"https://housie-36e75-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"housie-36e75",storageBucket:"housie-36e75.firebasestorage.app",messagingSenderId:"330375959956",appId:"1:330375959956:web:8e48bf58b90a6d21d42b81"};
@@ -891,6 +922,10 @@ function switchHostTab(tab){
 }
 
 // ===== SCREEN NAV =====
+// ===== SCREEN HISTORY (Android/browser back button) =====
+// We push a history entry every time we navigate to a new screen so that
+// the OS back button triggers popstate instead of closing the app.
+let _suppressHistoryPush=false;
 function show(id){
   if(id!=='s-player'){
     stopPlayerSync();
@@ -907,14 +942,68 @@ function show(id){
   if(id==='s-display')renderDisplay();
   if(id==='s-player')positionPlayerTicket();
   if(id==='s-joingame'){
-    // Refresh join screen state and start live listener
     updateAutoCardDisplay();
     renderProfileRowJoin();
     startJoinListener();
   }
+  // Push history so OS back button fires popstate instead of exiting
+  if(!_suppressHistoryPush){
+    history.pushState({screen:id},document.title);
+  }
 }
+
+// What to do when user presses OS back button
+window.addEventListener('popstate',e=>{
+  const from=e.state&&e.state.screen;
+  _suppressHistoryPush=true; // don't push another entry while handling popstate
+  try{
+    _handleBack(from);
+  }finally{
+    _suppressHistoryPush=false;
+  }
+});
+
+function _handleBack(currentScreen){
+  // Determine which screen is currently visible
+  const active=document.querySelector('.screen.active');
+  const id=active?active.id:'s-landing';
+
+  if(id==='s-landing'){
+    // Already at root — let the browser handle (will close or go to previous site)
+    history.back();return;
+  }
+  if(id==='s-player'){
+    // Confirm before leaving mid-game
+    if(gs.gameId&&gameInProgress()){
+      if(!confirm('Leave the game? Your marks are saved and you can rejoin.')){
+        // Re-push current state so back doesn't exit
+        history.pushState({screen:id},document.title);return;
+      }
+    }
+    backFromPlayer();return;
+  }
+  if(id==='s-hostgame'){
+    // Host can't just leave — must end game explicitly or confirm
+    if(confirm('Leave host view? The game will keep running. You can rejoin as host.')){
+      show('s-joingame');
+    }else{
+      history.pushState({screen:id},document.title);
+    }
+    return;
+  }
+  if(id==='s-joingame'){show('s-landing');return;}
+  if(id==='s-creategame'){show('s-landing');return;}
+  if(id==='s-print'){show(printBackTarget);return;}
+  if(id==='s-display'){displayBack();return;}
+  // Fallback
+  show('s-landing');
+}
+
 function displayBack(){show(displayBackTarget);}
 function backFromPlayer(){show(gs.gameId?'s-joingame':'s-landing');}
+
+// Seed the initial history entry so popstate always fires (not just on back to prior page)
+history.replaceState({screen:'s-landing'},document.title);
 
 // ===== RNG =====
 function seededRng(seed){
@@ -999,7 +1088,13 @@ function checkPlayerEligibility(newNum){
 function renderTicketEl(grid,code,seq,calledSet,markedSet,prizeWinners,interactive){
   const wrap=document.createElement('div');wrap.className='ticket';
   const hdr=document.createElement('div');hdr.className='ticket-header';
-  hdr.innerHTML='<span>🎫 HOUSIE</span><span>#'+seq+'</span>';
+  // For the player's own interactive ticket, show their name; otherwise show card label
+  if(interactive){
+    const pname=getPlayerName();
+    hdr.innerHTML='<span style="font-weight:900;letter-spacing:.02em">'+(pname||'🎫 HOUSIE')+'</span><span>#'+seq+'</span>';
+  }else{
+    hdr.innerHTML='<span>🎫 HOUSIE</span><span>#'+seq+'</span>';
+  }
   wrap.appendChild(hdr);
   const wonPrizes=new Set();
   if(prizeWinners){Object.entries(prizeWinners).forEach(([pid,winners])=>{if((winners||[]).some(w=>(w.code===code||w.seq===seq)&&w.status==='accepted'))wonPrizes.add(pid);});}
@@ -1234,10 +1329,37 @@ function proceedToPlayerScreen(sess){
   if(sess&&(sess.marked.length>0||Object.keys(sess.eligibleAt||{}).length>0))toast('🔄 Session restored — '+ps.marked.size+' marks resumed');
 }
 
+function isAdminPassword(pw){
+  // Accept both the full password and common short variants
+  return pw==='AshuAdmin@1234'||pw==='AshuAdmin@123';
+}
+function toggleAdminPwSection(){
+  const s=document.getElementById('admin-pw-section');
+  s.style.display=s.style.display==='none'?'block':'none';
+  if(s.style.display==='block')setTimeout(()=>document.getElementById('admin-pw-input').focus(),50);
+}
+function goAdminResetFlow(){
+  const pw=document.getElementById('admin-pw-input').value.trim();
+  if(!isAdminPassword(pw)){toast('❌ Wrong admin password');return;}
+  // Admin verified from join screen — show reset modal, then enter host screen
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`<p style="color:var(--text2);font-size:.88rem;margin-bottom:10px">Set a new host password for game <strong>${gs.gameId}</strong>.</p>
+    <input type="text" id="new-pw-input" placeholder="NEW PASSWORD" maxlength="20" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"/>`;
+  openModal('🔑 Reset Host Password',wrap,[
+    {label:'Save & Enter',cls:'btn btn-primary btn-sm',cb:async()=>{
+      const v=document.getElementById('new-pw-input').value.trim();
+      if(v.length<3){toast('Min 3 chars');return;}
+      gs.hostPW=v;isAdminHost=true;broadcastGameState();closeModal();
+      document.getElementById('admin-pw-section').style.display='none';
+      document.getElementById('admin-pw-input').value='';
+      show('s-hostgame');toast('✅ Password reset to: '+v+' · Admin access granted');
+    }},
+    {label:'Cancel',cls:'btn btn-outline btn-sm',cb:closeModal},
+  ]);
+}
 function goHostFromJoin(){
   const pw=document.getElementById('host-pw-join').value.trim();
-  if(pw===MASTER_PW){
-    // Admin access
+  if(isAdminPassword(pw)){
     isAdminHost=true;
     show('s-hostgame');
     toast('🔑 Admin access granted');
@@ -1414,6 +1536,13 @@ function renderHostNumbers(){
   const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
   document.getElementById('host-last-num').textContent=last||'—';
   document.getElementById('host-called-count').textContent=gs.calledNums.size+' / 90 called';
+  // Dynamic call button label
+  const callBtn=document.getElementById('call-btn');
+  if(callBtn){
+    if(gs.calledNums.size===0)callBtn.textContent='🎱 Start Game';
+    else if(gs.calledNums.size>=90)callBtn.textContent='✅ All Numbers Called';
+    else callBtn.textContent='🎱 Call Next Number';
+  }
   const grid=document.getElementById('host-num-grid');grid.innerHTML='';
   for(let n=1;n<=90;n++){const cell=document.createElement('div');cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');cell.textContent=n;grid.appendChild(cell);}
   // Update claim tab badge
@@ -1425,7 +1554,15 @@ function renderHostNumbers(){
     wrap.innerHTML='';
     if(totalPending>0){
       const b=document.createElement('div');b.className='claim-bubble';b.textContent=totalPending;b.title='Pending claims';
-      b.onclick=()=>{switchHostTab('claims');};
+      b.onclick=()=>{
+        switchHostTab('claims');
+        setTimeout(()=>{
+          // Find and scroll to first pending chip
+          const firstPending=document.querySelector('#claims-panel .claim-card-chip.pending');
+          if(firstPending)firstPending.scrollIntoView({behavior:'smooth',block:'center'});
+          else{const el=document.getElementById('htp-claims');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+        },80);
+      };
       wrap.appendChild(b);
     }
   }
@@ -1645,8 +1782,92 @@ function generatePrintCards(){
   const from=parseInt(document.getElementById('print-from').value)||1;
   const to=parseInt(document.getElementById('print-to').value)||10;
   const area=document.getElementById('print-area');area.innerHTML='';
-  for(let s=from;s<=to;s++){const code=seqToCode(s);const grid=generateTicket(code);const wrap=document.createElement('div');wrap.className='print-card';wrap.appendChild(renderTicketEl(grid,code,s,new Set(),null,{},false));area.appendChild(wrap);}
-  toast('Generated '+(to-from+1)+' cards');
+  for(let s=from;s<=to;s++){
+    const code=seqToCode(s);const grid=generateTicket(code);
+    const wrap=document.createElement('div');wrap.className='print-card';
+    // Build a plain HTML table — no ticket-header, no themed divs
+    const tbl=document.createElement('table');tbl.className='print-ticket-grid';
+    for(let r=0;r<3;r++){
+      const tr=document.createElement('tr');
+      for(let c=0;c<9;c++){
+        const n=grid[r][c];const td=document.createElement('td');
+        if(n===0){td.className='blank';td.textContent='';}
+        else{td.textContent=n;}
+        tr.appendChild(td);
+      }
+      tbl.appendChild(tr);
+    }
+    // Small label below grid: "Card #12 · XKWP4A"
+    const lbl=document.createElement('div');lbl.className='print-card-label';
+    lbl.textContent='#'+s+'  ·  '+code;
+    wrap.appendChild(tbl);wrap.appendChild(lbl);
+    area.appendChild(wrap);
+  }
+  toast('Generated '+(to-from+1)+' cards — click 🖨 Print');
+}
+
+function exportCardsExcel(){
+  if(typeof XLSX==='undefined'){toast('Excel library not loaded yet — try again');return;}
+  const from=parseInt(document.getElementById('print-from').value)||1;
+  const to=parseInt(document.getElementById('print-to').value)||10;
+  const wb=XLSX.utils.book_new();
+  // Layout: 2 cards per row, each card = 4 rows (3 number rows + 1 label row) + 1 gap row
+  // Left card occupies cols 0-8, gap col 9, right card occupies cols 10-18
+  const CARD_ROWS=4; // 3 numbers + 1 label
+  const GAP_ROWS=1;  // blank row between card rows
+  const BLOCK=CARD_ROWS+GAP_ROWS;
+  const ws_data=[];
+  const count=to-from+1;
+  const rowPairs=Math.ceil(count/2);
+  // Pre-fill empty grid
+  const totalRows=rowPairs*BLOCK;
+  for(let r=0;r<totalRows;r++){
+    ws_data.push(Array(19).fill(''));
+  }
+  let i=0;
+  for(let s=from;s<=to;s++,i++){
+    const col=i%2===0?0:10; // left or right column block
+    const pair=Math.floor(i/2);
+    const rowBase=pair*BLOCK;
+    const code=seqToCode(s);const grid=generateTicket(code);
+    for(let r=0;r<3;r++){
+      for(let c=0;c<9;c++){
+        ws_data[rowBase+r][col+c]=grid[r][c]===0?'':grid[r][c];
+      }
+    }
+    // Label row
+    ws_data[rowBase+3][col]='#'+s;
+    ws_data[rowBase+3][col+1]=code;
+    // Merge label across 9 cells (we set them all the same for clarity)
+    for(let c=2;c<9;c++) ws_data[rowBase+3][col+c]='';
+  }
+  const ws=XLSX.utils.aoa_to_sheet(ws_data);
+  // Column widths: 9 for left block, narrow gap, 9 for right block
+  const cols=[];
+  for(let c=0;c<9;c++)cols.push({wch:4.5});
+  cols.push({wch:1.5}); // gap column
+  for(let c=0;c<9;c++)cols.push({wch:4.5});
+  ws['!cols']=cols;
+  // Row heights
+  const rows=[];
+  for(let r=0;r<totalRows;r++){
+    const posInBlock=r%BLOCK;
+    if(posInBlock<3)rows.push({hpt:18}); // number rows
+    else if(posInBlock===3)rows.push({hpt:12}); // label row
+    else rows.push({hpt:6}); // gap
+  }
+  ws['!rows']=rows;
+  // Merges for label rows
+  if(!ws['!merges'])ws['!merges']=[];
+  for(let i=0;i<count;i++){
+    const col=i%2===0?0:10;
+    const pair=Math.floor(i/2);
+    const labelRow=pair*BLOCK+3;
+    ws['!merges'].push({s:{r:labelRow,c:col},e:{r:labelRow,c:col+8}});
+  }
+  XLSX.utils.book_append_sheet(wb,ws,'Cards '+from+'-'+to);
+  XLSX.writeFile(wb,'housie-cards-'+from+'-to-'+to+'.xlsx');
+  toast('Downloaded Excel with '+(to-from+1)+' cards on one sheet');
 }
 
 // ===== COLLAPSIBLE =====
