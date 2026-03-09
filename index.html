@@ -212,7 +212,6 @@ select{
 }
 .btn-call:hover{transform:translateY(-2px);box-shadow:0 10px 36px var(--glow)}
 .btn-call:active{transform:scale(.98)}
-#install-btn{display:none}
 /* ===== NUMBER DISPLAY ===== */
 .last-called-big{
   font-family:'JetBrains Mono',monospace;font-size:5rem;font-weight:700;
@@ -406,12 +405,29 @@ select{
 /* ===== PRINT ===== */
 @media print{
   .no-print{display:none!important}
-  body{background:#fff;color:#000}
-  .ticket-cell{border:1px solid #ccc!important;background:#fff!important;color:#000!important}
-  .ticket-cell.blank{background:#f0f0f0!important}
-  .print-card{page-break-inside:avoid;margin-bottom:24px}
-  .screen:not(#s-print){display:none!important}
-  #s-print{display:block!important}
+  html,body{
+    height:auto!important;overflow:visible!important;
+    background:#fff!important;color:#000!important;
+  }
+  .screen{display:none!important;overflow:visible!important;min-height:0!important}
+  #s-print{
+    display:block!important;overflow:visible!important;
+    min-height:0!important;height:auto!important;
+  }
+  #print-area{
+    display:block!important;overflow:visible!important;
+    padding:8px!important;height:auto!important;
+  }
+  .print-card{
+    page-break-inside:avoid;break-inside:avoid;
+    margin-bottom:20px;display:block;
+  }
+  .ticket{border:1px solid #999!important;border-radius:8px!important;overflow:visible!important;background:#fff!important}
+  .ticket-header{background:#ddd!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ticket-cell{border:1px solid #bbb!important;background:#fff!important;color:#000!important}
+  .ticket-cell.blank{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ticket-code{color:#444!important}
+  * {-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 /* ===== UTILS ===== */
 .mono{font-family:'JetBrains Mono',monospace}
@@ -461,8 +477,16 @@ select{
     <h1 class="app-title">HOUSIE</h1>
     <p class="app-sub">🎉 The Festive Number Game</p>
   </div>
-  <!-- Install button - shown by PWA prompt -->
-  <button class="btn btn-primary no-print" id="install-btn" onclick="installApp()" style="max-width:340px">📲 Add to Home Screen</button>
+  <!-- Install section — adapts to device -->
+  <div id="install-section" style="max-width:340px;width:100%">
+    <!-- Chrome/Edge/Android: native prompt button -->
+    <button class="btn btn-primary btn-full no-print" id="install-btn" onclick="installApp()" style="display:none">📲 Add to Home Screen</button>
+    <!-- Fallback instructions shown when native prompt unavailable -->
+    <div id="install-hint" style="display:none;background:color-mix(in srgb,var(--accent) 8%,var(--bg2));border:2px solid var(--border);border-radius:14px;padding:12px 16px;font-size:.82rem;color:var(--text2);line-height:1.7">
+      <div style="font-weight:800;color:var(--accent);margin-bottom:6px">📲 Add to Home Screen</div>
+      <div id="install-hint-text"></div>
+    </div>
+  </div>
   <button class="btn btn-primary btn-full" style="max-width:340px" onclick="goCreateGame()">🏠 Create New Game</button>
   <div class="divider">or join a game</div>
   <div class="landing-input-row">
@@ -470,10 +494,6 @@ select{
     <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
   </div>
   <p class="hint" style="max-width:300px">Enter the 4-letter Game ID shared by the host</p>
-  <!-- Manual install fallback if PWA prompt not available -->
-  <p class="hint" id="manual-install-hint" style="max-width:300px;display:none">
-    📲 To install: tap <strong>Share → Add to Home Screen</strong> (iOS) or browser menu → <strong>Install App</strong> (Android/Chrome)
-  </p>
 </div>
 
 <!-- ===== CREATE GAME ===== -->
@@ -674,10 +694,11 @@ select{
 <!-- ===== PRINT ===== -->
 <div class="screen" id="s-print">
   <div class="topbar no-print">
-    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <button class="topbar-btn" onclick="show(printBackTarget)">← Back</button>
     <div class="topbar-title">🖨 Print Cards</div>
     <button class="topbar-btn accent" onclick="window.print()">🖨 Print</button>
   </div>
+  <!-- Controls hidden during print -->
   <div class="content no-print">
     <div class="panel">
       <div class="panel-title">Card Range</div>
@@ -690,7 +711,8 @@ select{
       <button class="btn btn-primary btn-full mt8" onclick="generatePrintCards()">Generate Cards</button>
     </div>
   </div>
-  <div id="print-area" style="padding:14px"></div>
+  <!-- print-area is OUTSIDE .content so it is never clipped by overflow-y:auto -->
+  <div id="print-area"></div>
 </div>
 
 <!-- Firebase -->
@@ -718,6 +740,13 @@ const PRIZE_DEFS=[
 
 // ===== GAME STATE =====
 let gs={gameId:'',hostPW:'',active:false,calledNums:new Set(),calledOrder:[],prizes:{},claims:{},enabledPrizes:{},winnerCounts:{},rangeFrom:1,rangeTo:100,tts:false};
+
+// Game is considered "in progress" only after the first number has been called.
+// Game is "in progress" only after the first number has been called.
+// gs.active=true just means the room was created. Joining is open until first number.
+function gameInProgress(){
+  return gs.active===true && Array.isArray(gs.calledOrder) && gs.calledOrder.length>0;
+}
 let ps={code:'',seq:0,grid:[],marked:new Set(),eligibleAt:{}};
 let isAdminHost=false; // true if joined via master password
 
@@ -725,6 +754,7 @@ let fbListener=null;
 let joinListener=null; // live listener while on join screen
 let pvIndex=1;
 let displayBackTarget='s-landing';
+let printBackTarget='s-landing';
 let deferredPrompt=null;
 let autoCardSeq=0;
 let currentHostTab='cards';
@@ -869,6 +899,7 @@ function show(id){
   }
   if(id!=='s-joingame')stopJoinListener();
   if(id==='s-display'){const cur=document.querySelector('.screen.active');if(cur&&cur.id!=='s-display')displayBackTarget=cur.id;}
+  if(id==='s-print'){const cur=document.querySelector('.screen.active');if(cur&&cur.id!=='s-print')printBackTarget=cur.id;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id);if(el)el.classList.add('active');
   window.scrollTo(0,0);
@@ -1085,7 +1116,7 @@ function assignAutoCard(gameId,rangeFrom,rangeTo){
 }
 function shuffleAutoCard(){
   if(!gs.gameId)return;
-  if(gs.active){toast('🚫 Game started — card is locked');return;}
+  if(gameInProgress()){toast('🚫 Numbers have been called — card is locked');return;}
   const range=gs.rangeTo-gs.rangeFrom+1;
   autoCardSeq=gs.rangeFrom+Math.floor(Math.random()*range);
   updateAutoCardDisplay();
@@ -1098,24 +1129,29 @@ function updateAutoCardDisplay(){
   const shuffleWrap=document.getElementById('shuffle-btn-wrap');
   const manualRow=document.getElementById('manual-card-row');
   const ri=document.getElementById('resume-indicator');
-  // Has this player already been issued a card for this game?
-  const lastSeq=getLastCardForGame(gs.gameId);
-  const hasIssuedCard=!!(lastSeq&&lastSeq>=gs.rangeFrom&&lastSeq<=gs.rangeTo);
   const sess=loadSession(gs.gameId,autoCardSeq);
-  if(gs.active){
-    if(hasIssuedCard){
-      hintEl.textContent='Your card is locked for this game';
+
+  if(gameInProgress()){
+    // Numbers have been called — check if this device has a real saved session
+    const lastSeq=getLastCardForGame(gs.gameId);
+    const hasSavedSession=!!(lastSeq&&lastSeq>=gs.rangeFrom&&lastSeq<=gs.rangeTo&&loadSession(gs.gameId,lastSeq));
+    if(hasSavedSession){
+      // Returning player — lock to their card
+      hintEl.textContent='Game in progress — your card is locked';
       if(shuffleWrap)shuffleWrap.style.display='none';
       if(manualRow)manualRow.style.display='none';
-      if(ri){if(sess&&sess.marked.length>0){ri.style.display='block';ri.textContent='✅ '+sess.marked.length+' marks saved · tap Play to resume';}else ri.style.display='none';}
+      const savedSess=loadSession(gs.gameId,lastSeq);
+      if(ri){if(savedSess&&savedSess.marked.length>0){ri.style.display='block';ri.textContent='✅ '+savedSess.marked.length+' marks saved · tap Play to resume';}else ri.style.display='none';}
     }else{
-      hintEl.innerHTML='<span style="color:var(--danger);font-weight:800">⛔ Game in progress — new players cannot join</span>';
+      // New player trying to join after numbers have been called — block
+      hintEl.innerHTML='<span style="color:var(--danger);font-weight:800">⛔ Game in progress — numbers have been called. New players cannot join.</span>';
       if(shuffleWrap)shuffleWrap.style.display='none';
       if(manualRow)manualRow.style.display='none';
       if(ri)ri.style.display='none';
     }
   }else{
-    hintEl.textContent='Auto-assigned · shuffle to change';
+    // Game not started OR no numbers called yet — everyone can join freely
+    hintEl.textContent=gs.active?'Game open · join before first number is called':'Auto-assigned · shuffle to change';
     if(shuffleWrap)shuffleWrap.style.display='';
     if(manualRow)manualRow.style.display='flex';
     if(ri){if(sess&&sess.marked.length>0){ri.style.display='block';ri.textContent='✅ Saved — '+sess.marked.length+' marks · tap Play to resume';}else ri.style.display='none';}
@@ -1141,7 +1177,10 @@ async function goJoinGame(){
 }
 function updateJoinStatus(data){
   const badge=document.getElementById('join-status-badge');const cnt=document.getElementById('join-called-count');
-  if(data&&data.active){badge.className='status-badge live';badge.textContent='🟢 Live';cnt.textContent=(data.calledNums?data.calledNums.length:0)+' numbers called';}
+  const inProgress=data&&data.active&&Array.isArray(data.calledOrder)&&data.calledOrder.length>0;
+  const waiting=data&&data.active&&!inProgress;
+  if(inProgress){badge.className='status-badge live';badge.textContent='🟢 In Progress';cnt.textContent=(data.calledNums?data.calledNums.length:0)+' numbers called';}
+  else if(waiting){badge.className='status-badge live';badge.textContent='🟡 Open — waiting for players';cnt.textContent='Join now before the game starts';}
   else{badge.className='status-badge';badge.textContent='⏳ Not started';cnt.textContent='';}
 }
 async function cleanOldGames(){
@@ -1151,15 +1190,15 @@ async function cleanOldGames(){
 function goPlayerFromJoin(){
   const manualVal=document.getElementById('player-card-input').value.trim().toUpperCase();
   let seq,code;
-  const lastSeq=getLastCardForGame(gs.gameId);
-  const hasIssuedCard=!!(lastSeq&&lastSeq>=gs.rangeFrom&&lastSeq<=gs.rangeTo);
 
-  if(gs.active){
-    // Game running — only returning players (with a saved card) can join
-    if(!hasIssuedCard){toast('⛔ Game already started — you cannot join now');return;}
+  if(gameInProgress()){
+    // Numbers have been called — only allow players who have a real saved session
+    const lastSeq=getLastCardForGame(gs.gameId);
+    const hasSavedSession=!!(lastSeq&&lastSeq>=gs.rangeFrom&&lastSeq<=gs.rangeTo&&loadSession(gs.gameId,lastSeq));
+    if(!hasSavedSession){toast('⛔ Numbers already being called — new players cannot join now');return;}
     seq=lastSeq;code=seqToCode(seq);
   }else if(manualVal){
-    // Pre-game manual entry
+    // Pre-game: honour manual card entry
     if(/^\d+$/.test(manualVal)){
       seq=parseInt(manualVal);
       if(seq<gs.rangeFrom||seq>gs.rangeTo){toast('Card not in range ('+gs.rangeFrom+'–'+gs.rangeTo+')');return;}
@@ -1170,6 +1209,7 @@ function goPlayerFromJoin(){
       code=manualVal;
     }
   }else{
+    // Use auto-assigned card
     seq=autoCardSeq;code=seqToCode(seq);
   }
 
@@ -1234,7 +1274,8 @@ function stopPlayerSync(){if(fbListener){fbListener.off();fbListener=null;}}
 
 function applyLiveSnapshot(data){
   if(!data)return;
-  gs.calledNums=new Set(data.calledNums||[]);gs.calledOrder=data.calledOrder||[];
+  gs.calledNums=new Set(Array.isArray(data.calledNums)?data.calledNums:[]);
+  gs.calledOrder=Array.isArray(data.calledOrder)?data.calledOrder:[];
   gs.rangeFrom=data.rangeFrom||1;gs.rangeTo=data.rangeTo||100;
   gs.active=data.active||false;gs.gameId=data.gameId||gs.gameId;gs.hostPW=data.hostPW||gs.hostPW;
   gs.enabledPrizes=data.enabledPrizes||{};gs.winnerCounts=data.winnerCounts||{};gs.tts=data.tts||false;
@@ -1649,26 +1690,64 @@ if('serviceWorker' in navigator){const swBlob=new Blob([swCode],{type:'applicati
 
 // PWA install button logic
 window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredPrompt=e;
+  e.preventDefault();
+  deferredPrompt=e;
+  // Native prompt available — show the button, hide hint
   document.getElementById('install-btn').style.display='flex';
-  document.getElementById('manual-install-hint').style.display='none';
+  document.getElementById('install-hint').style.display='none';
 });
-window.addEventListener('appinstalled',()=>{document.getElementById('install-btn').style.display='none';deferredPrompt=null;});
-function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('install-btn').style.display='none';});}}
-
-// Show manual install hint on iOS/Safari where beforeinstallprompt doesn't fire
-(function(){
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  const isStandalone=window.navigator.standalone===true;
-  if((isIOS||isSafari)&&!isStandalone){
-    // Show manual hint after a short delay (don't show immediately)
-    setTimeout(()=>{
-      if(!deferredPrompt){
-        document.getElementById('manual-install-hint').style.display='block';
-      }
-    },2000);
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-section').style.display='none';
+  deferredPrompt=null;
+});
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(()=>{
+      deferredPrompt=null;
+      document.getElementById('install-section').style.display='none';
+    });
   }
+}
+
+// Device-aware install hint shown when native prompt isn't available
+(function(){
+  const ua=navigator.userAgent;
+  const isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+  if(isStandalone){
+    // Already installed — hide the whole section
+    document.getElementById('install-section').style.display='none';
+    return;
+  }
+  const isIOS=/iphone|ipad|ipod/i.test(ua);
+  const isSamsungBrowser=/SamsungBrowser/i.test(ua);
+  const isFirefoxAndroid=/Firefox/.test(ua)&&/Android/.test(ua);
+  const isOpera=/OPR|Opera/.test(ua);
+  const isChromeLike=/Chrome/.test(ua)&&!/Edg/.test(ua)&&!isSamsungBrowser;
+  const isEdge=/Edg\//.test(ua);
+
+  // beforeinstallprompt fires for Chrome/Edge/Samsung — wait a moment before deciding
+  setTimeout(()=>{
+    if(deferredPrompt||isStandalone)return; // prompt handled natively or already installed
+    const hintEl=document.getElementById('install-hint');
+    const hintText=document.getElementById('install-hint-text');
+    if(!hintEl||!hintText)return;
+    let msg='';
+    if(isIOS){
+      msg='Tap the <strong>Share</strong> button (□↑) in Safari, then choose <strong>Add to Home Screen</strong>.';
+    }else if(isSamsungBrowser){
+      msg='Tap the <strong>menu icon (⋮)</strong> then <strong>Add page to</strong> → <strong>Home screen</strong>.';
+    }else if(isFirefoxAndroid){
+      msg='Tap the <strong>menu icon (⋮)</strong> then <strong>Install</strong> or <strong>Add to Home screen</strong>.';
+    }else if(isOpera){
+      msg='Tap the <strong>Opera menu</strong> → <strong>Home screen</strong>.';
+    }else{
+      // Generic Android/other
+      msg='Open your browser menu and tap <strong>Add to Home Screen</strong> or <strong>Install App</strong>.';
+    }
+    hintText.innerHTML=msg;
+    hintEl.style.display='block';
+  },800);
 })();
 
 // ===== BEFOREUNLOAD / VISIBILITY =====
