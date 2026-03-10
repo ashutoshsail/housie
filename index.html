@@ -316,17 +316,17 @@ select{
 .winner-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:9px;background:color-mix(in srgb,var(--win) 18%,var(--bg2));border:2px solid var(--win);font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--win);font-weight:700;cursor:pointer}
 .no-claims{font-size:.82rem;color:var(--text3);font-style:italic;padding:4px 0}
 /* ===== PLAYER PRIZE GRID ===== */
-.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.prize-mini{background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:8px 10px;transition:all .2s;display:flex;align-items:center;gap:6px}
-.prize-mini-name{font-weight:800;font-size:.8rem;color:var(--text);line-height:1.2;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.prize-mini-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.prize-mini-status{color:var(--text2);font-size:.7rem;font-weight:700;white-space:nowrap}
+.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-width:0}
+.prize-mini{background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:7px 9px;transition:all .2s;display:flex;flex-direction:column;gap:4px;min-width:0;overflow:hidden;box-sizing:border-box}
+.prize-mini-name{font-weight:800;font-size:.8rem;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prize-mini-row2{display:flex;align-items:center;gap:5px;min-width:0}
+.prize-mini-status{color:var(--text2);font-size:.7rem;font-weight:700;white-space:nowrap;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .prize-mini.claimable{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,var(--bg2));animation:miniPulse 1.5s ease-in-out infinite}
 @keyframes miniPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--warn) 30%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
 .prize-mini.claimed{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--bg2))}
 .prize-mini.won-prize{border-color:var(--win);background:color-mix(in srgb,var(--win) 12%,var(--bg2))}
 .prize-mini.closed-prize{opacity:.5}
-.claim-btn{padding:3px 9px;border-radius:7px;background:var(--warn);color:#fff;font-weight:800;font-size:.7rem;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.claim-btn{padding:2px 8px;border-radius:6px;background:var(--warn);color:#fff;font-weight:800;font-size:.68rem;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .claim-btn:active{transform:scale(.95)}
 .claim-btn.already{background:var(--bg3);color:var(--text3);border:1.5px solid var(--border)}
 /* ===== PLAYER SCREEN ===== */
@@ -1576,19 +1576,18 @@ function renderPlayerPrizeGrid(){
     else if(isEligible&&!isClosed)cls+=' claimable';
     else if(isClosed)cls+=' closed-prize';
     mini.className=cls;
-    // Left: prize name
+    // Row 1: prize name
     const nm=document.createElement('div');nm.className='prize-mini-name';nm.textContent=p.name;
     mini.appendChild(nm);
-    // Right: status text + optional inline claim button
-    const right=document.createElement('div');right.className='prize-mini-right';
+    // Row 2: status text + optional claim button
+    const row2=document.createElement('div');row2.className='prize-mini-row2';
     const st=document.createElement('div');st.className='prize-mini-status';
-    if(iWon)st.innerHTML='🏆 Win';
-    else if(myClaim&&myClaim.status==='pending')st.innerHTML='⏳ Sent';
-    else if(myClaim&&myClaim.status==='rejected')st.innerHTML='❌';
-    else if(isClosed)st.innerHTML='🔒 '+acceptedCount;
-    else st.innerHTML=(acceptedCount?acceptedCount+'✓ · ':'')+((maxW-acceptedCount)+' left');
-    right.appendChild(st);
-    // Claim button inline if eligible
+    if(iWon)st.textContent='🏆 Win';
+    else if(myClaim&&myClaim.status==='pending')st.textContent='⏳ Sent';
+    else if(myClaim&&myClaim.status==='rejected')st.textContent='❌ Rejected';
+    else if(isClosed)st.textContent='🔒 '+acceptedCount+' won';
+    else st.textContent=(acceptedCount?acceptedCount+' won · ':'')+((maxW-acceptedCount)+' left');
+    row2.appendChild(st);
     if(isEligible&&!iWon&&!isClosed&&p.id!=='unlucky'){
       const btn=document.createElement('button');
       if(myClaim&&myClaim.status==='pending'){
@@ -1596,9 +1595,9 @@ function renderPlayerPrizeGrid(){
       }else{
         btn.className='claim-btn';btn.textContent='Claim';btn.onclick=()=>playerClaim(p.id);
       }
-      right.appendChild(btn);
+      row2.appendChild(btn);
     }
-    mini.appendChild(right);
+    mini.appendChild(row2);
     grid.appendChild(mini);
   });
 }
