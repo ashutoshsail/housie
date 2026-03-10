@@ -233,9 +233,9 @@ select{
 /* ===== TICKET ===== */
 .ticket{border:2px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg2)}
 .ticket-header{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));padding:6px 10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));padding:7px 10px;
   display:flex;align-items:center;justify-content:space-between;
-  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--btn-text);letter-spacing:.08em;
+  font-family:'Baloo 2',cursive;font-size:.95rem;font-weight:900;color:var(--btn-text);letter-spacing:.02em;
 }
 .ticket-row{display:grid;grid-template-columns:repeat(9,1fr)}
 .ticket-cell{
@@ -316,26 +316,28 @@ select{
 .winner-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:9px;background:color-mix(in srgb,var(--win) 18%,var(--bg2));border:2px solid var(--win);font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--win);font-weight:700;cursor:pointer}
 .no-claims{font-size:.82rem;color:var(--text3);font-style:italic;padding:4px 0}
 /* ===== PLAYER PRIZE GRID ===== */
-.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.prize-mini{background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:10px 12px;transition:all .2s}
-.prize-mini-name{font-weight:800;font-size:.85rem;color:var(--text);line-height:1.3}
-.prize-mini-status{color:var(--text2);font-size:.76rem;margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:700}
+.prize-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prize-mini{background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:8px 10px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.prize-mini-name{font-weight:800;font-size:.8rem;color:var(--text);line-height:1.2;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prize-mini-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.prize-mini-status{color:var(--text2);font-size:.7rem;font-weight:700;white-space:nowrap}
 .prize-mini.claimable{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,var(--bg2));animation:miniPulse 1.5s ease-in-out infinite}
 @keyframes miniPulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--warn) 30%,transparent)}50%{box-shadow:0 0 0 4px transparent}}
 .prize-mini.claimed{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--bg2))}
 .prize-mini.won-prize{border-color:var(--win);background:color-mix(in srgb,var(--win) 12%,var(--bg2))}
 .prize-mini.closed-prize{opacity:.5}
-.claim-btn{width:100%;margin-top:7px;padding:9px;border-radius:9px;background:var(--warn);color:#fff;font-weight:800;font-size:.8rem;border:none;cursor:pointer;transition:all .15s}
-.claim-btn:active{transform:scale(.97)}
-.claim-btn.already{background:var(--bg3);color:var(--text2);border:2px solid var(--border)}
+.claim-btn{padding:3px 9px;border-radius:7px;background:var(--warn);color:#fff;font-weight:800;font-size:.7rem;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.claim-btn:active{transform:scale(.95)}
+.claim-btn.already{background:var(--bg3);color:var(--text3);border:1.5px solid var(--border)}
 /* ===== PLAYER SCREEN ===== */
 .live-dot{width:9px;height:9px;border-radius:50%;background:var(--win);animation:livePulse 1.5s ease-in-out infinite;flex-shrink:0;box-shadow:0 0 8px var(--win)}
 @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--win) 50%,transparent)}50%{opacity:.7;box-shadow:0 0 0 6px transparent}}
 #player-ticket-wrapper{
   position:fixed;left:0;width:100vw;z-index:20;background:var(--bg);
-  padding:10px 10px 0;border-radius:0 0 18px 18px;
+  padding:0 10px 0;border-radius:0 0 18px 18px;
   box-shadow:0 6px 24px rgba(0,0,0,.35);
 }
+#player-content{gap:0;padding:0}
 .player-spacer{width:100%;background:transparent}
 .win-alert-bar{background:color-mix(in srgb,var(--win) 15%,var(--bg2));border:2px solid var(--win);border-radius:12px;padding:10px 14px;color:var(--win);font-weight:800;font-size:.88rem;display:flex;align-items:center;gap:8px;box-shadow:0 0 20px color-mix(in srgb,var(--win) 20%,transparent)}
 /* ===== CARD CHIPS ===== */
@@ -343,13 +345,51 @@ select{
 .card-chip:hover{border-color:var(--accent);color:var(--accent)}
 .card-chip.won{background:color-mix(in srgb,var(--win) 16%,var(--bg3));border-color:var(--win);color:var(--win);box-shadow:0 0 10px color-mix(in srgb,var(--win) 22%,transparent)}
 /* ===== DISPLAY MODE ===== */
-#s-display{background:#050508;color:#fff}
-#s-display .last-called-big{font-size:7rem;color:#fff;text-shadow:0 0 50px rgba(255,255,255,.5);animation:none}
-#s-display .num-cell{background:#111;color:#555}
-#s-display .num-cell.called{background:#e0e0e0;color:#000;font-weight:700;box-shadow:none}
-#s-display .called-count{color:#888}
-.display-prize-item{padding:8px 0;border-bottom:1px solid #1f1f1f;font-size:.9rem;color:#777}
-.display-prize-item .pw{color:#fff;font-weight:700}
+#s-display{background:var(--bg);color:var(--text)}
+#s-display .topbar{background:var(--bg2);border-color:var(--border)}
+#s-display .last-called-big{
+  font-size:8rem;font-weight:900;color:var(--accent);
+  text-shadow:0 0 60px var(--glow),0 0 20px var(--glow);
+  animation:none;
+}
+#s-display .num-cell{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+#s-display .num-cell.called{background:var(--accent);color:var(--btn-text);font-weight:700;box-shadow:0 0 8px var(--glow)}
+#s-display .called-count{color:var(--text2)}
+.display-prize-item{
+  padding:10px 14px;border-bottom:1px solid var(--border);
+  font-size:1rem;color:var(--text2);display:flex;align-items:center;gap:10px;
+}
+.display-prize-item .pw{color:var(--accent);font-weight:800;font-size:1.05rem;min-width:120px}
+.display-prize-item .pw-winners{color:var(--text);font-weight:700}
+/* Winner celebration overlay */
+#disp-winner-overlay{
+  position:fixed;inset:0;z-index:9000;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.82);backdrop-filter:blur(8px);
+  flex-direction:column;gap:16px;
+}
+#disp-winner-overlay.show{display:flex;animation:overlayIn .35s ease}
+@keyframes overlayIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+#disp-winner-card{
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--corner));
+  border-radius:24px;padding:32px 40px;text-align:center;
+  box-shadow:0 0 80px var(--glow),0 0 30px var(--glow);
+  animation:winnerPulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes winnerPulse{from{box-shadow:0 0 40px var(--glow)}to{box-shadow:0 0 100px var(--glow),0 0 40px var(--accent)}}
+#disp-winner-card .wc-prize{font-size:1rem;font-weight:800;color:var(--btn-text);opacity:.85;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+#disp-winner-card .wc-name{font-size:2.4rem;font-weight:900;color:var(--btn-text);line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+#disp-winner-card .wc-card{font-size:1rem;font-weight:700;color:var(--btn-text);opacity:.75;margin-top:6px;font-family:'JetBrains Mono',monospace}
+/* Claims badge on display */
+#disp-claims-badge{
+  display:none;position:fixed;top:80px;right:16px;z-index:500;
+  background:var(--danger);color:#fff;font-size:1rem;font-weight:800;
+  border-radius:50px;padding:8px 16px;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  animation:badgePulse 1s ease-in-out infinite alternate;
+}
+#disp-claims-badge.show{display:block}
+@keyframes badgePulse{from{transform:scale(1)}to{transform:scale(1.08)}}
 /* ===== STATUS BADGE ===== */
 .status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:.82rem;font-weight:800;background:var(--bg3);color:var(--text2);border:2px solid var(--border)}
 .status-badge.live{background:color-mix(in srgb,var(--win) 14%,var(--bg3));color:var(--win);border-color:var(--win);box-shadow:0 0 10px color-mix(in srgb,var(--win) 20%,transparent)}
@@ -516,9 +556,9 @@ select{
 <!-- ===== CREATE GAME ===== -->
 <div class="screen" id="s-creategame">
   <div class="topbar">
-    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
-    <div class="topbar-title">🎮 New Game Setup</div>
-    <button class="topbar-btn accent" onclick="startHostGame()">Create Game ✓</button>
+    <button class="topbar-btn" id="create-back-btn" onclick="createGameBack()">← Back</button>
+    <div class="topbar-title" id="create-game-title">🎮 New Game Setup</div>
+    <button class="topbar-btn accent" id="create-game-btn" onclick="startHostGame()">Launch Game ✓</button>
   </div>
   <div class="content">
     <div class="panel">
@@ -583,7 +623,7 @@ select{
         </div>
         <div id="manual-card-row" style="display:flex;gap:8px;align-items:center;margin-top:10px">
           <span class="text2" style="font-size:.8rem;white-space:nowrap">Or enter #:</span>
-          <input type="text" id="player-card-input" placeholder="Card # or CODE" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
+          <input type="text" id="player-card-input" placeholder="Enter card code (e.g. XK4P7R)" style="flex:1" oninput="this.value=this.value.toUpperCase()"/>
         </div>
         <button class="btn btn-primary btn-full mt8" onclick="goPlayerFromJoin()">🎱 Play This Card →</button>
       </div>
@@ -692,13 +732,14 @@ select{
   <div class="content" id="player-content">
     <div id="player-win-alert"></div>
     <div class="player-spacer" id="player-spacer"></div>
-    <p class="hint">Tap numbers as host calls them 🎱</p>
-    <!-- Last called number shown prominently between card and prizes -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0 2px">
-      <div style="font-size:.7rem;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase">Last Called</div>
-      <div id="player-last-called" style="font-family:'JetBrains Mono',monospace;font-size:3.2rem;font-weight:900;color:var(--num-color);text-shadow:0 0 20px var(--glow);line-height:1">—</div>
+    <!-- Hint flush under card bottom -->
+    <p style="text-align:center;font-size:.72rem;color:var(--text3);margin:0;padding:2px 0;font-weight:600;letter-spacing:.04em;background:var(--bg)">🎱 Tap numbers as host calls them</p>
+    <!-- Last called number -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:4px 0 2px;background:var(--bg)">
+      <div style="font-size:.65rem;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;line-height:1">Last<br>Called</div>
+      <div id="player-last-called" style="font-family:'JetBrains Mono',monospace;font-size:3.4rem;font-weight:900;color:var(--num-color);text-shadow:0 0 20px var(--glow);line-height:1">—</div>
     </div>
-    <div class="panel">
+    <div class="panel" style="margin:4px 10px 10px">
       <div class="panel-title">🏆 Prizes</div>
       <div class="prize-grid-2" id="player-prize-grid"></div>
     </div>
@@ -708,15 +749,34 @@ select{
 
 <!-- ===== DISPLAY ===== -->
 <div class="screen" id="s-display">
-  <div class="topbar" style="background:#000;border-color:#222">
+  <div class="topbar" id="disp-topbar">
     <button class="topbar-btn" onclick="displayBack()">← Back</button>
-    <div class="topbar-title" style="color:#fff">📺 Display Mode</div>
+    <div class="topbar-title">📺 Display</div>
+    <div class="theme-dropdown-wrap">
+      <button class="icon-btn" onclick="toggleThemeMenu('disp')" id="theme-toggle-disp">🎨</button>
+      <div class="theme-menu" id="theme-menu-disp"></div>
+    </div>
   </div>
-  <div class="content" style="background:#000">
-    <div class="last-called-big" id="disp-last-num">—</div>
-    <div class="called-count" id="disp-called-count" style="color:#666">Waiting...</div>
-    <div class="num-grid" id="disp-num-grid" style="margin-top:14px"></div>
-    <div id="disp-prizes" style="margin-top:16px"></div>
+  <!-- Floating pending claims badge -->
+  <div id="disp-claims-badge">⏳ <span id="disp-claims-count">0</span> pending</div>
+  <!-- Winner celebration overlay (hidden until winner declared) -->
+  <div id="disp-winner-overlay" onclick="this.classList.remove('show')">
+    <div id="disp-fireworks"></div>
+    <div id="disp-winner-card">
+      <div class="wc-prize" id="wc-prize-name">🏆 WINNER</div>
+      <div class="wc-name" id="wc-winner-name">Player</div>
+      <div class="wc-card" id="wc-card-num">#0</div>
+    </div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:8px">tap to dismiss</div>
+  </div>
+  <div class="content">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 0 10px">
+      <div style="font-size:.7rem;font-weight:800;color:var(--text3);letter-spacing:.18em;text-transform:uppercase">Last Called</div>
+      <div class="last-called-big" id="disp-last-num">—</div>
+      <div class="called-count" id="disp-called-count">Waiting...</div>
+    </div>
+    <div class="num-grid" id="disp-num-grid"></div>
+    <div id="disp-prizes" style="margin-top:16px;border-radius:14px;overflow:hidden;border:2px solid var(--border)"></div>
   </div>
 </div>
 
@@ -859,7 +919,7 @@ function setTheme(t){
   document.querySelectorAll('.theme-menu-item').forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
 }
 function buildThemeMenus(){
-  ['theme-menu','theme-menu-host','theme-menu-player'].forEach(id=>{
+  ['theme-menu','theme-menu-host','theme-menu-player','theme-menu-disp'].forEach(id=>{
     const el=document.getElementById(id);if(!el)return;el.innerHTML='';
     THEMES.forEach(t=>{
       const b=document.createElement('div');b.className='theme-menu-item';b.dataset.theme=t.id;b.textContent=t.label;
@@ -983,16 +1043,12 @@ function _handleBack(currentScreen){
     backFromPlayer();return;
   }
   if(id==='s-hostgame'){
-    // Host can't just leave — must end game explicitly or confirm
-    if(confirm('Leave host view? The game will keep running. You can rejoin as host.')){
-      show('s-joingame');
-    }else{
-      history.pushState({screen:id},document.title);
-    }
+    // Back from host screen → open live game settings panel
+    openHostSettings();
     return;
   }
   if(id==='s-joingame'){show('s-landing');return;}
-  if(id==='s-creategame'){show('s-landing');return;}
+  if(id==='s-creategame'){createGameBack();return;}
   if(id==='s-print'){show(printBackTarget);return;}
   if(id==='s-display'){displayBack();return;}
   // Fallback
@@ -1160,7 +1216,70 @@ function goCreateGame(){
   let pw='';for(let i=0;i<5;i++)pw+=chars[Math.floor(Math.random()*chars.length)];
   document.getElementById('host-pw-input').value=pw;
   document.getElementById('range-from').value=1;document.getElementById('range-to').value=100;
+  // Pre-assign game ID so it's visible before launch
+  gs.gameId=randId();gs.active=false;
+  _updateCreateScreen(false);
   updateRangeHint();buildPrizeSetup();show('s-creategame');
+}
+
+function _updateCreateScreen(isLive){
+  // Updates back button label+action and title based on whether game is running
+  const backBtn=document.getElementById('create-back-btn');
+  const titleEl=document.getElementById('create-game-title');
+  const actionBtn=document.getElementById('create-game-btn');
+  if(isLive){
+    backBtn.textContent='← Back to Game';
+    backBtn.onclick=()=>show('s-hostgame');
+    titleEl.textContent='⚙️ Game '+gs.gameId;
+    actionBtn.textContent='Save Settings ✓';
+    actionBtn.onclick=saveHostSettings;
+  }else{
+    backBtn.textContent='← Back';
+    backBtn.onclick=createGameBack;
+    titleEl.textContent='🎮 Game '+gs.gameId;
+    actionBtn.textContent='Launch Game ✓';
+    actionBtn.onclick=startHostGame;
+  }
+}
+
+function createGameBack(){
+  // From the setup screen: if game is live go back to it, otherwise go to landing
+  if(gs.active){show('s-hostgame');}else{gs.gameId='';show('s-landing');}
+}
+
+function openHostSettings(){
+  document.getElementById('host-pw-input').value=gs.hostPW;
+  document.getElementById('range-from').value=gs.rangeFrom;
+  document.getElementById('range-to').value=gs.rangeTo;
+  const tts=document.getElementById('tts-toggle');
+  if(gs.tts)tts.classList.add('on');else tts.classList.remove('on');
+  _updateCreateScreen(true);
+  updateRangeHint();buildPrizeSetupFromState();show('s-creategame');
+}
+
+function buildPrizeSetupFromState(){
+  // Build prize setup pre-filled with current live game state
+  buildPrizeSetup();
+  PRIZE_DEFS.forEach(p=>{
+    const tog=document.getElementById('ps-tog-'+p.id);
+    const cnt=document.getElementById('ps-cnt-'+p.id);
+    if(tog){if(gs.enabledPrizes[p.id]!==false)tog.classList.add('on');else tog.classList.remove('on');}
+    if(cnt)cnt.textContent=gs.winnerCounts[p.id]||1;
+  });
+}
+
+async function saveHostSettings(){
+  const pw=document.getElementById('host-pw-input').value.trim();
+  if(pw.length<3){toast('Password must be at least 3 chars');return;}
+  gs.hostPW=pw;
+  gs.tts=document.getElementById('tts-toggle').classList.contains('on');
+  PRIZE_DEFS.forEach(p=>{
+    gs.enabledPrizes[p.id]=document.getElementById('ps-tog-'+p.id)?.classList.contains('on')??true;
+    gs.winnerCounts[p.id]=parseInt(document.getElementById('ps-cnt-'+p.id)?.textContent)||1;
+  });
+  broadcastGameState();
+  toast('✅ Settings saved');
+  show('s-hostgame');
 }
 function randId(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let id='';for(let i=0;i<4;i++)id+=c[Math.floor(Math.random()*c.length)];return id;}
 
@@ -1179,13 +1298,15 @@ async function startHostGame(){
     gs.winnerCounts[p.id]=parseInt(document.getElementById('ps-cnt-'+p.id)?.textContent)||1;
     gs.prizes[p.id]=[];gs.claims[p.id]=[];
   });
-  const id=randId();gs.gameId=id;isAdminHost=false;
+  // gameId already pre-assigned in goCreateGame; just mark active
+  gs.active=true;isAdminHost=false;
+  const id=gs.gameId;
   try{
     const existing=await db.ref('games').once('value');const updates={};
     existing.forEach(child=>{updates['games/'+child.key]=null;});
     updates['games/'+id]=buildSnapshot();
     await db.ref('/').update(updates);
-    show('s-hostgame');toast('🎉 Game '+id+' started!');spawnConfetti();
+    show('s-hostgame');toast('🎉 Game '+id+' started!');spawnConfetti();_shownWinnerKeys=new Set();
   }catch(e){toast('Firebase error: '+e.message);}
 }
 
@@ -1293,11 +1414,9 @@ function goPlayerFromJoin(){
     if(!hasSavedSession){toast('⛔ Numbers already being called — new players cannot join now');return;}
     seq=lastSeq;code=seqToCode(seq);
   }else if(manualVal){
-    // Pre-game: honour manual card entry
+    // Pre-game: only accept alphanumeric code, not bare sequence numbers (security)
     if(/^\d+$/.test(manualVal)){
-      seq=parseInt(manualVal);
-      if(seq<gs.rangeFrom||seq>gs.rangeTo){toast('Card not in range ('+gs.rangeFrom+'–'+gs.rangeTo+')');return;}
-      code=seqToCode(seq);
+      toast('Enter the alphanumeric card code (e.g. XK4P7R), not just a number');return;
     }else{
       seq=codeToSeq(manualVal,gs.rangeTo);
       if(seq<0||seq<gs.rangeFrom){toast('Code not found in active range');return;}
@@ -1405,13 +1524,15 @@ function applyLiveSnapshot(data){
   PRIZE_DEFS.forEach(p=>{gs.prizes[p.id]=(data.prizes&&data.prizes[p.id]||[]).map(w=>({code:w.code,seq:w.seq,status:w.status,playerName:w.playerName||null,grid:generateTicket(w.code)}));});
   gs.claims={};
   PRIZE_DEFS.forEach(p=>{gs.claims[p.id]=(data.claims&&data.claims[p.id]||[]).map(c=>({code:c.code,seq:c.seq,ts:c.ts,status:c.status,markedNums:c.markedNums||null,triggerNum:c.triggerNum||null,calledAtClaim:c.calledAtClaim||0,playerName:c.playerName||null}));});
+  // Check for new winners if display screen is visible
+  if(document.getElementById('s-display').classList.contains('active'))checkForNewWinners();
 }
 
 // ===== PLAYER SCREEN =====
 function renderPlayerScreen(){
   if(!ps.code)return;
   const name=getPlayerName();
-  document.getElementById('player-card-label').textContent=(name?name+' · ':'')+ps.code+' #'+ps.seq;
+  document.getElementById('player-card-label').textContent=gs.gameId||'HOUSIE';
   const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
   document.getElementById('player-last-called').textContent=last||'—';
   const alerts=[];
@@ -1432,8 +1553,10 @@ function positionPlayerTicket(){
     const spacer=document.getElementById('player-spacer');
     if(!topbar||!wrapper||!spacer)return;
     wrapper.style.top=topbar.getBoundingClientRect().bottom+'px';
-    const wh=wrapper.getBoundingClientRect().height||120;
-    spacer.style.height=wh+'px';
+    // Use wrapper.bottom (distance from top of viewport to bottom of card)
+    // so the spacer ends exactly where the card ends — no extra padding gap
+    const wrapperBottom=wrapper.getBoundingClientRect().bottom;
+    spacer.style.height=wrapperBottom+'px';
   });
 }
 function renderPlayerPrizeGrid(){
@@ -1448,25 +1571,34 @@ function renderPlayerPrizeGrid(){
     const isEligible=ps.eligibleAt[p.id]!==undefined;
     const mini=document.createElement('div');
     let cls='prize-mini';
-    if(iWon)cls+=' won-prize';else if(myClaim&&myClaim.status==='pending')cls+=' claimed';
-    else if(isEligible&&!isClosed)cls+=' claimable';else if(isClosed)cls+=' closed-prize';
+    if(iWon)cls+=' won-prize';
+    else if(myClaim&&myClaim.status==='pending')cls+=' claimed';
+    else if(isEligible&&!isClosed)cls+=' claimable';
+    else if(isClosed)cls+=' closed-prize';
     mini.className=cls;
+    // Left: prize name
     const nm=document.createElement('div');nm.className='prize-mini-name';nm.textContent=p.name;
+    mini.appendChild(nm);
+    // Right: status text + optional inline claim button
+    const right=document.createElement('div');right.className='prize-mini-right';
     const st=document.createElement('div');st.className='prize-mini-status';
-    if(iWon)st.innerHTML='✅ Won!';
-    else if(myClaim&&myClaim.status==='pending')st.innerHTML='⏳ Claim sent';
-    else if(myClaim&&myClaim.status==='rejected')st.innerHTML='❌ Rejected';
-    else if(isClosed)st.innerHTML='🔒 Closed ('+acceptedCount+' won)';
-    else if(isEligible)st.innerHTML='🎯 Eligible!';
-    else st.innerHTML=(acceptedCount?acceptedCount+' won · ':'')+((maxW-acceptedCount)+' left');
-    mini.appendChild(nm);mini.appendChild(st);
+    if(iWon)st.innerHTML='🏆 Win';
+    else if(myClaim&&myClaim.status==='pending')st.innerHTML='⏳ Sent';
+    else if(myClaim&&myClaim.status==='rejected')st.innerHTML='❌';
+    else if(isClosed)st.innerHTML='🔒 '+acceptedCount;
+    else st.innerHTML=(acceptedCount?acceptedCount+'✓ · ':'')+((maxW-acceptedCount)+' left');
+    right.appendChild(st);
+    // Claim button inline if eligible
     if(isEligible&&!iWon&&!isClosed&&p.id!=='unlucky'){
       const btn=document.createElement('button');
-      if(myClaim&&myClaim.status==='pending'){btn.className='claim-btn already';btn.textContent='⏳ Pending';btn.disabled=true;}
-      else if(myClaim&&myClaim.status==='rejected'){btn.className='claim-btn already';btn.textContent='❌ Rejected';btn.disabled=true;}
-      else{btn.className='claim-btn';btn.textContent='🙋 Claim '+p.name;btn.onclick=()=>playerClaim(p.id);}
-      mini.appendChild(btn);
+      if(myClaim&&myClaim.status==='pending'){
+        btn.className='claim-btn already';btn.textContent='⏳';btn.disabled=true;
+      }else{
+        btn.className='claim-btn';btn.textContent='Claim';btn.onclick=()=>playerClaim(p.id);
+      }
+      right.appendChild(btn);
     }
+    mini.appendChild(right);
     grid.appendChild(mini);
   });
 }
@@ -1701,6 +1833,9 @@ async function hostResolveClaim(prizeId,code,decision,playerName){
     if(!gs.prizes[prizeId].some(w=>w.code===code))gs.prizes[prizeId].push({code,seq,status:'accepted',playerName:playerName||null,grid:generateTicket(code)});
     else gs.prizes[prizeId].find(w=>w.code===code).status='accepted';
     spawnConfetti();
+    const prizeDef=PRIZE_DEFS.find(p=>p.id===prizeId);
+    const seq2=codeToSeq(code,gs.rangeTo);
+    showWinnerCelebration(prizeDef?prizeDef.name:'Prize',playerName||null,seq2);
   }
   broadcastGameState();renderClaimsPanel();renderAllCardsPanel();renderWinnersPanel();
   toast(decision==='accepted'?'🎉 Claim accepted!':'❌ Claim rejected');
@@ -1746,6 +1881,7 @@ function callNextNumber(){
   if(gs.calledNums.size>=90){toast('All 90 numbers called!');return;}
   let n;do{n=Math.floor(Math.random()*90)+1;}while(gs.calledNums.has(n));
   gs.calledNums.add(n);gs.calledOrder.push(n);
+  dismissWinnerOverlay(); // clear winner flash when next number called
   if(gs.tts)speakNumber(n);
   broadcastGameState();renderHostNumbers();renderDisplay();
 }
@@ -1763,19 +1899,90 @@ async function endGame(){
 function renderDisplay(){
   const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
   document.getElementById('disp-last-num').textContent=last||'—';
-  document.getElementById('disp-called-count').textContent=gs.calledNums.size+' / 90 called';
+  document.getElementById('disp-called-count').textContent=gs.calledNums.size?gs.calledNums.size+' / 90 called':'Waiting for first number…';
   const grid=document.getElementById('disp-num-grid');grid.innerHTML='';
   for(let n=1;n<=90;n++){const cell=document.createElement('div');cell.className='num-cell'+(gs.calledNums.has(n)?' called':'');cell.textContent=n;grid.appendChild(cell);}
+  // Prize rows
   const prizes=document.getElementById('disp-prizes');prizes.innerHTML='';
   PRIZE_DEFS.forEach(p=>{
     if(!gs.enabledPrizes[p.id])return;
     const winners=(gs.prizes[p.id]||[]).filter(w=>w.status==='accepted');
     const item=document.createElement('div');item.className='display-prize-item';
-    const labels=winners.length?winners.map(w=>winnerDisplayLabel(w)).join(', '):'—';
-    item.innerHTML='<span class="pw">'+p.name+'</span> — '+labels;
+    const nameEl=document.createElement('span');nameEl.className='pw';nameEl.textContent=p.name;
+    const winEl=document.createElement('span');winEl.className='pw-winners';
+    winEl.textContent=winners.length?winners.map(w=>w.playerName?w.playerName+' (#'+w.seq+')':'#'+w.seq).join(' · '):'—';
+    item.appendChild(nameEl);item.appendChild(winEl);
     prizes.appendChild(item);
   });
+  // Pending claims badge — only count prizes not yet closed
+  const totalPending=Object.entries(gs.claims).reduce((s,[pid,arr])=>{
+    const maxW=gs.winnerCounts[pid]||1;
+    const accepted=(gs.prizes[pid]||[]).filter(w=>w.status==='accepted').length;
+    const isClosed=accepted>=maxW;
+    return s+(isClosed?0:(arr||[]).filter(c=>c.status==='pending').length);
+  },0);
+  const badge=document.getElementById('disp-claims-badge');
+  const cnt=document.getElementById('disp-claims-count');
+  if(badge){badge.classList.toggle('show',totalPending>0);if(cnt)cnt.textContent=totalPending;}
 }
+
+let _shownWinnerKeys=new Set();
+function checkForNewWinners(){
+  PRIZE_DEFS.forEach(p=>{
+    (gs.prizes[p.id]||[]).forEach(w=>{
+      if(w.status!=='accepted')return;
+      const key=p.id+':'+w.seq;
+      if(_shownWinnerKeys.has(key))return;
+      _shownWinnerKeys.add(key);
+      showWinnerCelebration(p.name,w.playerName||null,w.seq);
+    });
+  });
+}
+
+let _winnerTimeout=null;
+function showWinnerCelebration(prizeName,playerName,seq){
+  document.getElementById('wc-prize-name').textContent='🏆 '+prizeName;
+  document.getElementById('wc-winner-name').textContent=playerName||'Card #'+seq;
+  document.getElementById('wc-card-num').textContent='Card #'+seq;
+  const overlay=document.getElementById('disp-winner-overlay');
+  overlay.classList.add('show');
+  spawnFireworks();
+  // Clear any previous timeout — overlay stays until next number or next winner
+  if(_winnerTimeout)clearTimeout(_winnerTimeout);
+  _winnerTimeout=null;
+}
+function dismissWinnerOverlay(){
+  const overlay=document.getElementById('disp-winner-overlay');
+  if(overlay)overlay.classList.remove('show');
+  if(_winnerTimeout){clearTimeout(_winnerTimeout);_winnerTimeout=null;}
+}
+
+function spawnFireworks(){
+  const container=document.getElementById('disp-fireworks');
+  if(!container)return;
+  container.innerHTML='';
+  const colors=['var(--accent)','var(--accent2)','var(--accent3)','var(--confetti1)','var(--confetti2)','var(--confetti3)','#fff'];
+  const shapes=['●','★','✦','♦','▲','◆'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div');
+    const angle=Math.random()*360;const dist=60+Math.random()*140;
+    const dx=Math.cos(angle*Math.PI/180)*dist;const dy=Math.sin(angle*Math.PI/180)*dist;
+    p.textContent=shapes[Math.floor(Math.random()*shapes.length)];
+    p.style.cssText=`position:absolute;font-size:${10+Math.random()*18}px;color:${colors[Math.floor(Math.random()*colors.length)]};
+      animation:fwPiece ${0.8+Math.random()*1.4}s ease-out forwards;
+      --dx:${dx}px;--dy:${dy}px;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;`;
+    container.appendChild(p);
+    setTimeout(()=>p.remove(),2500);
+  }
+}
+
+// CSS for firework pieces (injected once)
+(function(){
+  if(document.getElementById('fw-style'))return;
+  const s=document.createElement('style');s.id='fw-style';
+  s.textContent=`@keyframes fwPiece{0%{opacity:1;transform:translate(-50%,-50%) translate(0,0) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.3)}}`;
+  document.head.appendChild(s);
+})();
 
 // ===== PRINT =====
 function generatePrintCards(){
@@ -1835,9 +2042,8 @@ function exportCardsExcel(){
         ws_data[rowBase+r][col+c]=grid[r][c]===0?'':grid[r][c];
       }
     }
-    // Label row
-    ws_data[rowBase+3][col]='#'+s;
-    ws_data[rowBase+3][col+1]=code;
+    // Label row — seq + code together
+    ws_data[rowBase+3][col]='#'+s+'  '+code;
     // Merge label across 9 cells (we set them all the same for clarity)
     for(let c=2;c<9;c++) ws_data[rowBase+3][col+c]='';
   }
