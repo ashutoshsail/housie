@@ -176,10 +176,13 @@ select{
 /* Physics balls — crisp solid circles, no glow, positioned by JS */
 .deco-ball{
   position:fixed;border-radius:50%;pointer-events:none;z-index:4;
-  display:flex;align-items:center;justify-content:center;
+  display:none;align-items:center;justify-content:center;
   font-family:'JetBrains Mono',monospace;font-weight:800;color:#fff;
-  line-height:1;user-select:none;will-change:left,top;
+  line-height:1;user-select:none;will-change:transform;
+  transform-origin:center;
+  transition:transform .6s cubic-bezier(.34,1.56,.64,1);
 }
+body.landing-active .deco-ball{display:flex;}
 /* match-flash: ball briefly inverts on number match */
 .deco-ball.match-flash{background:#fff!important;color:#222!important;}
 /* grid number pop-out element */
@@ -1031,7 +1034,9 @@ const db=firebase.database();
 
   // ── Physics balls ─────────────────────────────────────────────────
   const BALL_COLORS=['#f0c040','#f97316','#a855f7'];
-  const BALL_R=[26,22,24];
+  const BALL_NUM_R=30, BALL_EMPTY_SCALE=0.72;
+  const BALL_DOM_R=BALL_NUM_R; // DOM element always this radius
+  const BALL_R=[BALL_NUM_R,BALL_NUM_R,BALL_NUM_R]; // physics spawn radius
   const ballEls=Array.from(document.querySelectorAll('.deco-ball'));
 
   const W=()=>window.innerWidth, H=()=>window.innerHeight;
@@ -1049,23 +1054,33 @@ const db=firebase.database();
       x: side ? R*2+Math.random()*W()*0.25 : W()-R*2-Math.random()*W()*0.25,
       y: R + Math.random()*Math.max(R, maxY-R),
       vx: spd(), vy: spd(),
-      r:R, col,
+      r:BALL_NUM_R, col,  // physics r always full size; scale() shrinks visually
       num: i===0 ? Math.floor(Math.random()*90)+1 : null,
       el: ballEls[i],
       cooldowns:{},
     };
   });
 
-  // Style balls — only ball[0] shows a number initially
+  function resizeBall(b){
+    const scale=b.num!==null?1:BALL_EMPTY_SCALE;
+    b.el.style.transform=`scale(${scale})`;
+    // Physics radius stays BALL_NUM_R — DOM size never changes, only visual scale
+  }
+
+  // Style balls — DOM size always BALL_NUM_R, scale via transform
   balls.forEach(b=>{
     if(!b.el)return;
     b.el.style.background=b.col;
-    b.el.style.width=b.r*2+'px';
-    b.el.style.height=b.r*2+'px';
-    b.el.style.fontSize=Math.round(b.r*0.82)+'px';
+    b.el.style.width=BALL_NUM_R*2+'px';
+    b.el.style.height=BALL_NUM_R*2+'px';
+    b.el.style.fontSize=Math.round(BALL_NUM_R*0.75)+'px';
     b.el.textContent=b.num!==null?b.num:'';
-    b.el.style.left=(b.x-b.r)+'px';
-    b.el.style.top=(b.y-b.r)+'px';
+    // Apply initial scale (no transition on first render)
+    b.el.style.transition='none';
+    resizeBall(b);
+    requestAnimationFrame(()=>b.el.style.transition='');// re-enable after first frame
+    b.el.style.left=(b.x-BALL_DOM_R)+'px';
+    b.el.style.top=(b.y-BALL_DOM_R)+'px';
   });
 
   // Get all solid obstacle rects (logo + Create Game button)
@@ -1210,14 +1225,14 @@ const db=firebase.database();
               popSlot(matchIdx);
               b.el.classList.add('match-flash');
               setTimeout(()=>b.el.classList.remove('match-flash'),220);
-              setTimeout(()=>assignNew(b),300);
+              setTimeout(()=>{assignNew(b);resizeBall(b);},300);
             }
           }
         }
       });
 
-      b.el.style.left=(b.x-b.r)+'px';
-      b.el.style.top=(b.y-b.r)+'px';
+      b.el.style.left=(b.x-BALL_DOM_R)+'px';
+      b.el.style.top=(b.y-BALL_DOM_R)+'px';
     });
 
     // Ball-ball elastic collisions + number transfer: only ONE ball holds a number at a time
@@ -1237,9 +1252,11 @@ const db=firebase.database();
           if(aHas){
             a.num=null; a.el.textContent='';
             bb.num=Math.floor(Math.random()*90)+1; bb.el.textContent=bb.num;
+            resizeBall(a); resizeBall(bb);
           } else if(bbHas){
             bb.num=null; bb.el.textContent='';
             a.num=Math.floor(Math.random()*90)+1; a.el.textContent=a.num;
+            resizeBall(bb); resizeBall(a);
           }
           // If neither has a number, do nothing — keeps exactly one in circulation
         }
@@ -1432,6 +1449,7 @@ function show(id){
   if(id==='s-print'){const cur=document.querySelector('.screen.active');if(cur&&cur.id!=='s-print')printBackTarget=cur.id;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(id);if(el)el.classList.add('active');
+  document.body.classList.toggle('landing-active', id==='s-landing');
   window.scrollTo(0,0);
   if(id==='s-hostgame')renderHostScreen();
   if(id==='s-display')renderDisplay();
@@ -1495,6 +1513,7 @@ function backFromPlayer(){show(gs.gameId?'s-joingame':'s-landing');}
 
 // Seed the initial history entry so popstate always fires (not just on back to prior page)
 history.replaceState({screen:'s-landing'},document.title);
+document.body.classList.add('landing-active'); // balls visible on initial landing screen
 
 // ===== RNG =====
 function seededRng(seed){
