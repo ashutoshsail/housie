@@ -182,6 +182,10 @@ select{
   transform-origin:center;
   transition:transform .6s cubic-bezier(.34,1.56,.64,1);
 }
+.deco-ball .ball-num{
+  transition:opacity .18s ease;
+  pointer-events:none;
+}
 body.landing-active .deco-ball{display:flex;}
 /* match-flash: ball briefly inverts on number match */
 .deco-ball.match-flash{background:#fff!important;color:#222!important;}
@@ -630,7 +634,7 @@ body.landing-active .deco-ball{display:flex;}
   <button class="btn btn-primary btn-full" style="max-width:340px" onclick="goCreateGame()">🏠 Create New Game</button>
   <div class="divider">or join a game</div>
   <div class="landing-input-row">
-    <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase()" style="text-align:center;font-size:1.2rem;letter-spacing:.2em"/>
+    <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase();if(this.value.length===4)goJoinGame()" style="text-align:center;font-size:1.2rem;letter-spacing:.2em"/>
     <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
   </div>
   <p class="hint" style="max-width:300px">Enter the 4-letter Game ID shared by the host</p>
@@ -1054,7 +1058,7 @@ const db=firebase.database();
       x: side ? R*2+Math.random()*W()*0.25 : W()-R*2-Math.random()*W()*0.25,
       y: R + Math.random()*Math.max(R, maxY-R),
       vx: spd(), vy: spd(),
-      r:BALL_NUM_R, col,  // physics r always full size; scale() shrinks visually
+      r:i===0?BALL_NUM_R:Math.round(BALL_NUM_R*BALL_EMPTY_SCALE), col,
       num: i===0 ? Math.floor(Math.random()*90)+1 : null,
       el: ballEls[i],
       cooldowns:{},
@@ -1063,8 +1067,28 @@ const db=firebase.database();
 
   function resizeBall(b){
     const scale=b.num!==null?1:BALL_EMPTY_SCALE;
+    // Never override transition — let CSS handle it smoothly
     b.el.style.transform=`scale(${scale})`;
-    // Physics radius stays BALL_NUM_R — DOM size never changes, only visual scale
+    b.r=Math.round(BALL_NUM_R*scale);
+    b.el.style.boxShadow=b.num!==null
+      ? `0 0 18px 4px ${b.col}cc, 0 4px 14px ${b.col}88`
+      : `0 2px 8px ${b.col}55`;
+  }
+
+  // Scale fires immediately; only the number text fades
+  function flashNum(b, newNum){
+    // 1. Resize RIGHT NOW so scale animates from the moment of collision
+    b.num=newNum;
+    resizeBall(b);
+    // 2. Crossfade the number text independently
+    const span=b.el.querySelector('.ball-num');
+    if(span){
+      span.style.opacity='0';
+      setTimeout(()=>{
+        span.textContent=newNum!==null?newNum:'';
+        span.style.opacity='1';
+      },180);
+    }
   }
 
   // Style balls — DOM size always BALL_NUM_R, scale via transform
@@ -1074,11 +1098,14 @@ const db=firebase.database();
     b.el.style.width=BALL_NUM_R*2+'px';
     b.el.style.height=BALL_NUM_R*2+'px';
     b.el.style.fontSize=Math.round(BALL_NUM_R*0.75)+'px';
-    b.el.textContent=b.num!==null?b.num:'';
-    // Apply initial scale (no transition on first render)
+    const span=document.createElement('span');
+    span.className='ball-num';
+    span.textContent=b.num!==null?b.num:'';
+    b.el.innerHTML=''; b.el.appendChild(span);
+    // Suppress transition for first frame so balls don't animate in from scale(0)
     b.el.style.transition='none';
     resizeBall(b);
-    requestAnimationFrame(()=>b.el.style.transition='');// re-enable after first frame
+    requestAnimationFrame(()=>{ b.el.style.transition=''; });
     b.el.style.left=(b.x-BALL_DOM_R)+'px';
     b.el.style.top=(b.y-BALL_DOM_R)+'px';
   });
@@ -1196,7 +1223,11 @@ const db=firebase.database();
       if(!b.el)return;
       b.x+=b.vx; b.y+=b.vy;
 
-      const assignNew=(ball)=>{ball.num=Math.floor(Math.random()*90)+1;ball.el.textContent=ball.num;};
+      const assignNew=(ball)=>{
+        ball.num=Math.floor(Math.random()*90)+1;
+        const sp=ball.el.querySelector('.ball-num');
+        if(sp)sp.textContent=ball.num; else ball.el.textContent=ball.num;
+      };
       const bottomBound=btnEl?btnEl.getBoundingClientRect().top:ch;
 
       // Screen edges — ball gets new number on bounce only if it already had one
@@ -1250,13 +1281,11 @@ const db=firebase.database();
           // Number transfer: the ball that HAD the number loses it, other gets a fresh one
           const aHas=a.num!==null, bbHas=bb.num!==null;
           if(aHas){
-            a.num=null; a.el.textContent='';
-            bb.num=Math.floor(Math.random()*90)+1; bb.el.textContent=bb.num;
-            resizeBall(a); resizeBall(bb);
+            flashNum(a, null);
+            setTimeout(()=>flashNum(bb, Math.floor(Math.random()*90)+1), 80);
           } else if(bbHas){
-            bb.num=null; bb.el.textContent='';
-            a.num=Math.floor(Math.random()*90)+1; a.el.textContent=a.num;
-            resizeBall(bb); resizeBall(a);
+            flashNum(bb, null);
+            setTimeout(()=>flashNum(a, Math.floor(Math.random()*90)+1), 80);
           }
           // If neither has a number, do nothing — keeps exactly one in circulation
         }
