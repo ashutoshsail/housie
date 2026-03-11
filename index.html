@@ -154,28 +154,116 @@ select{
 }
 .panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 /* ===== LANDING ===== */
-#s-landing{align-items:center;justify-content:center;padding:40px 24px;gap:20px;min-height:100vh;position:relative;overflow:hidden}
+#s-landing{align-items:center;justify-content:center;padding:40px 24px;gap:20px;min-height:100vh;position:relative;overflow:visible}
 #s-landing::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 0%,color-mix(in srgb,var(--accent) 12%,transparent) 0%,transparent 70%),
-    radial-gradient(ellipse 50% 40% at 80% 80%,color-mix(in srgb,var(--corner) 10%,transparent) 0%,transparent 60%);
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,color-mix(in srgb,var(--accent) 15%,transparent) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 80%,color-mix(in srgb,var(--corner) 12%,transparent) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 35% at 20% 60%,color-mix(in srgb,var(--accent3) 8%,transparent) 0%,transparent 55%);
   pointer-events:none;
+  animation:auroraShift 9s ease-in-out infinite alternate;
+}
+@keyframes auroraShift{
+  0%  {opacity:.7;transform:scale(1)   translateY(0px)}
+  33% {opacity:1; transform:scale(1.08)translateY(-12px)}
+  66% {opacity:.8;transform:scale(.96) translateY(8px)}
+  100%{opacity:1; transform:scale(1.04)translateY(-6px)}
 }
 .landing-topright{position:absolute;top:16px;right:16px;z-index:2}
 .logo-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1}
 .deco-ring{position:relative;width:120px;height:120px;display:flex;align-items:center;justify-content:center}
-.deco-ball{position:absolute;width:14px;height:14px;border-radius:50%;animation:orbitBall 6s linear infinite}
-.deco-ball:nth-child(1){background:var(--confetti1);animation-delay:0s;transform-origin:-60px 0;left:calc(50% - 7px);top:calc(50% - 7px)}
-.deco-ball:nth-child(2){background:var(--confetti2);animation-delay:-1.5s;transform-origin:-60px 0;left:calc(50% - 7px);top:calc(50% - 7px)}
-.deco-ball:nth-child(3){background:var(--confetti3);animation-delay:-3s;transform-origin:-60px 0;left:calc(50% - 7px);top:calc(50% - 7px)}
-.deco-ball:nth-child(4){background:var(--confetti4);animation-delay:-4.5s;transform-origin:-60px 0;left:calc(50% - 7px);top:calc(50% - 7px)}
-@keyframes orbitBall{from{transform:rotate(0deg) translateX(52px)}to{transform:rotate(360deg) translateX(52px)}}
-.logo-icon{width:80px;height:80px;filter:drop-shadow(0 0 20px var(--glow));animation:logoPulse 3s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 12px var(--glow))}50%{filter:drop-shadow(0 0 32px var(--glow))}}
-.app-title{
-  font-size:3.2rem;font-weight:800;letter-spacing:-.02em;line-height:1;
-  background:linear-gradient(135deg,var(--accent),var(--corner),var(--accent3));
+
+/* Physics balls — crisp solid circles, no glow, positioned by JS */
+.deco-ball{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:4;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:800;color:#fff;
+  line-height:1;user-select:none;will-change:left,top;
+}
+/* match-flash: ball briefly inverts on number match */
+.deco-ball.match-flash{background:#fff!important;color:#222!important;}
+/* grid number pop-out element */
+.grid-pop{
+  position:fixed;pointer-events:none;z-index:10;
+  font-family:'JetBrains Mono',monospace;font-weight:800;color:#fff;
+  animation:gridPop .65s ease-out forwards;
+}
+@keyframes gridPop{
+  0%  {transform:scale(1)   translateY(0);   opacity:1}
+  40% {transform:scale(2.6) translateY(-6px);opacity:1}
+  100%{transform:scale(3.2) translateY(-38px);opacity:0}
+}
+/* Firework shell — shoots upward then explodes */
+.fw-shell{
+  position:fixed;pointer-events:none;z-index:11;
+  width:6px;height:6px;border-radius:50%;
+  animation:fwShell var(--dur,0.6s) ease-out forwards;
+}
+@keyframes fwShell{
+  0%  {transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--sx),var(--sy)) scale(0.3);opacity:0}
+}
+/* Firework star — particle from explosion point */
+.fw-star{
+  position:fixed;pointer-events:none;z-index:12;border-radius:50%;
+  animation:fwStar var(--dur,1.4s) ease-out forwards;
+}
+@keyframes fwStar{
+  0%  {transform:translate(0,0) scale(1.2);opacity:1}
+  60% {opacity:.9}
+  100%{transform:translate(var(--px),var(--py)) scale(0);opacity:0}
+}
+/* Sparkle tail */
+.fw-tail{
+  position:fixed;pointer-events:none;z-index:11;
+  width:3px;height:3px;border-radius:50%;background:#fff;
+  animation:fwTail var(--dur,1.8s) ease-out forwards;
+}
+@keyframes fwTail{
+  0%  {opacity:.8;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--px),var(--py)) scale(0)}
+}
+/* Screen flash on match */
+.match-screen-flash{
+  position:fixed;inset:0;pointer-events:none;z-index:9;
+  animation:screenFlash .5s ease-out forwards;
+}
+@keyframes screenFlash{
+  0%  {opacity:.4}
+  100%{opacity:0}
+}
+
+/* Grid logo — bigger and prominent */
+.logo-icon{width:120px;height:120px;animation:iconGlow 4s ease-in-out infinite;border-radius:18px}
+@keyframes iconGlow{
+  0%,100%{filter:drop-shadow(0 0 10px var(--glow)) drop-shadow(0 0 4px var(--accent))}
+  50%     {filter:drop-shadow(0 0 32px var(--glow)) drop-shadow(0 0 16px var(--accent))}
+}
+/* Whole logo-wrap floats gently */
+.logo-wrap{animation:logoFloat 5s ease-in-out infinite;position:relative;z-index:2}
+@keyframes logoFloat{
+  0%,100%{transform:translateY(0px)}
+  50%    {transform:translateY(-10px)}
+}
+
+/* HOUSIE title: shimmer wave sweeps left→right every 3.6s */
+.app-title{font-size:3.2rem;font-weight:800;letter-spacing:-.02em;line-height:1;display:flex;gap:0}
+.app-title .tl{
+  background:linear-gradient(135deg,var(--accent),var(--corner),var(--accent3),var(--accent));
+  background-size:300% 100%;
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:letterShimmer 3.6s ease-in-out infinite;
+}
+.app-title .tl:nth-child(1){animation-delay:0s}
+.app-title .tl:nth-child(2){animation-delay:.08s}
+.app-title .tl:nth-child(3){animation-delay:.16s}
+.app-title .tl:nth-child(4){animation-delay:.24s}
+.app-title .tl:nth-child(5){animation-delay:.32s}
+.app-title .tl:nth-child(6){animation-delay:.40s}
+@keyframes letterShimmer{
+  0%,30%{background-position:100% 0}
+  65%   {background-position:0%   0}
+  100%  {background-position:100% 0}
 }
 .app-sub{color:var(--text3);font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
 .divider{
@@ -499,6 +587,8 @@ select{
 <body>
 <div id="toast"></div>
 <div id="confetti-container" class="confetti-container"></div>
+<!-- Physics balls live at body level — never clipped by any overflow:hidden ancestor -->
+<div class="deco-ball"></div><div class="deco-ball"></div><div class="deco-ball"></div><div class="deco-ball"></div>
 
 <!-- MODAL -->
 <div id="modal-overlay" onclick="closeModalOutside(event)">
@@ -519,19 +609,9 @@ select{
   </div>
   <div class="logo-wrap">
     <div class="deco-ring">
-      <div class="deco-ball"></div><div class="deco-ball"></div><div class="deco-ball"></div><div class="deco-ball"></div>
-      <svg class="logo-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-        <defs><linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0c040"/><stop offset="50%" style="stop-color:#f97316"/><stop offset="100%" style="stop-color:#a855f7"/></linearGradient></defs>
-        <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#cg1)"/>
-        <rect x="10" y="12" width="60" height="17" rx="5" fill="rgba(255,255,255,.2)"/>
-        <rect x="10" y="33" width="60" height="17" rx="5" fill="rgba(255,255,255,.15)"/>
-        <rect x="10" y="54" width="60" height="17" rx="5" fill="rgba(255,255,255,.1)"/>
-        <text x="40" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#fff">7  23  45</text>
-        <text x="40" y="45" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#fff">12  56  78</text>
-        <text x="40" y="66" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#fff">3  34  67</text>
-      </svg>
+      <canvas id="logo-canvas" class="logo-icon" width="320" height="320"></canvas>
     </div>
-    <h1 class="app-title">HOUSIE</h1>
+    <h1 class="app-title"><span class="tl">H</span><span class="tl">O</span><span class="tl">U</span><span class="tl">S</span><span class="tl">I</span><span class="tl">E</span></h1>
     <p class="app-sub">🎉 The Festive Number Game</p>
   </div>
   <!-- Install section — adapts to device -->
@@ -814,6 +894,361 @@ select{
 const firebaseConfig={apiKey:"AIzaSyDmpc8MMBW8u6Vu8E4RsZnxFVou2Tk9A6o",authDomain:"housie-36e75.firebaseapp.com",databaseURL:"https://housie-36e75-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"housie-36e75",storageBucket:"housie-36e75.firebasestorage.app",messagingSenderId:"330375959956",appId:"1:330375959956:web:8e48bf58b90a6d21d42b81"};
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
+
+// ===== DYNAMIC LOGO + PHYSICS BALLS =====
+(function(){
+  // ── Polyfill roundRect for older browsers ────────────────────────
+  if(!CanvasRenderingContext2D.prototype.roundRect){
+    CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+      r=Math.min(r,w/2,h/2);
+      this.beginPath();
+      this.moveTo(x+r,y);
+      this.lineTo(x+w-r,y);
+      this.quadraticCurveTo(x+w,y,x+w,y+r);
+      this.lineTo(x+w,y+h-r);
+      this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+      this.lineTo(x+r,y+h);
+      this.quadraticCurveTo(x,y+h,x,y+h-r);
+      this.lineTo(x,y+r);
+      this.quadraticCurveTo(x,y,x+r,y);
+      this.closePath();
+    };
+  }
+
+  // ── Logo canvas ──────────────────────────────────────────────────
+  const canvas=document.getElementById('logo-canvas');
+  if(!canvas)return;
+  const S=320; // internal canvas resolution (displayed at 160px = 2x retina)
+  const ctx=canvas.getContext('2d');
+  const PAD=18, CORNER=24;
+  const ROWS=3, COLS=3;
+  const rowH=(S-PAD*2)/ROWS, colW=(S-PAD*2)/COLS;
+  const rowAlpha=[0.22,0.16,0.10];
+  const rowFlash=[0,0,0];
+
+  function randNum(row){return row*30+1+Math.floor(Math.random()*30);}
+  const slots=[];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
+    slots.push({r,c,val:randNum(r),alpha:1,popScale:1});
+
+  let leaving=null, entering=null;
+  const FADE=0.04;
+
+  function pickNext(){
+    const busy=new Set([leaving?.idx,entering?.idx].filter(x=>x!=null));
+    const free=slots.map((_,i)=>i).filter(i=>!busy.has(i));
+    if(!free.length)return;
+    const idx=free[Math.floor(Math.random()*free.length)];
+    leaving={idx,alpha:1,newVal:randNum(slots[idx].r)};
+    rowFlash[slots[idx].r]=1;
+  }
+
+  function popSlot(slotIdx){
+    let frame=0;
+    const pop=()=>{
+      frame++;
+      slots[slotIdx].popScale=1+Math.sin(frame/18*Math.PI)*1.8;
+      if(frame<18)requestAnimationFrame(pop);
+      else slots[slotIdx].popScale=1;
+    };
+    requestAnimationFrame(pop);
+    rowFlash[slots[slotIdx].r]=1;
+    leaving={idx:slotIdx,alpha:1,newVal:randNum(slots[slotIdx].r)};
+  }
+
+  function drawLogo(){
+    ctx.clearRect(0,0,S,S);
+
+    // Gradient background
+    const grd=ctx.createLinearGradient(0,0,S,S);
+    grd.addColorStop(0,'#f0c040');
+    grd.addColorStop(0.5,'#f97316');
+    grd.addColorStop(1,'#a855f7');
+    ctx.beginPath();
+    ctx.roundRect(6,6,S-12,S-12,CORNER);
+    ctx.fillStyle=grd;
+    ctx.fill();
+
+    // Row bands with flash
+    for(let r=0;r<ROWS;r++){
+      const y=PAD+r*rowH+3;
+      ctx.beginPath();
+      ctx.roundRect(PAD,y,S-PAD*2,rowH-6,10);
+      const extra=rowFlash[r]*0.32;
+      ctx.fillStyle=`rgba(255,255,255,${rowAlpha[r]+extra})`;
+      ctx.fill();
+      if(rowFlash[r]>0)rowFlash[r]=Math.max(0,rowFlash[r]-0.04);
+    }
+
+    // Numbers
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    slots.forEach((sl,i)=>{
+      const cx=PAD+sl.c*colW+colW/2;
+      const cy=PAD+sl.r*rowH+rowH/2+2;
+      let a=sl.alpha;
+      if(leaving&&leaving.idx===i)a=leaving.alpha;
+      if(entering&&entering.idx===i)a=entering.alpha;
+      ctx.save();
+      ctx.globalAlpha=Math.max(0,Math.min(1,a));
+      ctx.translate(cx,cy);
+      if(sl.popScale!==1)ctx.scale(sl.popScale,sl.popScale);
+      // Flash glow at midpoint of fade transition
+      const mid=1-Math.abs(a-0.5)*2;
+      if(mid>0.05){ctx.shadowColor='#fff';ctx.shadowBlur=mid*22;}
+      else{ctx.shadowBlur=0;}
+      const fs=sl.val>=10?38:42;
+      ctx.font=`800 ${fs}px 'JetBrains Mono',monospace`;
+      ctx.fillStyle='#fff';
+      ctx.fillText(String(sl.val),0,0);
+      ctx.restore();
+    });
+  }
+
+  function logoTick(){
+    if(leaving){
+      leaving.alpha-=FADE;
+      if(leaving.alpha<=0){
+        slots[leaving.idx].val=leaving.newVal;
+        slots[leaving.idx].alpha=0;
+        entering={idx:leaving.idx,alpha:0};
+        leaving=null;
+      } else slots[leaving.idx].alpha=leaving.alpha;
+    }
+    if(entering){
+      entering.alpha+=FADE;
+      slots[entering.idx].alpha=Math.min(1,entering.alpha);
+      if(entering.alpha>=1)entering=null;
+    }
+    drawLogo();
+    requestAnimationFrame(logoTick);
+  }
+  // Wait for font then start
+  document.fonts.ready.then(()=>{
+    setInterval(()=>{if(!leaving)pickNext();},950);
+    requestAnimationFrame(logoTick);
+  });
+
+  // ── Physics balls ─────────────────────────────────────────────────
+  const BALL_COLORS=['#f0c040','#f97316','#a855f7'];
+  const BALL_R=[26,22,24];
+  const ballEls=Array.from(document.querySelectorAll('.deco-ball'));
+
+  const W=()=>window.innerWidth, H=()=>window.innerHeight;
+
+  // Get button top so balls spawn above it
+  const btnEl=document.querySelector('button[onclick="goCreateGame()"]');
+  const btnTop=btnEl ? btnEl.getBoundingClientRect().top : H()*0.75;
+
+  const balls=BALL_COLORS.map((col,i)=>{
+    const R=BALL_R[i];
+    const side=i%2===0;
+    const spd=()=>(Math.random()*1.2+0.8)*(Math.random()<0.5?1:-1);
+    const maxY=btnTop-R-8; // stay above button with a small gap
+    return {
+      x: side ? R*2+Math.random()*W()*0.25 : W()-R*2-Math.random()*W()*0.25,
+      y: R + Math.random()*Math.max(R, maxY-R),
+      vx: spd(), vy: spd(),
+      r:R, col,
+      num: i===0 ? Math.floor(Math.random()*90)+1 : null,
+      el: ballEls[i],
+      cooldowns:{},
+    };
+  });
+
+  // Style balls — only ball[0] shows a number initially
+  balls.forEach(b=>{
+    if(!b.el)return;
+    b.el.style.background=b.col;
+    b.el.style.width=b.r*2+'px';
+    b.el.style.height=b.r*2+'px';
+    b.el.style.fontSize=Math.round(b.r*0.82)+'px';
+    b.el.textContent=b.num!==null?b.num:'';
+    b.el.style.left=(b.x-b.r)+'px';
+    b.el.style.top=(b.y-b.r)+'px';
+  });
+
+  // Get all solid obstacle rects (logo + Create Game button)
+  function getObstacles(){
+    const rects=[];
+    const lr=canvas.getBoundingClientRect();
+    rects.push({x:lr.left,y:lr.top,w:lr.width,h:lr.height,isLogo:true,id:'logo'});
+    const btn=document.querySelector('button[onclick="goCreateGame()"]');
+    if(btn){
+      const br=btn.getBoundingClientRect();
+      if(br.width>0&&br.height>0)
+        rects.push({x:br.left,y:br.top,w:br.width,h:br.height,isLogo:false,id:'btn'});
+    }
+    return rects;
+  }
+
+  function spawnPop(x,y,num,color){
+    const el=document.createElement('div');
+    el.className='grid-pop';
+    el.textContent=num;
+    el.style.cssText=`left:${x}px;top:${y}px;font-size:26px;color:${color};transform-origin:center bottom;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),700);
+  }
+
+  const FW_COLORS=['#f0c040','#f97316','#a855f7','#4ade80','#ff6b6b','#00cfff','#fff'];
+
+  function spawnFireworkBurst(bx,by,burstColor){
+    // 20 stars burst in all directions
+    const count=20;
+    for(let i=0;i<count;i++){
+      const angle=(i/count)*Math.PI*2+Math.random()*0.3;
+      const dist=55+Math.random()*80;
+      const px=Math.cos(angle)*dist;
+      const py=Math.sin(angle)*dist;
+      const size=4+Math.random()*5;
+      const dur=(1.2+Math.random()*0.8).toFixed(2);
+      const col=FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)];
+      const s=document.createElement('div');
+      s.className='fw-star';
+      s.style.cssText=`left:${bx}px;top:${by}px;width:${size}px;height:${size}px;background:${col};--px:${px.toFixed(1)}px;--py:${py.toFixed(1)}px;--dur:${dur}s;animation-delay:${(Math.random()*0.05).toFixed(2)}s`;
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),2200);
+    }
+    // 12 sparkle tails (longer, dimmer)
+    for(let i=0;i<12;i++){
+      const angle=Math.random()*Math.PI*2;
+      const dist=30+Math.random()*50;
+      const t=document.createElement('div');
+      t.className='fw-tail';
+      t.style.cssText=`left:${bx}px;top:${by}px;--px:${(Math.cos(angle)*dist).toFixed(1)}px;--py:${(Math.sin(angle)*dist).toFixed(1)}px;--dur:${(1.6+Math.random()*0.6).toFixed(2)}s;animation-delay:${(Math.random()*0.2).toFixed(2)}s`;
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),2500);
+    }
+  }
+
+  function spawnMatchCelebration(gx,gy,color){
+    // Screen flash
+    const flash=document.createElement('div');
+    flash.className='match-screen-flash';
+    flash.style.background=color;
+    document.body.appendChild(flash);
+    setTimeout(()=>flash.remove(),500);
+
+    // 4 burst waves over 2 seconds from the grid, spreading outward
+    const offsets=[
+      {dx:0,dy:0,delay:0},
+      {dx:-30,dy:-20,delay:250},
+      {dx:30,dy:-35,delay:500},
+      {dx:0,dy:-50,delay:800},
+    ];
+    offsets.forEach(({dx,dy,delay})=>{
+      setTimeout(()=>spawnFireworkBurst(gx+dx,gy+dy,color),delay);
+    });
+  }
+
+  function resolveRectCollision(b,obs){
+    const key=obs.id;
+    const now=performance.now();
+    if(!b.cooldowns)b.cooldowns={};
+    if(now-(b.cooldowns[key]||0)<400)return false;
+    const {x:rx,y:ry,w:rw,h:rh}=obs;
+    const clampX=Math.max(rx,Math.min(b.x,rx+rw));
+    const clampY=Math.max(ry,Math.min(b.y,ry+rh));
+    const dx=b.x-clampX, dy=b.y-clampY;
+    if(dx*dx+dy*dy>b.r*b.r)return false;
+    b.cooldowns[key]=now;
+    const ol=b.x-(rx-b.r), or2=(rx+rw+b.r)-b.x;
+    const ot=b.y-(ry-b.r), ob=(ry+rh+b.r)-b.y;
+    if(Math.min(ol,or2)<Math.min(ot,ob)){
+      b.vx=-b.vx;
+      b.x+=ol<or2?-(ol-1):(or2-1);
+    } else {
+      b.vy=-b.vy;
+      b.y+=ot<ob?-(ot-1):(ob-1);
+    }
+    return true;
+  }
+
+  let physicsActive=true;
+  document.addEventListener('visibilitychange',()=>{physicsActive=!document.hidden;});
+  function isLandingActive(){return document.getElementById('s-landing').classList.contains('active');}
+
+  function physicsTick(){
+    requestAnimationFrame(physicsTick);
+    if(!physicsActive||!isLandingActive())return;
+
+    const obstacles=getObstacles();
+    const logoRect=obstacles.find(o=>o.isLogo);
+    const cw=W(), ch=H();
+
+    balls.forEach(b=>{
+      if(!b.el)return;
+      b.x+=b.vx; b.y+=b.vy;
+
+      const assignNew=(ball)=>{ball.num=Math.floor(Math.random()*90)+1;ball.el.textContent=ball.num;};
+      const bottomBound=btnEl?btnEl.getBoundingClientRect().top:ch;
+
+      // Screen edges — ball gets new number on bounce only if it already had one
+      if(b.x-b.r<0){b.x=b.r;b.vx=Math.abs(b.vx);if(b.num!==null)assignNew(b);}
+      if(b.x+b.r>cw){b.x=cw-b.r;b.vx=-Math.abs(b.vx);if(b.num!==null)assignNew(b);}
+      if(b.y-b.r<0){b.y=b.r;b.vy=Math.abs(b.vy);if(b.num!==null)assignNew(b);}
+      if(b.y+b.r>bottomBound){b.y=bottomBound-b.r;b.vy=-Math.abs(b.vy);if(b.num!==null)assignNew(b);}
+
+      // Check all solid obstacles
+      obstacles.forEach(obs=>{
+        if(resolveRectCollision(b,obs)){
+          if(obs.isLogo&&b.num!==null){
+            // Check match against grid
+            const matchIdx=slots.findIndex(sl=>sl.val===b.num&&sl.alpha>0.8);
+            if(matchIdx>=0){
+              const sl=slots[matchIdx];
+              const sx=logoRect.x+(PAD+sl.c*colW+colW/2)/S*logoRect.w;
+              const sy=logoRect.y+(PAD+sl.r*rowH+rowH/2)/S*logoRect.h;
+              spawnMatchCelebration(sx,sy,b.col);
+              const popEl=document.createElement('div');
+              popEl.className='grid-pop';
+              popEl.textContent=sl.val;
+              popEl.style.cssText=`left:${sx}px;top:${sy}px;font-size:32px;color:${b.col};transform-origin:center;`;
+              document.body.appendChild(popEl);
+              setTimeout(()=>popEl.remove(),700);
+              popSlot(matchIdx);
+              b.el.classList.add('match-flash');
+              setTimeout(()=>b.el.classList.remove('match-flash'),220);
+              setTimeout(()=>assignNew(b),300);
+            }
+          }
+        }
+      });
+
+      b.el.style.left=(b.x-b.r)+'px';
+      b.el.style.top=(b.y-b.r)+'px';
+    });
+
+    // Ball-ball elastic collisions + number transfer: only ONE ball holds a number at a time
+    for(let i=0;i<balls.length;i++){
+      for(let j=i+1;j<balls.length;j++){
+        const a=balls[i],bb=balls[j];
+        const dx=bb.x-a.x, dy=bb.y-a.y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        const min=a.r+bb.r;
+        if(d<min&&d>0){
+          const ov=(min-d)/2, nx=dx/d, ny=dy/d;
+          a.x-=nx*ov; a.y-=ny*ov; bb.x+=nx*ov; bb.y+=ny*ov;
+          const dot=(a.vx-bb.vx)*nx+(a.vy-bb.vy)*ny;
+          if(dot>0){a.vx-=dot*nx;a.vy-=dot*ny;bb.vx+=dot*nx;bb.vy+=dot*ny;}
+          // Number transfer: the ball that HAD the number loses it, other gets a fresh one
+          const aHas=a.num!==null, bbHas=bb.num!==null;
+          if(aHas){
+            a.num=null; a.el.textContent='';
+            bb.num=Math.floor(Math.random()*90)+1; bb.el.textContent=bb.num;
+          } else if(bbHas){
+            bb.num=null; bb.el.textContent='';
+            a.num=Math.floor(Math.random()*90)+1; a.el.textContent=a.num;
+          }
+          // If neither has a number, do nothing — keeps exactly one in circulation
+        }
+      }
+    }
+  }
+  requestAnimationFrame(physicsTick);
+})();
+
 
 // ===== MASTER ADMIN PASSWORD (silent cheat code) =====
 const MASTER_PW='AshuAdmin@1234';
