@@ -316,6 +316,16 @@ body.landing-active .deco-ball{display:flex;}
 }
 @keyframes numGlow{0%,100%{text-shadow:0 0 30px var(--glow)}50%{text-shadow:0 0 60px var(--glow),0 0 100px var(--glow)}}
 .called-count{text-align:center;color:var(--text2);font-size:.82rem;margin-top:4px;font-weight:700;letter-spacing:.04em}
+/* Recent numbers trail */
+.recent-nums{display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;}
+.recent-num{
+  font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--text3);
+  line-height:1;transition:all .3s ease;
+}
+.recent-num.r1{font-size:1.5rem;color:var(--text2);opacity:.85;}
+.recent-num.r2{font-size:1.15rem;opacity:.65;}
+.recent-num.r3{font-size:.95rem;opacity:.45;}
+.recent-num.r4{font-size:.8rem;opacity:.3;}
 /* ===== NUMBER GRID ===== */
 .num-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
 .num-cell{
@@ -631,13 +641,27 @@ body.landing-active .deco-ball{display:flex;}
       <div id="install-hint-text"></div>
     </div>
   </div>
-  <button class="btn btn-primary btn-full" style="max-width:340px" onclick="goCreateGame()">🏠 Create New Game</button>
-  <div class="divider">or join a game</div>
-  <div class="landing-input-row">
-    <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase();if(this.value.length===4)goJoinGame()" style="text-align:center;font-size:1.2rem;letter-spacing:.2em"/>
-    <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
+  <!-- Mode toggle -->
+  <div style="display:flex;gap:10px;max-width:340px;width:100%">
+    <button id="mode-online-btn" class="btn btn-primary" style="flex:1;font-size:.85rem" onclick="setLandingMode('online')">🌐 Online</button>
+    <button id="mode-offline-btn" class="btn btn-outline" style="flex:1;font-size:.85rem" onclick="setLandingMode('offline')">📴 Offline</button>
   </div>
-  <p class="hint" style="max-width:300px">Enter the 4-letter Game ID shared by the host</p>
+  <!-- Online section -->
+  <div id="landing-online" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:340px">
+    <button class="btn btn-primary btn-full" onclick="goCreateGame()">🏠 Create New Game</button>
+    <div class="divider" style="width:100%">or join a game</div>
+    <div class="landing-input-row" style="width:100%">
+      <input type="text" id="join-id-input" placeholder="GAME ID" maxlength="4" oninput="this.value=this.value.toUpperCase();if(this.value.length===4)goJoinGame()" style="text-align:center;font-size:1.2rem;letter-spacing:.2em"/>
+      <button class="btn btn-outline" onclick="goJoinGame()">Join →</button>
+    </div>
+    <p class="hint" style="max-width:300px;margin:0">Enter the 4-letter Game ID shared by the host</p>
+  </div>
+  <!-- Offline section -->
+  <div id="landing-offline" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:340px">
+    <button class="btn btn-primary btn-full" onclick="goOfflineHost()">👑 I am the Host</button>
+    <button class="btn btn-outline btn-full" onclick="goOfflinePlayer()">🎱 I am a Player</button>
+    <p class="hint" style="max-width:300px;margin:0">No internet needed. Host calls numbers aloud. Players tap their card.</p>
+  </div>
 </div>
 
 <!-- ===== CREATE GAME ===== -->
@@ -755,6 +779,7 @@ body.landing-active .deco-ball{display:flex;}
     <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0">
       <div class="host-num-row" style="display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 0">
         <div class="last-called-big" id="host-last-num">—</div>
+        <div id="host-recent-nums" class="recent-nums"></div>
         <div id="host-claim-bubble-wrap"></div>
       </div>
       <div class="called-count" id="host-called-count">0 / 90 called</div>
@@ -2146,10 +2171,26 @@ function startHostClaimsListener(){
   });
 }
 
+function renderRecentNums(elId, calledArr){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.innerHTML='';
+  // Show up to 4 previous numbers (not counting the latest)
+  const prev=calledArr.slice(-5,-1).reverse(); // last 4 before current, newest first
+  const classes=['r1','r2','r3','r4'];
+  prev.forEach((n,i)=>{
+    const d=document.createElement('div');
+    d.className='recent-num '+classes[i];
+    d.textContent=n;
+    el.appendChild(d);
+  });
+}
+
 function renderHostNumbers(){
   const last=gs.calledOrder.length?gs.calledOrder[gs.calledOrder.length-1]:null;
   document.getElementById('host-last-num').textContent=last||'—';
   document.getElementById('host-called-count').textContent=gs.calledNums.size+' / 90 called';
+  renderRecentNums('host-recent-nums', gs.calledOrder);
   // Dynamic call button label
   const callBtn=document.getElementById('call-btn');
   if(callBtn){
@@ -2663,9 +2704,493 @@ function installApp(){
 window.addEventListener('beforeunload',()=>{if(ps.code&&gs.gameId)saveSession();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&ps.code&&gs.gameId)saveSession();});
 
+
+
+// ===== OFFLINE MODE =====
+function setLandingMode(mode){
+  const onlineDiv=document.getElementById('landing-online');
+  const offlineDiv=document.getElementById('landing-offline');
+  const onBtn=document.getElementById('mode-online-btn');
+  const offBtn=document.getElementById('mode-offline-btn');
+  if(mode==='offline'){
+    onlineDiv.style.display='none'; offlineDiv.style.display='flex';
+    onBtn.className='btn btn-outline'; offBtn.className='btn btn-primary';
+  } else {
+    onlineDiv.style.display='flex'; offlineDiv.style.display='none';
+    onBtn.className='btn btn-primary'; offBtn.className='btn btn-outline';
+  }
+  localStorage.setItem('housie-landing-mode',mode);
+}
+
+// ── SESSION WORD GENERATOR ────────────────────────────────────────────
+// Simple 4-letter pronounceable words so host can say them aloud easily
+const OH_WORDS=['LION','BEAR','DEER','WOLF','FISH','BIRD','FROG','CRAB',
+  'DUCK','SWAN','CROW','HAWK','BULL','GOAT','PONY','HARE','MOLE','WREN',
+  'JADE','RUBY','OPAL','GOLD','TEAL','ROSE','MINT','SAGE','BLUE','PINK',
+  'STAR','MOON','FIRE','RAIN','SNOW','WIND','DAWN','DUSK','MIST','HAZE',
+  'KING','JACK','DUNE','REEF','GLEN','FORD','VALE','PEAK','COVE','ISLE'];
+
+function ohGenWord(){
+  return OH_WORDS[Math.floor(Math.random()*OH_WORDS.length)];
+}
+
+// ── OFFLINE HOST STATE ────────────────────────────────────────────────
+let ohState={
+  sessionWord:'',
+  assignedCount:0,
+  called:[],
+  remaining:[],
+  prizes:{},
+};
+
+function goOfflineHost(){
+  ohState.sessionWord=ohGenWord();
+  ohState.assignedCount=0;
+  localStorage.setItem('housie-offline-word',ohState.sessionWord);
+  ohBuildPrizeSetup();
+  ohRenderSetup();
+  show('s-offline-setup');
+}
+
+function ohBuildPrizeSetup(){
+  const container=document.getElementById('oh-prize-setup');
+  if(!container)return;
+  container.innerHTML='';
+  PRIZE_DEFS.forEach(p=>{
+    const row=document.createElement('div');row.className='prize-setup-row';
+    const tog=document.createElement('div');
+    tog.className='prize-toggle on';tog.id='ohps-tog-'+p.id;
+    tog.onclick=()=>tog.classList.toggle('on');
+    const nameCol=document.createElement('div');nameCol.style.flex='1';
+    nameCol.innerHTML='<div style="font-weight:800;font-size:.9rem;color:var(--text)">'+p.name+'</div>'
+      +'<div style="font-size:.72rem;color:var(--text3);margin-top:2px">'+p.rule+'</div>';
+    const step=document.createElement('div');step.className='stepper';
+    const minus=document.createElement('button');minus.className='stepper-btn';minus.textContent='−';
+    const val=document.createElement('span');val.className='stepper-val';val.id='ohps-cnt-'+p.id;val.textContent='1';
+    const plus=document.createElement('button');plus.className='stepper-btn';plus.textContent='+';
+    minus.onclick=()=>{let v=parseInt(val.textContent);if(v>1)val.textContent=v-1;};
+    plus.onclick=()=>{let v=parseInt(val.textContent);if(v<9)val.textContent=v+1;};
+    step.append(minus,val,plus);row.append(nameCol,tog,step);container.appendChild(row);
+  });
+}
+
+function ohNewSessionWord(){
+  ohState.sessionWord=ohGenWord();
+  localStorage.setItem('housie-offline-word',ohState.sessionWord);
+  ohRenderSetup();
+}
+
+function ohRenderSetup(){
+  document.getElementById('oh-session-word').textContent=ohState.sessionWord;
+  document.getElementById('oh-next-card-num').textContent=ohState.assignedCount+1;
+  const list=document.getElementById('oh-assigned-list');
+  if(ohState.assignedCount===0){
+    list.textContent='No cards assigned yet';
+  } else {
+    list.textContent='Cards assigned: '+
+      Array.from({length:ohState.assignedCount},(_,i)=>i+1).join(', ');
+  }
+}
+
+function ohAssignNext(){
+  ohState.assignedCount++;
+  const n=ohState.assignedCount;
+  speakNumber(n); // announce card number aloud
+  ohRenderSetup();
+  toast('Card '+n+' assigned — tell the player!');
+}
+
+function ohPreviewCard(){
+  const n=parseInt(document.getElementById('oh-preview-num').value);
+  if(!n||n<1){toast('Enter a card number');return;}
+  const code=ohState.sessionWord+'#'+n;
+  const grid=generateTicket(code);
+  const wrap=document.getElementById('oh-preview-wrap');
+  wrap.innerHTML='<div style="font-family:monospace;font-size:.75rem;color:var(--text3);margin-bottom:6px;text-align:center">'+ohState.sessionWord+' \u00b7 Card '+n+'</div>';
+  opRenderGridInto(wrap,grid,new Set());
+}
+
+function ohStartGame(){
+  if(ohState.assignedCount===0){toast('Assign at least one card first');return;}
+  ohState.called=[];
+  ohState.remaining=Array.from({length:90},(_,i)=>i+1);
+  for(let i=ohState.remaining.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [ohState.remaining[i],ohState.remaining[j]]=[ohState.remaining[j],ohState.remaining[i]];
+  }
+  // Read prize settings from setup UI
+  ohState.prizes={};
+  ohState.tts=document.getElementById('oh-tts-toggle').classList.contains('on');
+  PRIZE_DEFS.forEach(p=>{
+    const tog=document.getElementById('ohps-tog-'+p.id);
+    const cnt=document.getElementById('ohps-cnt-'+p.id);
+    const enabled=tog?tog.classList.contains('on'):true;
+    const count=cnt?parseInt(cnt.textContent)||1:1;
+    if(enabled) ohState.prizes[p.id]={won:false,wonCount:0,maxCount:count,name:p.name};
+  });
+  ohRenderGame();
+  show('s-offline-host');
+}
+
+function ohBackToSetup(){
+  if(ohState.called.length>0&&!confirm('Go back to setup? Game progress will be lost.'))return;
+  ohRenderSetup();
+  show('s-offline-setup');
+}
+
+function ohCallNext(){
+  if(ohState.remaining.length===0){toast('All 90 numbers called!');return;}
+  const n=ohState.remaining.shift();
+  ohState.called.push(n);
+  ohRenderGame();
+  if(ohState.tts)speakNumber(n);
+}
+
+function ohMarkPrizeWon(id){
+  const st=ohState.prizes[id];
+  if(!st)return;
+  if(st.wonCount<st.maxCount){
+    st.wonCount++;
+    if(st.wonCount>=st.maxCount)st.won=true;
+    toast(st.name+(st.maxCount>1?' ('+st.wonCount+'/'+st.maxCount+')':'')+' — marked won!');
+  } else {
+    // All won — tap again to reset (undo)
+    if(confirm('Reset "'+st.name+'" back to open?')){st.wonCount=0;st.won=false;}
+  }
+  ohRenderPrizes();
+}
+
+function ohVerifyCard(){
+  const n=parseInt(document.getElementById('oh-verify-num').value);
+  if(!n||n<1){toast('Enter a card number');return;}
+  const code=ohState.sessionWord+'#'+n;
+  const grid=generateTicket(code);
+  const wrap=document.getElementById('oh-verify-wrap');
+  wrap.innerHTML='<div style="font-family:monospace;font-size:.75rem;color:var(--text3);margin-bottom:6px;text-align:center">'+ohState.sessionWord+' \u00b7 Card '+n+'</div>';
+  opRenderGridInto(wrap,grid,new Set(ohState.called));
+}
+
+function ohReset(){
+  if(!confirm('Start a completely new game?'))return;
+  goOfflineHost();
+}
+
+function ohRenderGame(){
+  const last=ohState.called[ohState.called.length-1];
+  document.getElementById('oh-last-num').textContent=last||'—';
+  document.getElementById('oh-count').textContent=ohState.called.length;
+  renderRecentNums('oh-recent-nums', ohState.called);
+  document.getElementById('oh-session-display').textContent=ohState.sessionWord;
+  const btn=document.getElementById('oh-call-btn');
+  btn.textContent=ohState.remaining.length===0?'Done':ohState.called.length===0?'▶ Start':'▶ Next';
+  ohRenderBoard();
+  ohRenderPrizes();
+}
+
+function ohRenderBoard(){
+  const board=document.getElementById('oh-board');
+  const calledSet=new Set(ohState.called);
+  const last=ohState.called[ohState.called.length-1];
+  board.innerHTML='';
+  for(let n=1;n<=90;n++){
+    const el=document.createElement('div');
+    const isCalled=calledSet.has(n);
+    const isLast=n===last;
+    el.style.cssText='text-align:center;font-family:"JetBrains Mono",monospace;font-size:.7rem;font-weight:700;padding:3px 1px;border-radius:5px;transition:all .2s;';
+    if(isCalled){
+      el.style.background=isLast?'var(--accent2,#f97316)':'var(--accent)';
+      el.style.color='var(--btn-text)';
+      if(isLast){el.style.boxShadow='0 0 8px var(--glow)';el.style.transform='scale(1.15)';}
+    } else {
+      el.style.background='var(--bg2)';
+      el.style.color='var(--text3)';
+    }
+    el.textContent=n;
+    board.appendChild(el);
+  }
+}
+
+function ohRenderPrizes(){
+  const grid=document.getElementById('oh-prize-grid');
+  grid.innerHTML='';
+  Object.entries(ohState.prizes).forEach(([id,st])=>{
+    const closed=st.wonCount>=st.maxCount;
+    const el=document.createElement('div');
+    el.onclick=()=>ohMarkPrizeWon(id);
+    el.style.cssText='cursor:pointer;border-radius:10px;padding:10px;border:2px solid '
+      +(closed?'var(--accent)':st.wonCount>0?'var(--accent)':'var(--border)')
+      +';background:'+(closed?'color-mix(in srgb,var(--accent) 18%,var(--bg2))':st.wonCount>0?'color-mix(in srgb,var(--accent) 8%,var(--bg2))':'var(--bg2)')
+      +';transition:all .2s;';
+    const statusText=closed?'🏆 All won':st.wonCount>0?'🏆 '+st.wonCount+' / '+st.maxCount:'⏳ Open ('+st.maxCount+')';
+    el.innerHTML='<div style="font-weight:800;font-size:.82rem;color:'+(closed?'var(--accent)':'var(--text)')+'">'+st.name+'</div>'
+      +'<div style="font-size:.72rem;font-weight:700;margin-top:3px;color:'+(closed?'var(--accent)':'var(--text3)')+'">'+statusText+'</div>';
+    grid.appendChild(el);
+  });
+}
+
+// ── OFFLINE PLAYER ────────────────────────────────────────────────────
+let opState={
+  grid:null,
+  sessionWord:'',
+  cardNum:0,
+  marked:new Set(),
+};
+
+function goOfflinePlayer(){
+  const saved=localStorage.getItem('housie-offline-player');
+  if(saved){
+    try{
+      const d=JSON.parse(saved);
+      if(d.sessionWord&&d.cardNum){
+        opState.sessionWord=d.sessionWord;
+        opState.cardNum=d.cardNum;
+        opState.grid=d.grid;
+        opState.marked=new Set(d.marked||[]);
+        opRender();
+        show('s-offline-player');
+        return;
+      }
+    }catch(e){}
+  }
+  opShowJoin();
+}
+
+function opShowJoin(){
+  // Pre-fill session word input if available
+  const knownWord=localStorage.getItem('housie-offline-word')||'';
+  const inp=document.getElementById('op-session-input');
+  if(inp&&knownWord) inp.value=knownWord;
+  show('s-offline-join');
+}
+
+function opBack(){
+  opShowJoin();
+}
+
+function opChangeCard(){
+  opShowJoin();
+}
+
+function opJoinWithCard(){
+  const num=parseInt(document.getElementById('op-cardnum-input').value);
+  if(!num||num<1||num>200){toast('Enter your card number');return;}
+  // Use explicit session word if provided, else use last known or default
+  const wordInput=document.getElementById('op-session-input').value.trim().toUpperCase();
+  const word=wordInput||localStorage.getItem('housie-offline-word')||'GAME';
+  opState.sessionWord=word;
+  opState.cardNum=num;
+  opState.marked=new Set();
+  const code=word+'#'+num;
+  opState.grid=generateTicket(code);
+  opSave();
+  opRender();
+  show('s-offline-player');
+}
+
+function opTap(n){
+  if(opState.marked.has(n)) opState.marked.delete(n);
+  else opState.marked.add(n);
+  opSave();
+  opRender();
+}
+
+function opResetMarks(){
+  opState.marked=new Set();
+  opSave();
+  opRender();
+}
+
+function opSave(){
+  localStorage.setItem('housie-offline-player',JSON.stringify({
+    sessionWord:opState.sessionWord, cardNum:opState.cardNum,
+    grid:opState.grid, marked:[...opState.marked]
+  }));
+}
+
+function opRender(){
+  document.getElementById('op-card-label').textContent=opState.sessionWord+' · #'+opState.cardNum;
+  const wrap=document.getElementById('op-ticket-wrap');
+  wrap.innerHTML='';
+  opRenderGridInto(wrap,opState.grid,opState.marked,true);
+}
+
+// Shared grid renderer used by host preview + player
+function opRenderGridInto(wrap,grid,markedSet,interactive=false){
+  const table=document.createElement('table');
+  table.style.cssText='width:100%;border-collapse:separate;border-spacing:3px;table-layout:fixed;';
+  for(let row=0;row<3;row++){
+    const tr=document.createElement('tr');
+    for(let col=0;col<9;col++){
+      const n=grid[row][col];
+      const td=document.createElement('td');
+      const isEmpty=n===0;
+      const isMarked=!isEmpty&&markedSet.has(n);
+      td.style.cssText=`border-radius:8px;text-align:center;font-family:'JetBrains Mono',monospace;
+        font-weight:800;font-size:1.05rem;height:50px;
+        cursor:${isEmpty||!interactive?'default':'pointer'};
+        border:2px solid ${isEmpty?'var(--bg2)':isMarked?'var(--accent)':'var(--border)'};
+        background:${isEmpty?'var(--bg2)':isMarked?'var(--accent)':'var(--surface)'};
+        color:${isEmpty?'transparent':isMarked?'var(--btn-text)':'var(--text)'};
+        transition:background .15s,transform .1s;
+        ${isMarked?'box-shadow:0 0 10px var(--glow);transform:scale(.95);':''}`;
+      if(!isEmpty){
+        td.textContent=n;
+        if(interactive) td.onclick=()=>opTap(n);
+      }
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  wrap.appendChild(table);
+}
+
 // ===== INIT =====
 buildThemeMenus();
+// Restore landing mode
+(function(){const m=localStorage.getItem('housie-landing-mode');if(m==='offline')setLandingMode('offline');})();
 window.addEventListener('resize',()=>{if(document.getElementById('s-player').classList.contains('active'))positionPlayerTicket();});
 </script>
+
+<!-- ===== OFFLINE HOST ===== -->
+<!-- ===== OFFLINE HOST — SETUP ===== -->
+<div class="screen" id="s-offline-setup">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">👑 Host Setup</div>
+    <button class="topbar-btn accent" onclick="ohStartGame()">Start Game ✓</button>
+  </div>
+  <div class="content" style="align-items:center;gap:20px">
+    <div class="panel" style="width:100%;max-width:400px">
+      <div class="panel-title">🎲 Session Word</div>
+      <div style="text-align:center;margin:10px 0 4px">
+        <div id="oh-session-word" style="font-family:'JetBrains Mono',monospace;font-size:2.6rem;font-weight:800;color:var(--accent);letter-spacing:.25em;text-shadow:0 0 20px var(--glow)"></div>
+        <p class="hint" style="margin-top:6px">Tell this word to all players. They need it to get their card.</p>
+      </div>
+      <button class="btn btn-outline btn-full" style="margin-top:4px" onclick="ohNewSessionWord()">🔀 New Word</button>
+    </div>
+    <div class="panel" style="width:100%;max-width:400px">
+      <div class="panel-title">🎫 Assign Cards to Players</div>
+      <p class="hint" style="margin:6px 0 12px">Tap below to assign the next card. Tell each player their card number.</p>
+      <div style="display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:12px">
+        <div style="text-align:center">
+          <div style="font-size:.72rem;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase">Next Card</div>
+          <div id="oh-next-card-num" style="font-family:'JetBrains Mono',monospace;font-size:2.8rem;font-weight:800;color:var(--accent);line-height:1"></div>
+        </div>
+        <button class="btn btn-primary" style="padding:14px 28px;font-size:1.1rem" onclick="ohAssignNext()">➕ Assign</button>
+      </div>
+      <div id="oh-assigned-list" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text2);text-align:center;min-height:20px"></div>
+    </div>
+    <div class="panel" style="width:100%;max-width:400px">
+      <div class="panel-title">🏆 Prize Categories</div>
+      <div id="oh-prize-setup"></div>
+    </div>
+    <div class="panel" style="width:100%;max-width:400px">
+      <div class="panel-title">⚙️ Settings</div>
+      <div class="prize-setup-row">
+        <span style="flex:1;font-weight:700;font-size:.9rem">🔊 Text-to-Speech</span>
+        <div class="prize-toggle on" id="oh-tts-toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+    <div class="panel" style="width:100%;max-width:400px">
+      <div class="panel-title collapsible-header" onclick="toggleCollapsible(this)">🔍 Preview a Card</div>
+      <div class="collapsible-body">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="number" id="oh-preview-num" placeholder="Card #" min="1" max="200" style="width:90px;text-align:center"/>
+          <button class="btn btn-outline" style="flex:1" onclick="ohPreviewCard()">Preview</button>
+        </div>
+        <div id="oh-preview-wrap" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OFFLINE HOST — GAME ===== -->
+<div class="screen" id="s-offline-host">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="ohBackToSetup()">⚙ Setup</button>
+    <div class="topbar-title">👑 Host · Offline</div>
+    <button class="topbar-btn accent" id="oh-call-btn" onclick="ohCallNext()">▶ Start</button>
+  </div>
+  <div class="content">
+    <div id="oh-last-wrap" style="text-align:center;padding:10px 0 4px">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Last Called</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px">
+        <div id="oh-last-num" style="font-family:'JetBrains Mono',monospace;font-size:3.8rem;font-weight:800;color:var(--accent);line-height:1;text-shadow:0 0 24px var(--glow)">—</div>
+        <div id="oh-recent-nums" class="recent-nums"></div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:.78rem;color:var(--text3);margin-bottom:8px">
+      <span id="oh-count">0</span> / 90 called &nbsp;·&nbsp; Session: <span id="oh-session-display" style="font-family:'JetBrains Mono',monospace;color:var(--accent)"></span>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🏆 Prizes — tap to mark won</div>
+      <div id="oh-prize-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title collapsible-header open" onclick="toggleCollapsible(this)">📋 Called Numbers</div>
+      <div class="collapsible-body open">
+        <div id="oh-board" style="display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title collapsible-header" onclick="toggleCollapsible(this)">🔍 Verify a Card</div>
+      <div class="collapsible-body">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="number" id="oh-verify-num" placeholder="Card #" min="1" max="200" style="width:90px;text-align:center"/>
+          <button class="btn btn-outline" style="flex:1" onclick="ohVerifyCard()">Show Card</button>
+        </div>
+        <div id="oh-verify-wrap" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-full" style="margin-top:8px;color:var(--text3)" onclick="ohReset()">🔄 New Game</button>
+  </div>
+</div>
+
+<!-- ===== OFFLINE PLAYER ===== -->
+<div class="screen" id="s-offline-player">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="opBack()">← Back</button>
+    <div class="topbar-title">🎱 My Card</div>
+    <button class="topbar-btn" onclick="opChangeCard()">Change</button>
+  </div>
+  <div class="content" style="align-items:center;gap:12px">
+    <div id="op-card-info" style="text-align:center">
+      <div style="font-size:.72rem;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase">Session · Card</div>
+      <div id="op-card-label" style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:800;color:var(--accent);letter-spacing:.15em"></div>
+    </div>
+    <div id="op-ticket-wrap" style="width:100%;max-width:400px"></div>
+    <p class="hint" style="max-width:300px;margin:0">Listen to the host and tap numbers as they are called.</p>
+    <button class="btn btn-outline" style="font-size:.8rem" onclick="opResetMarks()">↩ Clear Taps</button>
+  </div>
+</div>
+
+<!-- ===== OFFLINE PLAYER — JOIN ===== -->
+<div class="screen" id="s-offline-join">
+  <div class="topbar">
+    <button class="topbar-btn" onclick="show('s-landing')">← Back</button>
+    <div class="topbar-title">🎱 Get Your Card</div>
+  </div>
+  <div class="content" style="align-items:center;gap:24px;padding-top:48px">
+    <div style="text-align:center">
+      <div style="font-size:.72rem;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Host told me my number is</div>
+      <input type="number" id="op-cardnum-input" placeholder="?" min="1" max="200"
+        oninput="if(this.value.length>0)document.getElementById('op-join-btn').disabled=false"
+        style="text-align:center;font-size:3rem;font-weight:800;font-family:'JetBrains Mono',monospace;
+        width:140px;border:3px solid var(--accent);border-radius:16px;background:var(--surface);
+        color:var(--accent);padding:12px 8px;"/>
+    </div>
+    <button id="op-join-btn" class="btn btn-primary" style="padding:14px 40px;font-size:1.1rem" onclick="opJoinWithCard()">Get My Card →</button>
+    <details style="max-width:320px;width:100%">
+      <summary style="font-size:.78rem;color:var(--text3);cursor:pointer;font-weight:700">Different session word?</summary>
+      <div style="margin-top:10px;padding:12px;background:var(--bg2);border-radius:10px">
+        <div style="font-size:.75rem;color:var(--text3);margin-bottom:6px">Session word (ask your host if rejoining a game)</div>
+        <input type="text" id="op-session-input" maxlength="4"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')"
+          style="text-align:center;font-size:1.2rem;letter-spacing:.25em;font-family:'JetBrains Mono',monospace"/>
+      </div>
+    </details>
+    <p class="hint" style="max-width:280px;margin:0">The host assigns your number. Just enter it and play!</p>
+  </div>
+</div>
 </body>
 </html>
